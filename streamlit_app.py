@@ -232,7 +232,7 @@ with st.container(border=True):
 
         with st.popover("More filters", width="stretch"):
             min_battles = st.slider(
-                "Minimum 30-day battles",
+                "Minimum 30-day sample battles",
                 min_value=0,
                 max_value=max_battles,
                 value=50,
@@ -321,7 +321,7 @@ else:
 
 card_row1 = st.columns(3)
 card_row1[0].metric("Vehicles", f"{n_vehicles:,}", border=True)
-card_row1[1].metric("30-day battles", f"{total_battles:,}", border=True)
+card_row1[1].metric("30-day sample battles", f"{total_battles:,}", border=True)
 card_row1[2].metric("Nations", f"{n_nations}", border=True)
 
 card_row2 = st.columns(3)
@@ -411,7 +411,7 @@ with tab_nation:
                     hovertemplate=(
                         "<b>%{y} · %{x}</b><br>"
                         "Win rate: %{z:.1f}%<br>"
-                        "Battles: %{customdata[0]:,.0f}<br>"
+                        "Sample battles: %{customdata[0]:,.0f}<br>"
                         "Vehicles: %{customdata[1]:.0f}<br>"
                         "Avg K/D: %{customdata[2]:.2f}<br>"
                         "Avg frags/battle: %{customdata[3]:.2f}<br>"
@@ -445,7 +445,7 @@ with tab_nation:
             "Win rate": "win_rate",
             "K/D": "ground_frags_per_death",
             "Frags per battle": "ground_frags_per_battle",
-            "Battles": "battles",
+            "Sample battles": "battles",
         }
 
         tc1, tc2 = st.columns([3, 2], gap="large")
@@ -569,7 +569,7 @@ with tab_nation:
                 column_config={
                     "country": "Nation",
                     "vehicles": st.column_config.NumberColumn("Vehicles", format="%d"),
-                    "battles": st.column_config.NumberColumn("Battles", format="%d"),
+                    "battles": st.column_config.NumberColumn("Sample battles", format="%d"),
                     "avg_ce": st.column_config.NumberColumn("Avg CE", format="%.1f"),
                     "median_ce": st.column_config.NumberColumn("Median CE", format="%.1f"),
                     "top_br_range": "Top BR range",
@@ -646,7 +646,7 @@ with tab_rankings:
                 "country": "Nation",
                 "vehicle_type": "Type",
                 "realistic_br": st.column_config.NumberColumn("BR", format="%.1f"),
-                "battles": st.column_config.NumberColumn("Battles", format="%d"),
+                "battles": st.column_config.NumberColumn("Sample battles", format="%d"),
                 "days_observed": st.column_config.NumberColumn("Days", format="%d"),
                 "win_rate": st.column_config.NumberColumn("Win rate", format="%.2f%%"),
                 "ground_frags_per_battle": st.column_config.NumberColumn("Frags / battle", format="%.2f"),
@@ -689,7 +689,7 @@ with tab_rankings:
             st.plotly_chart(bar_fig, width="stretch")
 
         with rank_right:
-            st.markdown("**Battles vs CE Score**")
+            st.markdown("**Sample battles vs CE Score**")
             scatter_df = filtered_vehicle_df.dropna(
                 subset=["battles", "combat_effectiveness", "realistic_br"]
             ).copy()
@@ -714,7 +714,7 @@ with tab_rankings:
                 ],
             )
             scatter_fig.update_layout(
-                xaxis_title="30-day battles",
+                xaxis_title="30-day sample battles",
                 yaxis_title="Combat Effectiveness Score",
                 height=520,
                 margin=dict(l=10, r=10, t=20, b=10),
@@ -768,7 +768,7 @@ with tab_rankings:
                 d4.metric("Rank", f"{row.get('rank', 'N/A')}")
 
                 d5, d6 = st.columns(2)
-                d5.metric("30-day battles", f"{int(row.get('battles', 0)):,}")
+                d5.metric("30-day sample battles", f"{int(row.get('battles', 0)):,}")
                 d6.metric("Days observed", f"{int(row.get('days_observed', 0))}")
 
                 d7, d8 = st.columns(2)
@@ -860,7 +860,7 @@ with tab_trends:
             "Win rate": "win_rate",
             "K/D": "ground_frags_per_death",
             "Frags per battle": "ground_frags_per_battle",
-            "Battles": "battles",
+            "Sample battles": "battles",
         }
 
         tcol1, tcol2 = st.columns([3, 2], gap="large")
@@ -922,6 +922,17 @@ with tab_data:
         "The scraper collects up to 30 chart observations per Realistic Ground vehicle."
     )
 
+    st.subheader("About battle counts")
+    st.info(
+        "Battle counts here come from ThunderSkill's **tracked-user sample** — "
+        "players who have linked their account — not global War Thunder battle "
+        "totals. Absolute numbers are therefore small, and low counts for rare, "
+        "event, or minor-nation vehicles are expected. They remain useful as a "
+        "**sample-size / confidence weight**: the Combat Effectiveness Score "
+        "uses them to pull low-sample vehicles toward their BR average. "
+        "(`index_battles` is essentially the same window sample, pre-summed.)"
+    )
+
     c1, c2, c3 = st.columns(3)
     c1.metric("Raw rows", f"{len(raw_df):,}")
     c2.metric("Raw vehicles", f"{raw_df['vehicle_slug'].nunique():,}")
@@ -930,7 +941,7 @@ with tab_data:
     c4, c5, c6 = st.columns(3)
     c4.metric("30-day vehicle rows", f"{len(vehicle_30d_df):,}")
     c5.metric("Filtered vehicles", f"{len(filtered_vehicle_df):,}")
-    c6.metric("Filtered battles", f"{int(filtered_vehicle_df['battles'].fillna(0).sum()):,}")
+    c6.metric("Filtered sample battles", f"{int(filtered_vehicle_df['battles'].fillna(0).sum()):,}")
 
     if "date" in raw_df.columns:
         st.write("Raw date range:", raw_df["date"].min(), "to", raw_df["date"].max())
