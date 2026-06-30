@@ -17,3 +17,7 @@ logs/*.csv
 
 # Logs and local files
 *.log
+
+# Dated raw index snapshots
+data/raw/vehicle_index/ground_realistic_vehicle_index_*.csv
+data/raw/vehicle_index/vehicle_index_*.csv
