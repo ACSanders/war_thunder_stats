@@ -429,6 +429,13 @@ with tab_nation:
             heat_fig.update_xaxes(side="bottom")
             st.plotly_chart(heat_fig, width="stretch")
 
+            st.caption(
+                "Heatmap reflects the active filters. Blank cells mean either no "
+                "vehicles passed the current filters, no win-rate signal was "
+                "available, or vehicles in that nation/BR range are missing BR "
+                "metadata in the source data."
+            )
+
         st.divider()
 
         # --- 2. Nation daily trend ---
@@ -959,6 +966,12 @@ Combat Effectiveness Score = clip(50 + 15 × z_total, 0, 100)
         "and ~95+ is exceptional. The top vehicle in a BR is not automatically "
         "100. Efficiency is intentionally excluded (it is already a composite). "
         "Vehicles without a Realistic BR are not scored."
+    )
+
+    st.info(
+        "Vehicles missing `realistic_br` in the source data cannot appear in "
+        "BR-range charts (including the Nation × BR Range heatmap) until the "
+        "pipeline recovers or backfills their BR metadata."
     )
 
     st.subheader("Current filtered vehicle dataframe")
