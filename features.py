@@ -613,3 +613,124 @@ def build_br_aggregate(vehicle_df: pd.DataFrame) -> pd.DataFrame:
         )
         .sort_values("realistic_br")
     )
+
+
+# ============================================================
+# Nation Meta aggregates (for the redesigned Nation Meta tab)
+# ============================================================
+
+def build_nation_br_heatmap(vehicle_df: pd.DataFrame) -> pd.DataFrame:
+    """One row per (country, br_range_label) for the Nation x BR Range heatmap.
+
+    win_rate_bw is the battle-weighted win rate over the 30-day window; the
+    avg_* fields and counts are for hover. Requires br_range_label / br_range_min
+    (from add_br_ranges) on the vehicle-level frame.
+    """
+    if vehicle_df.empty or "br_range_label" not in vehicle_df.columns:
+        return pd.DataFrame()
+
+    df = vehicle_df.dropna(subset=["country", "br_range_label"]).copy()
+    if df.empty:
+        return pd.DataFrame()
+
+    w = df["battles"].fillna(0).clip(lower=0)
+    df["_wr_num"] = (df["win_rate"] * w).where(df["win_rate"].notna(), 0.0)
+    df["_wr_den"] = w.where(df["win_rate"].notna(), 0.0)
+
+    out = df.groupby(["country", "br_range_label"], as_index=False).agg(
+        br_range_min=("br_range_min", "min"),
+        battles=("battles", "sum"),
+        vehicles=("vehicle_slug", "nunique"),
+        avg_kd=("ground_frags_per_death", "mean"),
+        avg_fpb=("ground_frags_per_battle", "mean"),
+        avg_ce=("combat_effectiveness", "mean"),
+        _wr_num=("_wr_num", "sum"),
+        _wr_den=("_wr_den", "sum"),
+    )
+
+    out["win_rate_bw"] = out["_wr_num"] / out["_wr_den"].where(out["_wr_den"] > 0)
+    out = out.drop(columns=["_wr_num", "_wr_den"])
+
+    return out.sort_values(["country", "br_range_min"]).reset_index(drop=True)
+
+
+def build_nation_daily_trend(recent_df: pd.DataFrame) -> pd.DataFrame:
+    """One row per (date, country) with battle-weighted daily metrics.
+
+    Metrics are battle-weighted across that nation's vehicles on each day:
+    win_rate, ground_frags_per_death, ground_frags_per_battle; battles is summed.
+    CE Score is a window-level vehicle score and is deliberately not produced
+    here. Rolling smoothing is applied in the app layer.
+    """
+    if recent_df.empty:
+        return pd.DataFrame()
+
+    df = recent_df.dropna(subset=["date", "country"]).copy()
+    if df.empty:
+        return pd.DataFrame()
+
+    w = df["battles"].fillna(0).clip(lower=0)
+    metrics = ["win_rate", "ground_frags_per_death", "ground_frags_per_battle"]
+
+    agg_kwargs = {"battles": ("battles", "sum")}
+    for m in metrics:
+        df[f"_{m}_num"] = (df[m] * w).where(df[m].notna(), 0.0)
+        df[f"_{m}_den"] = w.where(df[m].notna(), 0.0)
+        agg_kwargs[f"_{m}_num"] = (f"_{m}_num", "sum")
+        agg_kwargs[f"_{m}_den"] = (f"_{m}_den", "sum")
+
+    out = df.groupby(["date", "country"], as_index=False).agg(**agg_kwargs)
+
+    for m in metrics:
+        out[m] = out[f"_{m}_num"] / out[f"_{m}_den"].where(out[f"_{m}_den"] > 0)
+
+    keep = ["date", "country", "battles"] + metrics
+    return out[keep].sort_values(["country", "date"]).reset_index(drop=True)
+
+
+def build_nation_summary(vehicle_df: pd.DataFrame) -> pd.DataFrame:
+    """Nation-level summary cards/table: CE central tendency, totals, top BR
+    range (by battles), and the nation's best vehicle by CE Score."""
+    if vehicle_df.empty:
+        return pd.DataFrame()
+
+    df = vehicle_df.dropna(subset=["country"]).copy()
+    if df.empty:
+        return pd.DataFrame()
+
+    rows = []
+    for country, g in df.groupby("country"):
+        ce = g["combat_effectiveness"]
+
+        scored = g.dropna(subset=["combat_effectiveness"])
+        if not scored.empty:
+            best = scored.loc[scored["combat_effectiveness"].idxmax()]
+            best_vehicle = best.get("vehicle_name", np.nan)
+            best_vehicle_ce = best.get("combat_effectiveness", np.nan)
+        else:
+            best_vehicle = np.nan
+            best_vehicle_ce = np.nan
+
+        top_br_range = np.nan
+        if "br_range_label" in g.columns and g["br_range_label"].notna().any():
+            by_range = (
+                g.dropna(subset=["br_range_label"])
+                .groupby("br_range_label")["battles"].sum()
+            )
+            if not by_range.empty:
+                top_br_range = by_range.idxmax()
+
+        rows.append(
+            {
+                "country": country,
+                "vehicles": g["vehicle_slug"].nunique(),
+                "battles": g["battles"].sum(),
+                "avg_ce": ce.mean(),
+                "median_ce": ce.median(),
+                "top_br_range": top_br_range,
+                "best_vehicle": best_vehicle,
+                "best_vehicle_ce": best_vehicle_ce,
+            }
+        )
+
+    return pd.DataFrame(rows).sort_values("avg_ce", ascending=False).reset_index(drop=True)

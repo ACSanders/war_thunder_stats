@@ -1,0 +1,16 @@
+# War Thunder Stats - dark, high-contrast "meta intelligence" theme.
+[theme]
+base = "dark"
+
+# Ember / red-orange accent.
+primaryColor = "#E8743B"
+
+# Charcoal backgrounds; raised secondary surface for cards/containers.
+backgroundColor = "#0F1216"
+secondaryBackgroundColor = "#1A1F26"
+textColor = "#E6E8EB"
+
+# Slightly muted body text and rounded corners on cards/widgets.
+font = "sans serif"
+baseRadius = "0.6rem"
+borderColor = "#2A3038"
