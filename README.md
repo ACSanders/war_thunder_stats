@@ -1,2 +1,2 @@
 # war_thunder_stats
-Daily War Thunder vehicle statistics pipeline with Streamlit analytics, rankings, and performance trends.
+Automated data pipeline and Streamlit analytics dashboard for War Thunder vehicle performance statistics using public ThunderSkill data.
