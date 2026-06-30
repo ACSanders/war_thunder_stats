@@ -6,6 +6,8 @@ import plotly.express as px
 import requests
 import streamlit as st
 
+import features
+
 
 # ============================================================
 # App config
@@ -30,277 +32,45 @@ DATA_URL = (
 
 @st.cache_data(ttl=60 * 60)
 def load_data(url: str) -> pd.DataFrame:
+    """Fetch the raw CSV from GitHub. Parse the date so date-range readouts work;
+    all deeper typing / cleaning happens in features.clean_daily."""
     df = pd.read_csv(url)
 
     if "date" in df.columns:
         df["date"] = pd.to_datetime(df["date"], errors="coerce")
 
-    numeric_cols = [
-        "realistic_br",
-        "arcade_br",
-        "simulator_br",
-        "rank",
-        "battles",
-        "win_rate",
-        "efficiency",
-        "air_frags_per_battle",
-        "air_frags_per_death",
-        "ground_frags_per_battle",
-        "ground_frags_per_death",
-        "index_battles",
-        "index_win_rate",
-        "index_efficiency",
-    ]
-
-    for col in numeric_cols:
-        if col in df.columns:
-            df[col] = pd.to_numeric(df[col], errors="coerce")
-
-    bool_cols = [
-        "is_premium",
-        "is_squadron",
-        "is_pack",
-        "on_marketplace",
-    ]
-
-    for col in bool_cols:
-        if col in df.columns:
-            if df[col].dtype == "object":
-                df[col] = (
-                    df[col]
-                    .astype(str)
-                    .str.lower()
-                    .map({"true": True, "false": False})
-                    .fillna(False)
-                )
-            else:
-                df[col] = df[col].fillna(False).astype(bool)
-
-    text_cols = [
-        "vehicle_slug",
-        "vehicle_name",
-        "vehicle_url",
-        "pic",
-        "country",
-        "vehicle_type",
-        "mode",
-        "index_role",
-        "index_type",
-        "index_country",
-    ]
-
-    for col in text_cols:
-        if col in df.columns:
-            df[col] = df[col].astype(str).str.strip()
-
-    # Clean vehicle image URLs.
-    # Important: do NOT invent image URLs from vehicle_slug.
-    # ThunderSkill image filenames are not guaranteed to match vehicle_slug.
-    if "pic" in df.columns:
-        df["pic"] = df["pic"].replace(
-            ["nan", "None", "NaN", "null", "NULL", ""],
-            np.nan,
-        )
-
-        relative_pic_mask = df["pic"].notna() & df["pic"].str.startswith("/")
-
-        df.loc[relative_pic_mask, "pic"] = (
-            "https://thunderskill.com" + df.loc[relative_pic_mask, "pic"]
-        )
-
     return df
 
 
-# ============================================================
-# Data preparation
-# ============================================================
+# Cached wrappers around the pure helpers in features.py. Caching is kept here
+# (Streamlit-specific); the data logic lives in the importable module.
 
-def filter_recent_observations(df: pd.DataFrame, days: int = 30) -> pd.DataFrame:
-    """
-    Keep observations within the most recent global date window.
-
-    The pipeline pulls up to 30 chart observations per vehicle. Most vehicles
-    have recent daily data, but sparse event vehicles may have old observations.
-    This filter removes those old sparse rows from the app's default views.
-    """
-    out = df.copy()
-
-    if "date" not in out.columns or out["date"].isna().all():
-        return out
-
-    max_date = out["date"].max()
-    min_date = max_date - pd.Timedelta(days=days - 1)
-
-    return out[(out["date"] >= min_date) & (out["date"] <= max_date)].copy()
+@st.cache_data(ttl=60 * 60)
+def get_cleaned_daily(raw_df: pd.DataFrame) -> pd.DataFrame:
+    """cleaned_daily_df: one typed, backfilled row per vehicle per day."""
+    return features.clean_daily(raw_df)
 
 
-def weighted_average(values: pd.Series, weights: pd.Series) -> float:
-    valid = values.notna() & weights.notna() & weights.gt(0)
-
-    if valid.any():
-        return float(np.average(values.loc[valid], weights=weights.loc[valid]))
-
-    return float(values.mean(skipna=True))
+@st.cache_data(ttl=60 * 60)
+def get_recent_daily(cleaned_daily_df: pd.DataFrame) -> pd.DataFrame:
+    """Most recent 30-day window of cleaned_daily_df."""
+    return features.recent_window(cleaned_daily_df, days=features.RECENT_WINDOW_DAYS)
 
 
-def build_vehicle_aggregate(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Build one row per vehicle from recent observations.
-
-    Battles are summed across the window.
-    Performance metrics are battle-weighted averages.
-    """
-    out = df.copy()
-
-    if out.empty:
-        return out
-
-    out["battles_weight"] = out["battles"].fillna(0).clip(lower=0)
-
-    group_cols = [
-        "vehicle_slug",
-        "vehicle_name",
-        "vehicle_url",
-        "pic",
-        "country",
-        "vehicle_type",
-        "rank",
-        "realistic_br",
-        "is_premium",
-        "is_squadron",
-        "is_pack",
-        "on_marketplace",
-        "release_date_raw",
-        "mode",
-    ]
-
-    group_cols = [c for c in group_cols if c in out.columns]
-
-    weighted_cols = [
-        "win_rate",
-        "efficiency",
-        "ground_frags_per_battle",
-        "ground_frags_per_death",
-        "air_frags_per_battle",
-        "air_frags_per_death",
-    ]
-
-    weighted_cols = [c for c in weighted_cols if c in out.columns]
-
-    rows = []
-
-    for keys, g in out.groupby(group_cols, dropna=False):
-        row = {}
-
-        if len(group_cols) == 1:
-            row[group_cols[0]] = keys
-        else:
-            for col, value in zip(group_cols, keys):
-                row[col] = value
-
-        row["battles"] = g["battles"].sum(skipna=True)
-        row["observations"] = len(g)
-
-        if "date" in g.columns:
-            row["first_observed"] = g["date"].min()
-            row["last_observed"] = g["date"].max()
-            row["days_observed"] = g["date"].nunique()
-
-        weights = g["battles_weight"]
-
-        for col in weighted_cols:
-            row[col] = weighted_average(g[col], weights)
-
-        rows.append(row)
-
-    return pd.DataFrame(rows)
+@st.cache_data(ttl=60 * 60)
+def get_vehicle_agg(recent_daily_df: pd.DataFrame) -> pd.DataFrame:
+    """vehicle_agg_df: one row per vehicle with scores, BR-relative features,
+    and quality flags."""
+    vehicle_df = features.build_vehicle_agg(recent_daily_df)
+    vehicle_df = features.add_combat_effectiveness(vehicle_df)
+    vehicle_df = features.add_br_normalized(vehicle_df)
+    vehicle_df = features.add_quality_flags(vehicle_df)
+    return vehicle_df
 
 
-def add_combat_effectiveness(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Combat Effectiveness v2.
-
-    This is a descriptive player-performance score. It is not a claim about
-    intrinsic vehicle strength.
-
-    Metrics are percentile-ranked before weighting so raw scale differences
-    do not dominate the score.
-    """
-    out = df.copy()
-
-    score_cols = {
-        "ground_frags_per_death": 0.35,
-        "ground_frags_per_battle": 0.35,
-        "win_rate": 0.20,
-        "efficiency": 0.10,
-    }
-
-    available = [c for c in score_cols if c in out.columns]
-
-    if not available:
-        out["combat_effectiveness"] = np.nan
-        out["meta_score"] = np.nan
-        return out
-
-    for col in available:
-        out[f"{col}_pct"] = out[col].rank(pct=True)
-
-    weight_sum = sum(score_cols[c] for c in available)
-
-    out["combat_effectiveness"] = sum(
-        out[f"{col}_pct"] * score_cols[col] for col in available
-    ) / weight_sum
-
-    out["combat_effectiveness"] = (out["combat_effectiveness"] * 100).round(1)
-
-    # Alias for compatibility if we later reuse older chart logic.
-    out["meta_score"] = out["combat_effectiveness"]
-
-    return out
-
-
-def build_nation_aggregate(vehicle_df: pd.DataFrame) -> pd.DataFrame:
-    if vehicle_df.empty:
-        return vehicle_df.copy()
-
-    nation_df = (
-        vehicle_df
-        .groupby("country", as_index=False)
-        .agg(
-            vehicles=("vehicle_slug", "nunique"),
-            battles=("battles", "sum"),
-            avg_win_rate=("win_rate", "mean"),
-            avg_frags_per_battle=("ground_frags_per_battle", "mean"),
-            avg_frags_per_death=("ground_frags_per_death", "mean"),
-            avg_efficiency=("efficiency", "mean"),
-            avg_combat_effectiveness=("combat_effectiveness", "mean"),
-        )
-        .sort_values("avg_combat_effectiveness", ascending=False)
-    )
-
-    return nation_df
-
-
-def build_br_aggregate(vehicle_df: pd.DataFrame) -> pd.DataFrame:
-    if vehicle_df.empty:
-        return vehicle_df.copy()
-
-    br_df = (
-        vehicle_df
-        .groupby("realistic_br", as_index=False)
-        .agg(
-            vehicles=("vehicle_slug", "nunique"),
-            battles=("battles", "sum"),
-            avg_win_rate=("win_rate", "mean"),
-            avg_frags_per_battle=("ground_frags_per_battle", "mean"),
-            avg_frags_per_death=("ground_frags_per_death", "mean"),
-            avg_efficiency=("efficiency", "mean"),
-            avg_combat_effectiveness=("combat_effectiveness", "mean"),
-        )
-        .sort_values("realistic_br")
-    )
-
-    return br_df
+# Data preparation, vehicle aggregation, scoring, and nation/BR aggregates now
+# live in features.py (pure pandas, reusable by offline scripts). The cached
+# wrappers above expose them to the app.
 
 
 # ============================================================
@@ -377,9 +147,9 @@ except Exception as e:
     st.exception(e)
     st.stop()
 
-recent_df = filter_recent_observations(raw_df, days=30)
-vehicle_30d_df = build_vehicle_aggregate(recent_df)
-vehicle_30d_df = add_combat_effectiveness(vehicle_30d_df)
+cleaned_daily_df = get_cleaned_daily(raw_df)
+recent_df = get_recent_daily(cleaned_daily_df)
+vehicle_30d_df = get_vehicle_agg(recent_df)
 
 
 # ============================================================
@@ -494,8 +264,8 @@ valid_vehicle_slugs = filtered_vehicle_df["vehicle_slug"].unique()
 
 filtered_recent_df = recent_df[recent_df["vehicle_slug"].isin(valid_vehicle_slugs)].copy()
 
-nation_30d_df = build_nation_aggregate(filtered_vehicle_df)
-br_30d_df = build_br_aggregate(filtered_vehicle_df)
+nation_30d_df = features.build_nation_aggregate(filtered_vehicle_df)
+br_30d_df = features.build_br_aggregate(filtered_vehicle_df)
 
 
 # ============================================================
