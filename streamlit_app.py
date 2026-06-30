@@ -59,12 +59,13 @@ def get_recent_daily(cleaned_daily_df: pd.DataFrame) -> pd.DataFrame:
 
 @st.cache_data(ttl=60 * 60)
 def get_vehicle_agg(recent_daily_df: pd.DataFrame) -> pd.DataFrame:
-    """vehicle_agg_df: one row per vehicle with scores, BR-relative features,
-    and quality flags."""
+    """vehicle_agg_df: one row per vehicle with the Combat Effectiveness Score,
+    broad BR range fields, and quality flags."""
     vehicle_df = features.build_vehicle_agg(recent_daily_df)
-    vehicle_df = features.add_combat_effectiveness(vehicle_df)
-    vehicle_df = features.add_br_normalized(vehicle_df)
-    vehicle_df = features.add_quality_flags(vehicle_df)
+    vehicle_df = features.add_quality_flags(vehicle_df)        # total_battles_30d, flags
+    vehicle_df = features.add_combat_effectiveness(vehicle_df)  # official BR-relative score
+    vehicle_df = features.add_combat_effectiveness_legacy(vehicle_df)
+    vehicle_df = features.add_br_ranges(vehicle_df)
     return vehicle_df
 
 
@@ -303,11 +304,11 @@ metric_cols[2].metric("Nations", f"{filtered_vehicle_df['country'].nunique():,}"
 
 if not filtered_vehicle_df.empty:
     metric_cols[3].metric(
-        "Avg CE v2",
+        "Avg CE Score",
         f"{filtered_vehicle_df['combat_effectiveness'].mean():.1f}",
     )
 else:
-    metric_cols[3].metric("Avg CE v2", "N/A")
+    metric_cols[3].metric("Avg CE Score", "N/A")
 
 
 # ============================================================
@@ -333,8 +334,10 @@ with tab_overview:
     st.subheader("Top 30-day performers")
 
     st.write(
-        "Combat Effectiveness v2 combines percentile-ranked ground frags per death, "
-        "ground frags per battle, win rate, and efficiency."
+        "The Combat Effectiveness Score measures how much a vehicle overperforms "
+        "the average for its exact BR, combining K/D (ground frags per death), "
+        "ground frags per battle, win rate, and a small data-confidence term. "
+        "50 is roughly average for the BR; higher is stronger."
     )
 
     if filtered_vehicle_df.empty:
@@ -380,13 +383,13 @@ with tab_overview:
                 "ground_frags_per_battle": st.column_config.NumberColumn("Frags / battle", format="%.2f"),
                 "ground_frags_per_death": st.column_config.NumberColumn("Frags / death", format="%.2f"),
                 "efficiency": st.column_config.NumberColumn("Efficiency", format="%.1f"),
-                "combat_effectiveness": st.column_config.NumberColumn("CE v2", format="%.1f"),
+                "combat_effectiveness": st.column_config.NumberColumn("CE Score", format="%.1f"),
             },
         )
 
         st.divider()
 
-        st.subheader("Top vehicles by Combat Effectiveness v2")
+        st.subheader("Top vehicles by Combat Effectiveness Score")
 
         top_chart_df = rankings.sort_values("combat_effectiveness", ascending=True)
 
@@ -410,7 +413,7 @@ with tab_overview:
         )
 
         fig.update_layout(
-            xaxis_title="Combat Effectiveness v2",
+            xaxis_title="Combat Effectiveness Score",
             yaxis_title=None,
             height=520,
             margin=dict(l=10, r=10, t=30, b=10),
@@ -446,7 +449,7 @@ with tab_overview:
 
         fig.update_layout(
             xaxis_title="30-day battles",
-            yaxis_title="Combat Effectiveness v2",
+            yaxis_title="Combat Effectiveness Score",
             height=520,
             margin=dict(l=10, r=10, t=30, b=10),
         )
@@ -510,7 +513,7 @@ with tab_explorer:
 
                 c7, c8 = st.columns(2)
                 c7.metric("Win rate", f"{row.get('win_rate', np.nan):.2f}%")
-                c8.metric("CE v2", f"{row.get('combat_effectiveness', np.nan):.1f}")
+                c8.metric("CE Score", f"{row.get('combat_effectiveness', np.nan):.1f}")
 
                 c9, c10 = st.columns(2)
                 c9.metric("Frags / battle", f"{row.get('ground_frags_per_battle', np.nan):.2f}")
@@ -607,7 +610,7 @@ with tab_nation_br:
                 "avg_frags_per_battle": st.column_config.NumberColumn("Avg frags / battle", format="%.2f"),
                 "avg_frags_per_death": st.column_config.NumberColumn("Avg frags / death", format="%.2f"),
                 "avg_efficiency": st.column_config.NumberColumn("Avg efficiency", format="%.1f"),
-                "avg_combat_effectiveness": st.column_config.NumberColumn("Avg CE v2", format="%.1f"),
+                "avg_combat_effectiveness": st.column_config.NumberColumn("Avg CE Score", format="%.1f"),
             },
         )
 
@@ -620,7 +623,7 @@ with tab_nation_br:
         )
 
         fig.update_layout(
-            xaxis_title="Average Combat Effectiveness v2",
+            xaxis_title="Average Combat Effectiveness Score",
             yaxis_title=None,
             height=420,
             margin=dict(l=10, r=10, t=30, b=10),
@@ -642,7 +645,7 @@ with tab_nation_br:
 
         fig.update_layout(
             xaxis_title="Realistic BR",
-            yaxis_title="Average Combat Effectiveness v2",
+            yaxis_title="Average Combat Effectiveness Score",
             height=420,
             margin=dict(l=10, r=10, t=30, b=10),
         )
@@ -663,7 +666,7 @@ with tab_nation_br:
                 "efficiency",
             ],
             format_func=lambda x: x.replace("_", " ").title().replace(
-                "Combat Effectiveness", "Combat Effectiveness v2"
+                "Combat Effectiveness", "Combat Effectiveness Score"
             ),
         )
 
@@ -825,25 +828,36 @@ with tab_data:
         st.write("Raw date range:", raw_df["date"].min(), "to", raw_df["date"].max())
         st.write("App recent date range:", recent_df["date"].min(), "to", recent_df["date"].max())
 
-    st.subheader("Combat Effectiveness v2")
+    st.subheader("Combat Effectiveness Score")
 
     st.write(
-        "Combat Effectiveness v2 is a percentile-weighted descriptive score:"
+        "The Combat Effectiveness Score measures how much a vehicle overperforms "
+        "the average for its **exact BR**. Each metric is smoothed toward the BR "
+        "average using an empirical-Bayes weight "
+        "(reliability = battles / (battles + 100)), so low-battle vehicles are "
+        "pulled toward average and do not dominate. Smoothed metrics are then "
+        "compared to the BR's distribution with a robust (median / MAD) z-score "
+        "and combined:"
     )
 
     st.code(
         """
-CE v2 =
-0.35 × percentile(ground frags per death)
-+ 0.35 × percentile(ground frags per battle)
-+ 0.20 × percentile(win rate)
-+ 0.10 × percentile(efficiency)
+z_total =
+  0.40 × z(K/D, ground frags per death)
++ 0.40 × z(ground frags per battle)
++ 0.15 × z(win rate)
++ 0.05 × z(data confidence = log1p(battles))
+
+Combat Effectiveness Score = clip(50 + 15 × z_total, 0, 100)
         """.strip()
     )
 
     st.write(
-        "This avoids the main weakness of a raw weighted sum: metrics with larger scales "
-        "can dominate the score. Percentile ranking makes the components comparable."
+        "K/D and frags per battle are log1p-transformed before smoothing because "
+        "they are skewed. 50 is roughly BR-average, ~65 is a strong step above, "
+        "and ~95+ is exceptional. The top vehicle in a BR is not automatically "
+        "100. Efficiency is intentionally excluded (it is already a composite). "
+        "Vehicles without a Realistic BR are not scored."
     )
 
     st.subheader("Current filtered vehicle dataframe")

@@ -7,7 +7,8 @@ of truth for:
   * safe metadata fallbacks (country / type / rank)     -> apply_metadata_fallbacks()
   * the recent 30-day window                            -> recent_window()
   * the one-row-per-vehicle aggregate                   -> build_vehicle_agg()
-  * descriptive scoring + BR-relative scoring           -> add_combat_effectiveness() / add_br_normalized()
+  * BR-relative Combat Effectiveness Score              -> add_combat_effectiveness()
+  * broad lineup-style BR range fields                  -> add_br_ranges()
   * data-quality flags                                  -> add_quality_flags()
 
 Keeping these as plain functions means the offline clustering / precompute
@@ -35,9 +36,6 @@ RECENT_WINDOW_DAYS = 30
 # Quality-flag thresholds (see add_quality_flags).
 MIN_SUFFICIENT_DAYS = 5
 MIN_SUFFICIENT_BATTLES = 20
-
-# Within-BR percentiles are noisy when a bracket has too few vehicles.
-MIN_BRACKET_VEHICLES = 5
 
 # Sentinel strings that should be treated as missing in text columns.
 _NULL_TOKENS = {"", "nan", "none", "null"}
@@ -124,8 +122,36 @@ META_COLS = [
     "mode",
 ]
 
-# Combat Effectiveness weights (shared by global CE and BR-relative CE).
-CE_WEIGHTS = {
+# ------------------------------------------------------------
+# Combat Effectiveness Score (BR-relative, empirical-Bayes)
+# ------------------------------------------------------------
+# The official score is computed within each EXACT realistic_br peer group.
+# Metric weights (must sum with CE_CONFIDENCE_WEIGHT to 1.0). efficiency is
+# deliberately excluded -- it is already a ThunderSkill-style composite.
+CE_METRIC_WEIGHTS = {
+    "ground_frags_per_death": 0.40,   # K/D
+    "ground_frags_per_battle": 0.40,
+    "win_rate": 0.15,
+}
+CE_CONFIDENCE_WEIGHT = 0.05           # within-BR standardized log1p(battles)
+
+# Metrics that get a log1p transform before smoothing/standardizing (skewed).
+CE_LOG1P_METRICS = {"ground_frags_per_death", "ground_frags_per_battle"}
+
+# Empirical-Bayes shrinkage: reliability = battles / (battles + PRIOR_BATTLES).
+PRIOR_BATTLES = 100
+
+# 0-100 mapping: score = SCORE_CENTER + SCORE_SLOPE * z_total (clipped 0-100).
+SCORE_CENTER = 50.0
+SCORE_SLOPE = 15.0
+
+# Robustness guards for the within-BR standardization.
+MIN_SCORE_PEERS = 8         # BRs with fewer scoreable vehicles -> NaN score
+ROBUST_SCALE_FLOOR = 1e-6   # avoids divide-by-near-zero when a BR is flat
+CONFIDENCE_Z_CLIP = 3.0     # bound the confidence term so big samples can't run away
+
+# Legacy global percentile formula (kept only for combat_effectiveness_legacy).
+CE_LEGACY_WEIGHTS = {
     "ground_frags_per_death": 0.35,
     "ground_frags_per_battle": 0.35,
     "win_rate": 0.20,
@@ -342,101 +368,170 @@ def build_vehicle_agg(recent_df: pd.DataFrame) -> pd.DataFrame:
 # Scoring
 # ============================================================
 
-def add_combat_effectiveness(df: pd.DataFrame) -> pd.DataFrame:
-    """Combat Effectiveness v2 (global). Formula is unchanged from the original
-    app: percentile-rank each metric across the whole frame, then weight.
+# Short debug-column names for the per-metric within-BR z-scores.
+_CE_METRIC_SHORT = {
+    "ground_frags_per_death": "kd",
+    "ground_frags_per_battle": "fpb",
+    "win_rate": "wr",
+}
 
-    Note: global CE values may shift slightly (observed <= 0.2 pts; top-25
-    membership unchanged) versus the pre-refactor app. This is intentional and
-    not a formula change -- the upstream battle-weighted average now returns NaN
-    when a vehicle has no valid battle-weighted rows instead of fabricating an
-    unweighted mean (see weighted_average / _weighted_means). Excluding those
-    fabricated values changes the percentile denominators feeding CE.
+
+def _within_br_robust_z(
+    values: pd.Series,
+    br: pd.Series,
+    clip: float | None = None,
+) -> pd.Series:
+    """Robust z-score of ``values`` within each exact-BR peer group.
+
+    Uses median + MAD (scaled by 1.4826 to be normal-consistent). Guards:
+      * BRs with fewer than MIN_SCORE_PEERS non-null values -> NaN.
+      * A flat BR (scale below ROBUST_SCALE_FLOOR) -> z = 0 (everyone average).
+      * Rows with a NaN value or NaN BR -> NaN.
+    """
+    med = values.groupby(br).transform("median")
+    mad = (values - med).abs().groupby(br).transform("median")
+    scale = 1.4826 * mad
+    count = values.groupby(br).transform("count")
+
+    has_spread = scale >= ROBUST_SCALE_FLOOR
+    z = (values - med) / scale.where(has_spread)
+    z = z.where(has_spread, 0.0)                 # flat BR -> everyone == average
+    z = z.where(values.notna(), np.nan)          # missing value -> NaN
+    z = z.where(count >= MIN_SCORE_PEERS, np.nan)  # too few peers -> NaN
+
+    if clip is not None:
+        z = z.clip(-clip, clip)
+
+    return z
+
+
+def add_combat_effectiveness(df: pd.DataFrame) -> pd.DataFrame:
+    """Combat Effectiveness Score: BR-relative overperformance, 0-100.
+
+    Computed within each EXACT realistic_br peer group:
+
+      1. transform skewed metrics with log1p (K/D, frags per battle);
+         win rate is used as-is.
+      2. empirical-Bayes shrinkage toward the exact-BR center, with
+         reliability = battles / (battles + PRIOR_BATTLES). Low-battle vehicles
+         are pulled strongly toward the BR average; high-battle vehicles keep
+         more of their observed value.
+      3. robust within-BR standardization (median + MAD) of the smoothed metric.
+      4. weighted combine (40% K/D, 40% frags/battle, 15% win rate, 5% a
+         within-BR confidence term = standardized log1p(battles), clipped).
+      5. score = 50 + 15 * z_total, clipped to 0-100.
+
+    50 = roughly BR-average; ~65 = a strong step above; ~95+ = exceptional.
+    Because it is robust-z (not percentile / min-max), the top vehicle in a BR
+    is NOT automatically 100. efficiency is intentionally excluded.
+
+    Missing-BR or signal-less (no battles) vehicles get NaN (not scoreable).
+    Adds debug columns: reliability, confidence_z, {kd,fpb,wr}_z_br.
     """
     out = df.copy()
 
-    available = [c for c in CE_WEIGHTS if c in out.columns]
-
-    if not available:
+    if "realistic_br" not in out.columns:
         out["combat_effectiveness"] = np.nan
         out["meta_score"] = np.nan
+        out["reliability"] = np.nan
         return out
 
-    for col in available:
-        out[f"{col}_pct"] = out[col].rank(pct=True)
+    br = out["realistic_br"]
+    battles = out["total_battles_30d"] if "total_battles_30d" in out.columns else out.get("battles")
+    battles = pd.to_numeric(battles, errors="coerce").fillna(0).clip(lower=0)
 
-    weight_sum = sum(CE_WEIGHTS[c] for c in available)
+    reliability = battles / (battles + PRIOR_BATTLES)
+    out["reliability"] = reliability.round(4)
 
-    out["combat_effectiveness"] = sum(
-        out[f"{col}_pct"] * CE_WEIGHTS[col] for col in available
+    # --- per-metric smoothed, standardized z within exact BR ---
+    metric_terms = {}  # metric -> (weight, z Series)
+    for metric, weight in CE_METRIC_WEIGHTS.items():
+        if metric not in out.columns:
+            continue
+        raw = pd.to_numeric(out[metric], errors="coerce")
+        t = np.log1p(raw) if metric in CE_LOG1P_METRICS else raw
+        center = t.groupby(br).transform("median")          # exact-BR prior center
+        t_smooth = reliability * t + (1.0 - reliability) * center
+        z = _within_br_robust_z(t_smooth, br)
+        out[f"{_CE_METRIC_SHORT[metric]}_z_br"] = z
+        metric_terms[metric] = (weight, z)
+
+    # --- confidence / stability term (within-BR standardized log1p battles) ---
+    conf_z = _within_br_robust_z(np.log1p(battles), br, clip=CONFIDENCE_Z_CLIP)
+    out["confidence_z"] = conf_z
+
+    # --- weighted combine with per-row renormalization over available terms ---
+    num = pd.Series(0.0, index=out.index)
+    den = pd.Series(0.0, index=out.index)
+    n_metric = pd.Series(0, index=out.index)
+
+    for _, (weight, z) in metric_terms.items():
+        avail = z.notna()
+        num = num + (weight * z).where(avail, 0.0)
+        den = den + pd.Series(weight, index=out.index).where(avail, 0.0)
+        n_metric = n_metric + avail.astype(int)
+
+    # Scoreable requires a real BR and at least one usable metric (so a 0-battle
+    # vehicle is never scored "average" off the confidence term alone).
+    scoreable = br.notna() & (n_metric >= 1)
+
+    conf_avail = conf_z.notna() & scoreable
+    num = num + (CE_CONFIDENCE_WEIGHT * conf_z).where(conf_avail, 0.0)
+    den = den + pd.Series(CE_CONFIDENCE_WEIGHT, index=out.index).where(conf_avail, 0.0)
+
+    z_total = (num / den.where(den > 0)).where(scoreable, np.nan)
+    score = (SCORE_CENTER + SCORE_SLOPE * z_total).clip(0, 100).round(1)
+
+    out["combat_effectiveness"] = score.where(scoreable, np.nan)
+    out["meta_score"] = out["combat_effectiveness"]  # vestigial alias
+
+    return out
+
+
+def add_combat_effectiveness_legacy(df: pd.DataFrame) -> pd.DataFrame:
+    """Legacy global-percentile score, kept only as combat_effectiveness_legacy
+    for validation/debug. This is the pre-change formula (incl. efficiency)."""
+    out = df.copy()
+
+    available = [c for c in CE_LEGACY_WEIGHTS if c in out.columns]
+    if not available:
+        out["combat_effectiveness_legacy"] = np.nan
+        return out
+
+    weight_sum = sum(CE_LEGACY_WEIGHTS[c] for c in available)
+    legacy = sum(
+        out[c].rank(pct=True) * CE_LEGACY_WEIGHTS[c] for c in available
     ) / weight_sum
-
-    out["combat_effectiveness"] = (out["combat_effectiveness"] * 100).round(1)
-
-    # Alias kept for compatibility with older chart logic.
-    out["meta_score"] = out["combat_effectiveness"]
+    out["combat_effectiveness_legacy"] = (legacy * 100).round(1)
 
     return out
 
 
 def assign_br_bracket(br: pd.Series) -> pd.Series:
-    """Map BR -> a 1.0-wide bracket key (floor). NaN BR stays NaN.
-
-    Isolated here so a later phase can swap in true overlapping lineup windows
-    (e.g. 5.0-5.7) without touching call sites.
-    """
+    """Map BR -> a 1.0-wide bracket key (floor). NaN BR stays NaN."""
     return np.floor(br)
 
 
-def _pct_within_bracket(
-    df: pd.DataFrame,
-    metric: str,
-    bracket_col: str,
-    min_n: int = MIN_BRACKET_VEHICLES,
-) -> pd.Series:
-    """Percentile rank of ``metric`` within each BR bracket.
+def add_br_ranges(df: pd.DataFrame) -> pd.DataFrame:
+    """Add broad lineup-style BR range fields (future-ready: HDBSCAN, sleepers,
+    lineup ranker, meta views). These are NOT the official scoring peer group --
+    the score uses exact realistic_br. Each range spans X.0 to X.7.
 
-    Brackets with fewer than ``min_n`` non-null values yield NaN (too noisy).
-    Rows with a NaN bracket (missing BR) also yield NaN.
-    """
-    s = pd.Series(np.nan, index=df.index, dtype="float64")
-
-    for _, idx in df.groupby(bracket_col).groups.items():
-        sub = df.loc[idx, metric]
-        if sub.notna().sum() >= min_n:
-            s.loc[idx] = sub.rank(pct=True)
-
-    return s
-
-
-def add_br_normalized(df: pd.DataFrame) -> pd.DataFrame:
-    """Add BR-relative features (additive; nothing existing is changed).
-
-    Adds:
-      br_bracket                  : 1.0-wide BR band key.
-      <metric>_pct_br             : percentile of metric within its BR bracket.
-      combat_effectiveness_br     : CE computed from the within-BR percentiles,
-                                    i.e. "good for its BR" rather than "high BR".
+    Adds: br_bracket (floor), br_range_min, br_range_max, br_range_label.
     """
     out = df.copy()
 
     if "realistic_br" in out.columns:
-        out["br_bracket"] = assign_br_bracket(out["realistic_br"])
+        floor = assign_br_bracket(out["realistic_br"])
     else:
-        out["br_bracket"] = np.nan
+        floor = pd.Series(np.nan, index=out.index)
 
-    metrics = [c for c in CE_WEIGHTS if c in out.columns]
-    for m in metrics:
-        out[f"{m}_pct_br"] = _pct_within_bracket(out, m, "br_bracket")
-
-    available = [c for c in CE_WEIGHTS if f"{c}_pct_br" in out.columns]
-
-    if available:
-        weight_sum = sum(CE_WEIGHTS[c] for c in available)
-        ce_br = sum(out[f"{c}_pct_br"] * CE_WEIGHTS[c] for c in available) / weight_sum
-        out["combat_effectiveness_br"] = (ce_br * 100).round(1)
-    else:
-        out["combat_effectiveness_br"] = np.nan
+    out["br_bracket"] = floor
+    out["br_range_min"] = floor
+    out["br_range_max"] = floor + 0.7
+    out["br_range_label"] = floor.apply(
+        lambda x: f"{x:.1f}–{x + 0.7:.1f}" if pd.notna(x) else np.nan
+    )
 
     return out
 
