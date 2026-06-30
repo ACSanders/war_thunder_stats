@@ -1,0 +1,19 @@
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.env
+
+# Development notebooks / scratch work
+*.ipynb
+
+# Backup scripts
+*_backup_*.py
+
+# Runtime/checkpoint data
+data/checkpoints/
+data/processed/snapshots/
+logs/*.csv
+
+# Logs and local files
+*.log
