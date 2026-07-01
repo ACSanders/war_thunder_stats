@@ -97,6 +97,13 @@ def get_clusters(vehicle_df: pd.DataFrame, min_sample_battles: int):
     return clustered, meta
 
 
+@st.cache_data(ttl=60 * 60)
+def get_lineups(candidate_df: pd.DataFrame, size: int, prefer_diversity: bool):
+    """Top-K scored lineups from an eligible candidate pool. Cached on the
+    candidate contents + controls."""
+    return features.build_lineups(candidate_df, size, prefer_diversity=prefer_diversity)
+
+
 # Data preparation, vehicle aggregation, scoring, and nation/BR aggregates now
 # live in features.py (pure pandas, reusable by offline scripts). The cached
 # wrappers above expose them to the app.
@@ -332,12 +339,12 @@ card_row2[2].metric("Rolling window", window_value, help=window_help, border=Tru
 # Tabs
 # ============================================================
 
-tab_nation, tab_rankings, tab_clusters, tab_trends, tab_data = st.tabs(
+tab_nation, tab_rankings, tab_clusters, tab_lineup, tab_data = st.tabs(
     [
         "Nation Meta",
         "Vehicle Rankings",
         "Performance Clusters",
-        "Trends",
+        "Lineup Builder",
         "Data Notes",
     ]
 )
@@ -1448,71 +1455,239 @@ with tab_clusters:
 
 
 # ============================================================
-# Trends tab
+# Lineup Builder tab
 # ============================================================
 
-with tab_trends:
-    st.subheader("Daily trends")
+with tab_lineup:
+    st.subheader("Lineup Builder")
     st.caption(
-        "Daily observations after the current filters. Metrics are simple "
-        "daily means across the selected grouping."
+        "Builds the strongest same-nation lineup you can actually bring within a "
+        "BR range. It ranks candidate combinations mostly by average Combat "
+        "Effectiveness Score, with an optional small role-diversity bonus. "
+        "This tab uses its own lineup controls and does not depend on the top "
+        "filter deck."
     )
 
-    if filtered_recent_df.empty:
-        st.warning("No trend rows match the current filters.")
+    lb_all = vehicle_30d_df  # full dataset; this tab is self-contained
+
+    nation_opts = sorted(lb_all["country"].dropna().unique())
+    if not nation_opts:
+        st.warning("No nations available in the data.")
     else:
-        trend_label_map = {
-            "Win rate": "win_rate",
-            "K/D": "ground_frags_per_death",
-            "Frags per battle": "ground_frags_per_battle",
-            "Sample battles": "battles",
-        }
-
-        tcol1, tcol2 = st.columns([3, 2], gap="large")
-        with tcol1:
-            global_trend_choice = st.pills(
-                "Trend metric",
-                options=list(trend_label_map.keys()),
-                default="Win rate",
-                selection_mode="single",
-                key="global_trend_metric",
+        with st.container(border=True):
+            row_a = st.columns([2, 1, 1, 1])
+            with row_a[0]:
+                lb_nation = st.selectbox("Nation", options=nation_opts, key="lb_nation")
+            nation_brs = sorted(
+                lb_all[(lb_all["country"] == lb_nation) & lb_all["has_realistic_br"]]
+                ["realistic_br"].dropna().unique()
             )
-        with tcol2:
-            trend_group = st.segmented_control(
-                "Group by",
-                options=["Nation", "BR"],
-                default="Nation",
-                key="global_trend_group",
+            if nation_brs:
+                hi_default = nation_brs[-1]
+                lo_candidates = [b for b in nation_brs if b >= hi_default - 1.0]
+                lo_default = lo_candidates[0] if lo_candidates else nation_brs[0]
+                lo_idx = nation_brs.index(lo_default)
+                with row_a[1]:
+                    lb_br_min = st.selectbox("BR min", options=nation_brs, index=lo_idx, key="lb_br_min")
+                with row_a[2]:
+                    lb_br_max = st.selectbox("BR max", options=nation_brs, index=len(nation_brs) - 1, key="lb_br_max")
+            else:
+                lb_br_min = lb_br_max = None
+            with row_a[3]:
+                lb_size = st.segmented_control(
+                    "Lineup size", options=[3, 4, 5], default=5, key="lb_size"
+                ) or 5
+
+            row_b = st.columns([1, 2, 1, 1])
+            with row_b[0]:
+                lb_premium = st.segmented_control(
+                    "Premiums", options=["Include", "Exclude"], default="Exclude", key="lb_premium"
+                ) or "Exclude"
+            type_opts = sorted(
+                lb_all[lb_all["country"] == lb_nation]["vehicle_type"].dropna().unique()
             )
+            with row_b[1]:
+                lb_types = st.multiselect(
+                    "Allowed vehicle types", options=type_opts, default=type_opts, key="lb_types"
+                )
+            with row_b[2]:
+                lb_min_sb = st.slider(
+                    "Min sample battles", 0, 500,
+                    int(features.LINEUP_MIN_SAMPLE_BATTLES), 25, key="lb_min_sb",
+                )
+            with row_b[3]:
+                lb_diversity = st.toggle(
+                    "Prefer role variety",
+                    value=True,
+                    key="lb_diversity",
+                    help=(
+                        "Adds a small score bonus for lineups with more unique "
+                        "vehicle types. Turn off for pure average CE ranking."
+                    ),
+                )
 
-        global_trend_choice = global_trend_choice or "Win rate"
-        trend_group = trend_group or "Nation"
-        global_metric = trend_label_map[global_trend_choice]
+        st.caption("Lineup Score = average CE Score + optional role-variety bonus.")
 
-        group_col = "country" if trend_group == "Nation" else "realistic_br"
+        if lb_br_min is None:
+            st.warning(f"{lb_nation} has no vehicles with a Realistic BR.")
+        elif lb_br_min > lb_br_max:
+            st.warning("BR min is above BR max — adjust the BR range.")
+        else:
+            candidates = features.build_lineup_candidates(
+                lb_all, lb_nation, lb_br_min, lb_br_max,
+                allowed_types=lb_types or None,
+                include_premium=(lb_premium == "Include"),
+                min_sample_battles=lb_min_sb,
+            ).copy()
 
-        grouped = (
-            filtered_recent_df
-            .groupby(["date", group_col], as_index=False)
-            .agg(value=(global_metric, "mean"))
-            .sort_values("date")
-        )
+            # Presentation label (slug stays the key).
+            def _lb_fmt_br(b):
+                return f"BR {b:.1f}" if pd.notna(b) else "BR N/A"
 
-        global_fig = px.line(
-            grouped,
-            x="date",
-            y="value",
-            color=group_col,
-            markers=True,
-        )
-        global_fig.update_layout(
-            xaxis_title="Date",
-            yaxis_title=global_trend_choice,
-            height=520,
-            margin=dict(l=10, r=10, t=20, b=10),
-            legend_title_text=trend_group,
-        )
-        st.plotly_chart(global_fig, width="stretch")
+            if not candidates.empty:
+                candidates["display_label"] = [
+                    f"{n} — {c if pd.notna(c) else 'Unknown'}, {_lb_fmt_br(b)}"
+                    for n, c, b in zip(
+                        candidates["vehicle_name"], candidates["country"], candidates["realistic_br"]
+                    )
+                ]
+
+            if len(candidates) < lb_size:
+                st.warning(
+                    f"Only {len(candidates)} eligible {lb_nation} vehicles in "
+                    f"{lb_br_min:.1f}–{lb_br_max:.1f} (need at least {lb_size}). "
+                    "Widen the BR range, lower minimum sample battles, allow more "
+                    "types, or include premiums."
+                )
+            else:
+                lineups = get_lineups(candidates, int(lb_size), bool(lb_diversity))
+                if lineups.empty:
+                    st.warning("No lineups could be built from the current candidates.")
+                else:
+                    best = lineups.iloc[0]
+                    label_by_slug = dict(zip(candidates["vehicle_slug"], candidates["display_label"]))
+                    members = (
+                        candidates[candidates["vehicle_slug"].isin(best["member_slugs"])]
+                        .sort_values("combat_effectiveness", ascending=False)
+                    )
+
+                    # --- Hero recommendation ---
+                    st.markdown("#### Recommended lineup")
+                    hero = st.columns(5)
+                    hero[0].metric("Lineup Score", f"{best['lineup_score']:.1f}", border=True)
+                    hero[1].metric("Avg CE Score", f"{best['avg_ce']:.1f}", border=True)
+                    hero[2].metric("Avg K/D", f"{best['avg_kd']:.2f}", border=True)
+                    hero[3].metric("Median sample battles", f"{int(best['median_sample_battles']):,}", border=True)
+                    hero[4].metric("Types covered", f"{int(best['n_types'])}", border=True)
+
+                    # --- Vehicle cards ---
+                    card_cols = st.columns(len(members))
+                    for col, (_, v) in zip(card_cols, members.iterrows()):
+                        with col:
+                            with st.container(border=True):
+                                st.markdown(f"**{v['vehicle_name']}**")
+                                prem_tag = " · 💰 Premium" if bool(v.get("is_premium", False)) else ""
+                                st.caption(
+                                    f"{v.get('vehicle_type', 'N/A')} · BR {v['realistic_br']:.1f}{prem_tag}"
+                                )
+                                st.metric("CE Score", f"{v['combat_effectiveness']:.1f}")
+                                st.caption(
+                                    f"K/D {v['ground_frags_per_death']:.2f} · "
+                                    f"{int(v['total_battles_30d']):,} sample battles"
+                                )
+
+                    # --- Visual A: lineup CE bar ---
+                    st.markdown("**Recommended lineup by CE Score**")
+                    bar = members.sort_values("combat_effectiveness", ascending=True)
+                    bar_fig = px.bar(
+                        bar, x="combat_effectiveness", y="display_label", orientation="h",
+                        color="vehicle_type",
+                        hover_data=[
+                            c for c in ["realistic_br", "ground_frags_per_death",
+                                        "total_battles_30d", "win_rate", "ground_frags_per_battle"]
+                            if c in bar.columns
+                        ],
+                    )
+                    bar_fig.update_layout(
+                        xaxis_title="CE Score", yaxis_title=None,
+                        height=max(300, 60 * len(bar) + 100),
+                        margin=dict(l=10, r=10, t=20, b=10), legend_title_text="Type",
+                    )
+                    bar_fig.update_xaxes(range=[0, 100])
+                    st.plotly_chart(bar_fig, width="stretch")
+
+                    # --- Visual B: lineup performance map (CE vs K/D) ---
+                    st.markdown("**Lineup performance map — CE Score vs K/D** (point size = sample battles)")
+                    map_fig = px.scatter(
+                        members, x="combat_effectiveness", y="ground_frags_per_death",
+                        color="vehicle_type", size="total_battles_30d", size_max=26,
+                        hover_name="display_label",
+                        hover_data={
+                            "display_label": False,
+                            "realistic_br": ":.1f",
+                            "vehicle_type": True,
+                            "combat_effectiveness": ":.1f",
+                            "ground_frags_per_death": ":.2f",
+                            "total_battles_30d": ":,.0f",
+                            "win_rate": ":.1f",
+                            "ground_frags_per_battle": ":.2f",
+                        },
+                    )
+                    map_fig.update_layout(
+                        xaxis_title="CE Score", yaxis_title="K/D (ground frags per death)",
+                        height=480,
+                        margin=dict(l=10, r=10, t=20, b=10), legend_title_text="Type",
+                    )
+                    st.plotly_chart(map_fig, width="stretch")
+
+                    # --- Alternative lineups table ---
+                    st.markdown("**Alternative lineups**")
+                    alt = lineups.copy()
+                    alt.insert(0, "rank", range(1, len(alt) + 1))
+                    alt["vehicles"] = alt["member_names"].apply(lambda t: " + ".join(t))
+                    alt_cols = [
+                        "rank", "vehicles", "lineup_score", "avg_ce", "avg_kd",
+                        "median_sample_battles", "n_types", "premium_count", "br_spread",
+                    ]
+                    st.dataframe(
+                        alt[alt_cols], width="stretch", hide_index=True,
+                        column_config={
+                            "rank": st.column_config.NumberColumn("#", format="%d"),
+                            "vehicles": "Lineup",
+                            "lineup_score": st.column_config.NumberColumn("Score", format="%.1f"),
+                            "avg_ce": st.column_config.NumberColumn("Avg CE", format="%.1f"),
+                            "avg_kd": st.column_config.NumberColumn("Avg K/D", format="%.2f"),
+                            "median_sample_battles": st.column_config.NumberColumn("Median sample battles", format="%d"),
+                            "n_types": st.column_config.NumberColumn("Types", format="%d"),
+                            "premium_count": st.column_config.NumberColumn("Premiums", format="%d"),
+                            "br_spread": st.column_config.NumberColumn("BR spread", format="%.1f"),
+                        },
+                    )
+
+                    # --- Candidate pool ---
+                    with st.expander(f"Eligible vehicles considered ({len(candidates)})"):
+                        pool_cols = [
+                            "display_label", "vehicle_type", "realistic_br",
+                            "combat_effectiveness", "ground_frags_per_death",
+                            "ground_frags_per_battle", "win_rate", "total_battles_30d",
+                            "is_premium",
+                        ]
+                        pool_cols = [c for c in pool_cols if c in candidates.columns]
+                        st.dataframe(
+                            candidates[pool_cols].sort_values("combat_effectiveness", ascending=False),
+                            width="stretch", hide_index=True,
+                            column_config={
+                                "display_label": "Vehicle",
+                                "vehicle_type": "Type",
+                                "realistic_br": st.column_config.NumberColumn("BR", format="%.1f"),
+                                "combat_effectiveness": st.column_config.NumberColumn("CE Score", format="%.1f"),
+                                "ground_frags_per_death": st.column_config.NumberColumn("K/D", format="%.2f"),
+                                "ground_frags_per_battle": st.column_config.NumberColumn("Frags / battle", format="%.2f"),
+                                "win_rate": st.column_config.NumberColumn("Win rate (ctx)", format="%.1f%%"),
+                                "total_battles_30d": st.column_config.NumberColumn("Sample battles", format="%d"),
+                                "is_premium": st.column_config.CheckboxColumn("Premium"),
+                            },
+                        )
 
 
 # ============================================================
