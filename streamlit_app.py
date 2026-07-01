@@ -1,4 +1,5 @@
 from io import BytesIO
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -19,6 +20,20 @@ st.set_page_config(
     page_icon="🛡️",
     layout="wide",
     initial_sidebar_state="collapsed",
+)
+
+# Larger, slightly heavier main tab labels (scoped to the tab list only so it
+# does not affect buttons, dropdowns, or other widgets).
+st.markdown(
+    """
+    <style>
+    .stTabs [data-baseweb="tab-list"] button p {
+        font-size: 1.15rem;
+        font-weight: 600;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
 )
 
 DATA_URL = (
@@ -129,17 +144,6 @@ def fetch_image_bytes(image_url):
         return None, f"Request failed: {e}"
 
 
-def render_vehicle_image(image_url, caption: str = "", width: int = 260) -> None:
-    """
-    ThunderSkill blocks embedded/programmatic image rendering for many vehicle images.
-    For now, show a clean placeholder and link to the image instead of a broken image.
-    """
-    st.info("Vehicle image available on ThunderSkill.")
-
-    if image_url and str(image_url).startswith("http"):
-        st.link_button("Open vehicle image", str(image_url))
-
-
 # ============================================================
 # Load and prepare data
 # ============================================================
@@ -164,11 +168,15 @@ if vehicle_30d_df.empty:
 # Header
 # ============================================================
 
-st.title("War Thunder Stats")
-st.caption(
-    "Rolling 30-day Realistic Ground meta from automated ThunderSkill data. "
-    "Scores describe observed player performance, not intrinsic vehicle strength."
-)
+LOGO_PATH = Path(__file__).resolve().parent / "assets" / "war_thunder_stats_logo1.png"
+
+logo_col, title_col = st.columns([1, 6], vertical_alignment="center")
+with logo_col:
+    if LOGO_PATH.exists():
+        st.image(str(LOGO_PATH), width=88)
+with title_col:
+    st.title("War Thunder Stats")
+    st.caption("Realistic Ground Forces meta, driven by player performance.")
 
 
 # ============================================================
@@ -657,6 +665,26 @@ with tab_rankings:
     if filtered_vehicle_df.empty:
         st.warning("No vehicles match the current filters.")
     else:
+        # Unique display label per vehicle (slug stays the internal key) so
+        # duplicate names from different nations do not collide in charts/selectbox.
+        vdf = filtered_vehicle_df.copy()
+
+        def _fmt_br(br):
+            return f"BR {br:.1f}" if pd.notna(br) else "BR N/A"
+
+        vdf["display_label"] = [
+            f"{n} — {c if pd.notna(c) else 'Unknown'}, {_fmt_br(b)}"
+            for n, c, b in zip(vdf["vehicle_name"], vdf["country"], vdf["realistic_br"])
+        ]
+
+        # Percentile features among currently filtered vehicles (for the radar),
+        # plus log1p battles used by the radar and by Similar vehicles.
+        vdf["_wr_pct"] = vdf["win_rate"].rank(pct=True) * 100
+        vdf["_kd_pct"] = vdf["ground_frags_per_death"].rank(pct=True) * 100
+        vdf["_fpb_pct"] = vdf["ground_frags_per_battle"].rank(pct=True) * 100
+        vdf["_logbattles"] = np.log1p(vdf["total_battles_30d"].fillna(0))
+        vdf["_ss_pct"] = vdf["_logbattles"].rank(pct=True) * 100
+
         ranking_cols = [
             "vehicle_name",
             "country",
@@ -671,125 +699,187 @@ with tab_rankings:
             "efficiency",
             "combat_effectiveness",
         ]
-        ranking_cols = [c for c in ranking_cols if c in filtered_vehicle_df.columns]
+        ranking_cols = [c for c in ranking_cols if c in vdf.columns]
 
         rankings = (
-            filtered_vehicle_df[ranking_cols]
-            .sort_values(["combat_effectiveness", "battles"], ascending=[False, False])
+            vdf.sort_values(["combat_effectiveness", "battles"], ascending=[False, False])
             .head(25)
             .copy()
         )
 
-        st.dataframe(
-            rankings,
-            width="stretch",
-            hide_index=True,
-            height=520,
-            column_config={
-                "vehicle_name": "Vehicle",
-                "country": "Nation",
-                "vehicle_type": "Type",
-                "realistic_br": st.column_config.NumberColumn("BR", format="%.1f"),
-                "battles": st.column_config.NumberColumn("Sample battles", format="%d"),
-                "days_observed": st.column_config.NumberColumn("Days", format="%d"),
-                "win_rate": st.column_config.NumberColumn("Win rate", format="%.2f%%"),
-                "ground_frags_per_battle": st.column_config.NumberColumn("Frags / battle", format="%.2f"),
-                "ground_frags_per_death": st.column_config.NumberColumn("Frags / death", format="%.2f"),
-                "efficiency": st.column_config.NumberColumn("Efficiency", format="%.1f"),
-                "combat_effectiveness": st.column_config.NumberColumn("CE Score", format="%.1f"),
-            },
+        # --- CE bar chart (full-width; unique label per bar; x fixed 0-100) ---
+        st.markdown("**Top vehicles by CE Score**")
+        bar_df = rankings.sort_values("combat_effectiveness", ascending=True)
+        bar_fig = px.bar(
+            bar_df,
+            x="combat_effectiveness",
+            y="display_label",
+            orientation="h",
+            color="country",
+            hover_data=[
+                c
+                for c in [
+                    "realistic_br",
+                    "battles",
+                    "days_observed",
+                    "win_rate",
+                    "ground_frags_per_battle",
+                    "ground_frags_per_death",
+                ]
+                if c in bar_df.columns
+            ],
         )
+        bar_fig.update_layout(
+            xaxis_title="Combat Effectiveness Score",
+            yaxis_title=None,
+            height=max(360, 26 * len(bar_df) + 120),
+            margin=dict(l=10, r=10, t=20, b=10),
+            legend_title_text="Nation",
+        )
+        bar_fig.update_xaxes(range=[0, 100])
+        st.plotly_chart(bar_fig, width="stretch")
 
-        rank_left, rank_right = st.columns(2, gap="large")
+        # --- Top performer table (collapsed, below the bar) ---
+        with st.expander("Show top performer table"):
+            st.dataframe(
+                rankings[ranking_cols],
+                width="stretch",
+                hide_index=True,
+                height=520,
+                column_config={
+                    "vehicle_name": "Vehicle",
+                    "country": "Nation",
+                    "vehicle_type": "Type",
+                    "realistic_br": st.column_config.NumberColumn("BR", format="%.1f"),
+                    "battles": st.column_config.NumberColumn("Sample battles", format="%d"),
+                    "days_observed": st.column_config.NumberColumn("Days", format="%d"),
+                    "win_rate": st.column_config.NumberColumn("Win rate", format="%.2f%%"),
+                    "ground_frags_per_battle": st.column_config.NumberColumn("Frags / battle", format="%.2f"),
+                    "ground_frags_per_death": st.column_config.NumberColumn("Frags / death", format="%.2f"),
+                    "efficiency": st.column_config.NumberColumn("Efficiency", format="%.1f"),
+                    "combat_effectiveness": st.column_config.NumberColumn("CE Score", format="%.1f"),
+                },
+            )
 
-        with rank_left:
-            st.markdown("**Top vehicles by CE Score**")
-            top_chart_df = rankings.sort_values("combat_effectiveness", ascending=True)
-            bar_fig = px.bar(
-                top_chart_df,
-                x="combat_effectiveness",
-                y="vehicle_name",
-                orientation="h",
-                hover_data=[
-                    c
-                    for c in [
+        # --- Daily K/D Stability Plot (top 12 by 30-day aggregate K/D) ---
+        st.markdown("**Daily K/D stability — top 12 by 30-day K/D**")
+        st.caption(
+            "Thick bar = middle 50% of daily K/D (25th–75th pct); thin line = "
+            "10th–90th pct; dot = median daily K/D; diamond = 30-day aggregate "
+            "K/D. Tight bars mean consistent performance; a diamond far from the "
+            "median means spike-driven K/D."
+        )
+        topkd = (
+            vdf.dropna(subset=["ground_frags_per_death"])
+            .sort_values("ground_frags_per_death", ascending=False)
+            .head(12)
+        )
+        if topkd.empty:
+            st.info("No K/D data under the current filters.")
+        else:
+            daily_kd = filtered_recent_df[
+                filtered_recent_df["vehicle_slug"].isin(topkd["vehicle_slug"])
+            ].dropna(subset=["ground_frags_per_death"])
+            grp = daily_kd.groupby("vehicle_slug")["ground_frags_per_death"]
+            stab = pd.DataFrame(
+                {
+                    "p10": grp.quantile(0.10),
+                    "p25": grp.quantile(0.25),
+                    "median": grp.quantile(0.50),
+                    "p75": grp.quantile(0.75),
+                    "p90": grp.quantile(0.90),
+                    "obs_days": grp.count(),
+                }
+            ).reset_index()
+            stab = stab.merge(
+                topkd[
+                    [
+                        "vehicle_slug",
+                        "display_label",
                         "country",
                         "realistic_br",
-                        "battles",
-                        "days_observed",
-                        "win_rate",
-                        "ground_frags_per_battle",
                         "ground_frags_per_death",
+                        "total_battles_30d",
                     ]
-                    if c in top_chart_df.columns
                 ],
-            )
-            bar_fig.update_layout(
-                xaxis_title="Combat Effectiveness Score",
-                yaxis_title=None,
-                height=520,
-                margin=dict(l=10, r=10, t=20, b=10),
-            )
-            st.plotly_chart(bar_fig, width="stretch")
+                on="vehicle_slug",
+                how="left",
+            ).rename(columns={"ground_frags_per_death": "agg_kd"})
+            stab = stab.sort_values("agg_kd", ascending=True)  # highest at top
 
-        with rank_right:
-            st.markdown("**Sample battles vs CE Score**")
-            scatter_df = filtered_vehicle_df.dropna(
-                subset=["battles", "combat_effectiveness", "realistic_br"]
-            ).copy()
-            scatter_fig = px.scatter(
-                scatter_df,
-                x="battles",
-                y="combat_effectiveness",
-                color="country",
-                size="realistic_br",
-                hover_name="vehicle_name",
-                hover_data=[
-                    c
-                    for c in [
-                        "vehicle_type",
-                        "realistic_br",
-                        "days_observed",
-                        "win_rate",
-                        "ground_frags_per_battle",
-                        "ground_frags_per_death",
-                    ]
-                    if c in scatter_df.columns
-                ],
-            )
-            scatter_fig.update_layout(
-                xaxis_title="30-day sample battles",
-                yaxis_title="Combat Effectiveness Score",
-                height=520,
+            palette = px.colors.qualitative.Set2
+            nats = sorted(stab["country"].fillna("Unknown").unique())
+            color_map = {n: palette[i % len(palette)] for i, n in enumerate(nats)}
+
+            stab_fig = go.Figure()
+            for _, r in stab.iterrows():
+                col = color_map.get(r["country"] if pd.notna(r["country"]) else "Unknown", "#888888")
+                y = r["display_label"]
+                br_txt = f"{r['realistic_br']:.1f}" if pd.notna(r["realistic_br"]) else "N/A"
+                sb_txt = f"{int(r['total_battles_30d']):,}" if pd.notna(r["total_battles_30d"]) else "0"
+                hover = (
+                    f"<b>{r['display_label']}</b><br>"
+                    f"Nation: {r['country']}<br>"
+                    f"BR: {br_txt}<br>"
+                    f"Aggregate K/D: {r['agg_kd']:.2f}<br>"
+                    f"Median daily K/D: {r['median']:.2f}<br>"
+                    f"25th–75th: {r['p25']:.2f}–{r['p75']:.2f}<br>"
+                    f"10th–90th: {r['p10']:.2f}–{r['p90']:.2f}<br>"
+                    f"Observed days: {int(r['obs_days'])}<br>"
+                    f"Sample battles: {sb_txt}"
+                    "<extra></extra>"
+                )
+                stab_fig.add_trace(go.Scatter(
+                    x=[r["p10"], r["p90"]], y=[y, y], mode="lines",
+                    line=dict(color=col, width=2), opacity=0.4,
+                    hoverinfo="skip", showlegend=False,
+                ))
+                stab_fig.add_trace(go.Scatter(
+                    x=[r["p25"], r["p75"]], y=[y, y], mode="lines",
+                    line=dict(color=col, width=9),
+                    hovertemplate=hover, showlegend=False,
+                ))
+                stab_fig.add_trace(go.Scatter(
+                    x=[r["median"]], y=[y], mode="markers",
+                    marker=dict(color=col, size=10, symbol="circle",
+                                line=dict(color="#0F1216", width=1)),
+                    hovertemplate=hover, showlegend=False,
+                ))
+                stab_fig.add_trace(go.Scatter(
+                    x=[r["agg_kd"]], y=[y], mode="markers",
+                    marker=dict(color="#E8743B", size=12, symbol="diamond",
+                                line=dict(color="#0F1216", width=1)),
+                    hovertemplate=hover, showlegend=False,
+                ))
+            stab_fig.update_layout(
+                xaxis_title="K/D (ground frags per death)",
+                yaxis_title=None,
+                height=max(360, 40 * len(stab) + 120),
                 margin=dict(l=10, r=10, t=20, b=10),
             )
-            st.plotly_chart(scatter_fig, width="stretch")
+            st.plotly_chart(stab_fig, width="stretch")
 
         st.divider()
 
         # --- folded-in vehicle detail (was the Vehicle Explorer tab) ---
         st.subheader("Vehicle detail")
 
-        vehicle_options = (
-            filtered_vehicle_df
-            .sort_values(["country", "realistic_br", "vehicle_name"])
-            ["vehicle_name"]
-            .dropna()
-            .unique()
-        )
+        detail_opts = vdf.sort_values("display_label")["vehicle_slug"].tolist()
+        slug_to_label = dict(zip(vdf["vehicle_slug"], vdf["display_label"]))
 
-        selected_vehicle = st.selectbox(
+        selected_slug = st.selectbox(
             "Select a vehicle",
-            options=vehicle_options,
+            options=detail_opts,
+            format_func=lambda s: slug_to_label.get(s, s),
             key="rankings_vehicle_select",
         )
 
-        vehicle_row = filtered_vehicle_df[
-            filtered_vehicle_df["vehicle_name"] == selected_vehicle
-        ].head(1)
+        vehicle_row = vdf[vdf["vehicle_slug"] == selected_slug].head(1)
 
         if not vehicle_row.empty:
             row = vehicle_row.iloc[0]
+
+            st.markdown(f"### {row.get('vehicle_name', 'Unknown vehicle')}")
 
             if not bool(row.get("has_realistic_br", True)):
                 st.warning(
@@ -799,62 +889,221 @@ with tab_rankings:
                     "as CE Score, BR heatmaps, and BR grouping."
                 )
 
-            card_left, card_right = st.columns([1, 2], gap="large")
+            # Link buttons side by side, kept compact (stack on mobile).
+            pic_url = row.get("pic")
+            ts_url = row.get("vehicle_url")
+            btn_a, btn_b, _btn_spacer = st.columns([2, 2, 3])
+            with btn_a:
+                if pd.notna(pic_url) and str(pic_url).startswith("http"):
+                    st.link_button("Open vehicle image", str(pic_url), width="stretch")
+            with btn_b:
+                if pd.notna(ts_url):
+                    st.link_button("Open ThunderSkill page", str(ts_url), width="stretch")
 
-            with card_left:
-                render_vehicle_image(
-                    image_url=row.get("pic"),
-                    caption=row.get("vehicle_name", ""),
-                    width=260,
+            # Stat cards.
+            d1, d2 = st.columns(2)
+            d1.metric("Nation", row.get("country", "N/A"))
+            d2.metric("Type", row.get("vehicle_type", "N/A"))
+
+            d3, d4 = st.columns(2)
+            d3.metric("BR", f"{row.get('realistic_br', np.nan):.1f}")
+            d4.metric("Rank", f"{row.get('rank', 'N/A')}")
+
+            d5, d6 = st.columns(2)
+            d5.metric("30-day sample battles", f"{int(row.get('battles', 0)):,}")
+            d6.metric("Days observed", f"{int(row.get('days_observed', 0))}")
+
+            d7, d8 = st.columns(2)
+            d7.metric("Win rate", f"{row.get('win_rate', np.nan):.2f}%")
+            d8.metric("CE Score", f"{row.get('combat_effectiveness', np.nan):.1f}")
+
+            d9, d10 = st.columns(2)
+            d9.metric("Frags / battle", f"{row.get('ground_frags_per_battle', np.nan):.2f}")
+            d10.metric("Frags / death", f"{row.get('ground_frags_per_death', np.nan):.2f}")
+
+            # --- Performance radar (0-100; percentiles among filtered peers) ---
+            st.markdown("**Performance radar**")
+            radar_axes = {
+                "CE Score": row.get("combat_effectiveness"),
+                "Win Rate Score": row.get("_wr_pct"),
+                "K/D Score": row.get("_kd_pct"),
+                "Frags/Battle Score": row.get("_fpb_pct"),
+                "Sample Size": row.get("_ss_pct"),
+            }
+            missing_axes = [k for k, v in radar_axes.items() if pd.isna(v)]
+            theta = list(radar_axes.keys())
+            r_vals = [0.0 if pd.isna(v) else float(v) for v in radar_axes.values()]
+            radar_fig = go.Figure()
+            radar_fig.add_trace(
+                go.Scatterpolar(
+                    r=r_vals + [r_vals[0]],
+                    theta=theta + [theta[0]],
+                    fill="toself",
+                    line=dict(color="#E8743B"),
+                    name=str(row.get("vehicle_name", "")),
                 )
+            )
+            radar_fig.update_layout(
+                polar=dict(radialaxis=dict(range=[0, 100], visible=True)),
+                showlegend=False,
+                height=380,
+                margin=dict(l=40, r=40, t=30, b=30),
+            )
+            st.plotly_chart(radar_fig, width="stretch")
+            radar_cap = (
+                "Win Rate / K/D / Frags-per-battle / Sample Size are percentiles "
+                "among the currently filtered vehicles; CE Score is the 0-100 "
+                "Combat Effectiveness Score."
+            )
+            if missing_axes:
+                radar_cap += " Unavailable metrics shown as 0: " + ", ".join(missing_axes) + "."
+            if len(vdf) < 3:
+                radar_cap += " Percentiles are unreliable with so few vehicles in view."
+            st.caption(radar_cap)
 
-            with card_right:
-                st.markdown(f"### {row.get('vehicle_name', 'Unknown vehicle')}")
+            # --- Similar vehicles (simple standardized nearest-neighbor) ---
+            st.markdown("**Similar vehicles by K-nearest neighbors**")
+            st.caption(
+                "Compares the selected vehicle with currently filtered vehicles "
+                "using standardized BR, CE Score, win rate, K/D, frags per battle, "
+                "and log sample battles. The search starts with same vehicle type "
+                "and nearby BR, then broadens if too few peers are available."
+            )
+            sim_feats = [
+                "realistic_br",
+                "combat_effectiveness",
+                "win_rate",
+                "ground_frags_per_death",
+                "ground_frags_per_battle",
+                "_logbattles",
+            ]
+            if pd.isna(row.get("realistic_br")) or pd.isna(row.get("combat_effectiveness")):
+                st.info(
+                    "Similar vehicles need a Realistic BR and CE Score, which are "
+                    "unavailable for this vehicle."
+                )
+            else:
+                base = vdf.dropna(
+                    subset=[
+                        "realistic_br",
+                        "combat_effectiveness",
+                        "win_rate",
+                        "ground_frags_per_death",
+                        "ground_frags_per_battle",
+                    ]
+                ).copy()
+                base = base[base["vehicle_slug"] != selected_slug]
 
-                d1, d2 = st.columns(2)
-                d1.metric("Nation", row.get("country", "N/A"))
-                d2.metric("Type", row.get("vehicle_type", "N/A"))
+                # Candidate pool: same type & BR within +-1.0, broadening if sparse.
+                cand = base[
+                    (base["vehicle_type"] == row.get("vehicle_type"))
+                    & ((base["realistic_br"] - row["realistic_br"]).abs() <= 1.0)
+                ]
+                if len(cand) < 3:
+                    cand = base[base["vehicle_type"] == row.get("vehicle_type")]
+                if len(cand) < 3:
+                    cand = base
 
-                d3, d4 = st.columns(2)
-                d3.metric("BR", f"{row.get('realistic_br', np.nan):.1f}")
-                d4.metric("Rank", f"{row.get('rank', 'N/A')}")
+                if cand.empty:
+                    st.info("No similar vehicles under the current filters.")
+                else:
+                    sel_feats = pd.Series({f: row[f] for f in sim_feats}, dtype="float64")
+                    scale_src = pd.concat(
+                        [cand[sim_feats], sel_feats.to_frame().T], ignore_index=True
+                    )
+                    mu = scale_src.mean()
+                    sd = scale_src.std(ddof=0).replace(0, 1.0)
+                    cz = (cand[sim_feats] - mu) / sd
+                    sz = (sel_feats - mu) / sd
+                    dist = np.sqrt(((cz - sz) ** 2).sum(axis=1))
+                    sim = cand.assign(_dist=dist).sort_values("_dist").head(3)
+                    sim["similarity"] = 1.0 / (1.0 + sim["_dist"])
 
-                d5, d6 = st.columns(2)
-                d5.metric("30-day sample battles", f"{int(row.get('battles', 0)):,}")
-                d6.metric("Days observed", f"{int(row.get('days_observed', 0))}")
+                    sim_cols = [
+                        "vehicle_name",
+                        "country",
+                        "realistic_br",
+                        "vehicle_type",
+                        "combat_effectiveness",
+                        "ground_frags_per_death",
+                        "ground_frags_per_battle",
+                        "total_battles_30d",
+                        "similarity",
+                    ]
+                    st.dataframe(
+                        sim[sim_cols],
+                        width="stretch",
+                        hide_index=True,
+                        column_config={
+                            "vehicle_name": "Vehicle",
+                            "country": "Nation",
+                            "realistic_br": st.column_config.NumberColumn("BR", format="%.1f"),
+                            "vehicle_type": "Type",
+                            "combat_effectiveness": st.column_config.NumberColumn("CE Score", format="%.1f"),
+                            "ground_frags_per_death": st.column_config.NumberColumn("K/D", format="%.2f"),
+                            "ground_frags_per_battle": st.column_config.NumberColumn("Frags / battle", format="%.2f"),
+                            "total_battles_30d": st.column_config.NumberColumn("Sample battles", format="%d"),
+                            "similarity": st.column_config.NumberColumn("Similarity", format="%.3f"),
+                        },
+                    )
 
-                d7, d8 = st.columns(2)
-                d7.metric("Win rate", f"{row.get('win_rate', np.nan):.2f}%")
-                d8.metric("CE Score", f"{row.get('combat_effectiveness', np.nan):.1f}")
+                    # Similarity ladder (compact lollipop of the top-3 matches).
+                    ladder = sim.sort_values("similarity", ascending=True)
+                    ladder_fig = px.bar(
+                        ladder,
+                        x="similarity",
+                        y="display_label",
+                        orientation="h",
+                        color="country",
+                        hover_data={
+                            "display_label": False,
+                            "realistic_br": ":.1f",
+                            "vehicle_type": True,
+                            "combat_effectiveness": ":.1f",
+                            "ground_frags_per_death": ":.2f",
+                            "ground_frags_per_battle": ":.2f",
+                            "total_battles_30d": ":,.0f",
+                            "similarity": ":.3f",
+                        },
+                    )
+                    ladder_fig.update_layout(
+                        xaxis_title="Similarity",
+                        yaxis_title=None,
+                        xaxis=dict(range=[0, 1]),
+                        height=max(220, 60 * len(ladder) + 80),
+                        margin=dict(l=10, r=10, t=10, b=10),
+                        legend_title_text="Nation",
+                    )
+                    st.plotly_chart(ladder_fig, width="stretch")
 
-                d9, d10 = st.columns(2)
-                d9.metric("Frags / battle", f"{row.get('ground_frags_per_battle', np.nan):.2f}")
-                d10.metric("Frags / death", f"{row.get('ground_frags_per_death', np.nan):.2f}")
-
-                if "vehicle_url" in row and pd.notna(row["vehicle_url"]):
-                    st.link_button("Open ThunderSkill page", row["vehicle_url"])
-
-            vehicle_slug = row.get("vehicle_slug")
+            # --- Trend chart + raw observations (last) ---
             vehicle_trend_df = filtered_recent_df[
-                filtered_recent_df["vehicle_slug"] == vehicle_slug
+                filtered_recent_df["vehicle_slug"] == selected_slug
             ].sort_values("date")
 
             if vehicle_trend_df.empty:
                 st.info("No trend data available for this vehicle.")
             else:
+                trend_options = [
+                    c
+                    for c in [
+                        "win_rate",
+                        "ground_frags_per_battle",
+                        "ground_frags_per_death",
+                        "battles",
+                    ]
+                    if c in vehicle_trend_df.columns
+                ]
+                _default_trend = "ground_frags_per_battle"
+                trend_index = (
+                    trend_options.index(_default_trend)
+                    if _default_trend in trend_options
+                    else 0
+                )
                 detail_metric = st.selectbox(
                     "Trend metric",
-                    options=[
-                        c
-                        for c in [
-                            "win_rate",
-                            "ground_frags_per_battle",
-                            "ground_frags_per_death",
-                            "battles",
-                        ]
-                        if c in vehicle_trend_df.columns
-                    ],
-                    index=0,
+                    options=trend_options,
+                    index=trend_index,
                     key="rankings_detail_metric",
                 )
 
@@ -863,7 +1112,7 @@ with tab_rankings:
                     x="date",
                     y=detail_metric,
                     markers=True,
-                    title=f"{selected_vehicle}: {detail_metric.replace('_', ' ').title()}",
+                    title=f"{row.get('vehicle_name', '')}: {detail_metric.replace('_', ' ').title()}",
                 )
                 detail_fig.update_layout(
                     xaxis_title="Date",
@@ -1110,6 +1359,7 @@ Combat Effectiveness Score = clip(50 + 15 × z_total, 0, 100)
 st.divider()
 
 st.caption(
-    "Data source: ThunderSkill public vehicle pages. "
-    "This app is an independent analytics project and is not affiliated with Gaijin or ThunderSkill."
+    "Independent data science project by Adam Sanders / "
+    "[War Thunder Stats](https://www.youtube.com/@warthunderstats). "
+    "Data source: ThunderSkill."
 )
