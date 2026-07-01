@@ -330,8 +330,17 @@ card_row1[1].metric("30-day sample battles", f"{total_battles:,}", border=True)
 card_row1[2].metric("Nations", f"{n_nations}", border=True)
 
 card_row2 = st.columns(3)
-card_row2[0].metric("Avg CE Score", avg_ce_str, border=True)
-card_row2[1].metric("Median WR", median_wr_str, border=True)
+card_row2[0].metric(
+    "Avg CE Score",
+    avg_ce_str,
+    help=(
+        "CE Score is a custom BR-normalized composite metric using K/D, frags "
+        "per battle, win rate, and sample battles/confidence. 50 is roughly "
+        "BR-average; higher is better."
+    ),
+    border=True,
+)
+card_row2[1].metric("Median Win Rate", median_wr_str, border=True)
 card_row2[2].metric("Rolling window", window_value, help=window_help, border=True)
 
 
@@ -981,7 +990,7 @@ with tab_rankings:
             st.caption(radar_cap)
 
             # --- Similar vehicles (simple standardized nearest-neighbor) ---
-            st.markdown("**Similar vehicles by K-nearest neighbors**")
+            st.subheader("Similar vehicles by K-nearest neighbors")
             st.caption(
                 "Compares the selected vehicle with currently filtered vehicles "
                 "using standardized BR, CE Score, win rate, K/D, frags per battle, "
@@ -1373,7 +1382,7 @@ with tab_clusters:
         )
 
         # --- 6. Cluster drilldown ---
-        st.markdown("**Explore an archetype**")
+        st.subheader("Explore an archetype")
         drill = st.selectbox("Archetype", options=present, key="clusters_drill")
         sub = cdf[cdf["friendly_label"] == drill]
         if sub.empty:
