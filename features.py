@@ -925,3 +925,146 @@ def label_clusters(clustered_df: pd.DataFrame) -> pd.DataFrame:
     out["friendly_label_base"] = out["cluster_id"].map(base_label)
     out["friendly_label"] = out["cluster_id"].map(final)
     return out
+
+
+# ============================================================
+# Lineup Builder (v1)
+# ============================================================
+# Builds a same-nation lineup within a BR range, ranked mostly by average CE
+# Score with an optional small role-diversity bonus. Intentionally simple: no
+# hard role/BR-coverage constraints, no uptier modelling.
+LINEUP_TOP_N = 25   # only combine the top-N eligible vehicles by CE (keeps search fast)
+LINEUP_TOP_K = 20   # number of scored lineups returned
+LINEUP_MIN_SAMPLE_BATTLES = 100
+
+
+def lineup_diversity_bonus(n_types: int) -> float:
+    """Small bonus for role diversity: 0 / +2.5 / +5.0 / +7.5 (capped at 4+)."""
+    if n_types <= 1:
+        return 0.0
+    if n_types == 2:
+        return 2.5
+    if n_types == 3:
+        return 5.0
+    return 7.5
+
+
+def build_lineup_candidates(
+    vehicle_df: pd.DataFrame,
+    nation: str,
+    br_min: float,
+    br_max: float,
+    allowed_types=None,
+    include_premium: bool = True,
+    min_sample_battles: int = LINEUP_MIN_SAMPLE_BATTLES,
+) -> pd.DataFrame:
+    """Eligible vehicles for a lineup: one nation, within the BR range, with a
+    Realistic BR and a CE Score, above the sample-battle floor, in the allowed
+    types, honoring the premium setting. Sorted by CE Score descending."""
+    if vehicle_df.empty:
+        return vehicle_df.copy()
+
+    out = vehicle_df.copy()
+    has_br = (
+        out["has_realistic_br"].fillna(False)
+        if "has_realistic_br" in out.columns
+        else out["realistic_br"].notna()
+    )
+    mask = (
+        (out["country"] == nation)
+        & has_br
+        & out["combat_effectiveness"].notna()
+        & (out["realistic_br"] >= br_min)
+        & (out["realistic_br"] <= br_max)
+        & (out["total_battles_30d"].fillna(0) >= min_sample_battles)
+    )
+    if allowed_types:
+        mask &= out["vehicle_type"].isin(allowed_types)
+    if not include_premium and "is_premium" in out.columns:
+        mask &= out["is_premium"] == False
+
+    cand = out[mask].copy()
+    return cand.sort_values("combat_effectiveness", ascending=False).reset_index(drop=True)
+
+
+def build_lineups(
+    candidate_df: pd.DataFrame,
+    size: int,
+    prefer_diversity: bool = True,
+    top_n: int = LINEUP_TOP_N,
+    top_k: int = LINEUP_TOP_K,
+) -> pd.DataFrame:
+    """Score every size-combination from the top-N candidates and return the
+    top-K lineups.
+
+    lineup_score = avg CE Score + (diversity bonus if prefer_diversity).
+
+    Returns one row per lineup with: member_slugs (tuple), member_names (tuple),
+    lineup_score, avg_ce, avg_kd, avg_frags_per_battle, avg_win_rate,
+    median_sample_battles, n_types, premium_count, br_spread, br_lo, br_hi.
+    """
+    import itertools
+
+    cols = [
+        "vehicle_slug",
+        "vehicle_name",
+        "vehicle_type",
+        "realistic_br",
+        "combat_effectiveness",
+        "ground_frags_per_death",
+        "ground_frags_per_battle",
+        "win_rate",
+        "total_battles_30d",
+        "is_premium",
+    ]
+    if candidate_df.empty or len(candidate_df) < size:
+        return pd.DataFrame()
+
+    pool = candidate_df.head(top_n).reset_index(drop=True)
+    pool = pool[[c for c in cols if c in pool.columns]].copy()
+
+    slug = pool["vehicle_slug"].to_numpy()
+    name = pool["vehicle_name"].to_numpy()
+    vtype = pool["vehicle_type"].astype("object").to_numpy()
+    br = pool["realistic_br"].to_numpy(dtype=float)
+    ce = pool["combat_effectiveness"].to_numpy(dtype=float)
+    kd = pool["ground_frags_per_death"].to_numpy(dtype=float)
+    fpb = pool["ground_frags_per_battle"].to_numpy(dtype=float)
+    wr = pool["win_rate"].to_numpy(dtype=float)
+    sb = pool["total_battles_30d"].to_numpy(dtype=float)
+    prem = (
+        pool["is_premium"].fillna(False).to_numpy(dtype=bool)
+        if "is_premium" in pool.columns
+        else np.zeros(len(pool), dtype=bool)
+    )
+
+    rows = []
+    for combo in itertools.combinations(range(len(pool)), size):
+        idx = list(combo)
+        n_types = len(set(vtype[i] for i in idx))
+        avg_ce = float(np.nanmean(ce[idx]))
+        bonus = lineup_diversity_bonus(n_types) if prefer_diversity else 0.0
+        rows.append(
+            {
+                "member_slugs": tuple(slug[i] for i in idx),
+                "member_names": tuple(name[i] for i in idx),
+                "lineup_score": avg_ce + bonus,
+                "avg_ce": avg_ce,
+                "avg_kd": float(np.nanmean(kd[idx])),
+                "avg_frags_per_battle": float(np.nanmean(fpb[idx])),
+                "avg_win_rate": float(np.nanmean(wr[idx])),
+                "median_sample_battles": float(np.nanmedian(sb[idx])),
+                "n_types": n_types,
+                "premium_count": int(np.sum(prem[idx])),
+                "br_spread": float(np.nanmax(br[idx]) - np.nanmin(br[idx])),
+                "br_lo": float(np.nanmin(br[idx])),
+                "br_hi": float(np.nanmax(br[idx])),
+            }
+        )
+
+    result = pd.DataFrame(rows)
+    return (
+        result.sort_values(["lineup_score", "avg_ce"], ascending=False)
+        .head(top_k)
+        .reset_index(drop=True)
+    )
