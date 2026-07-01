@@ -734,3 +734,194 @@ def build_nation_summary(vehicle_df: pd.DataFrame) -> pd.DataFrame:
         )
 
     return pd.DataFrame(rows).sort_values("avg_ce", ascending=False).reset_index(drop=True)
+
+
+# ============================================================
+# Performance clustering (v1)
+# ============================================================
+# Clustering intentionally uses only three standardized features:
+#   CE Score, K/D (ground frags per death), and log1p(sample battles).
+# Win rate / frags-per-battle / nation / vehicle type are context only.
+CLUSTER_MIN_SAMPLE_BATTLES = 100   # default evidence floor (user-adjustable in UI)
+CLUSTER_MIN_VEHICLES = 15          # below this we do not attempt clustering
+CLUSTER_Z_HIGH = 0.4               # z-median above this counts as "high"
+CLUSTER_Z_LOW = -0.4               # z-median below this counts as "low"
+
+
+def build_vehicle_clusters(
+    df: pd.DataFrame,
+    min_sample_battles: int = CLUSTER_MIN_SAMPLE_BATTLES,
+    min_cluster_size=None,
+    min_samples=None,
+):
+    """Cluster vehicles with HDBSCAN on standardized
+    [combat_effectiveness, ground_frags_per_death, log1p(total_battles_30d)].
+
+    Missing-BR vehicles and rows lacking CE / K/D are excluded, as are vehicles
+    below ``min_sample_battles``. Returns ``(clustered_df, meta)`` where
+    clustered_df has: log1p_sample_battles, z_ce, z_kd, z_log_battles, cluster_id
+    (-1 = HDBSCAN noise). ``meta`` describes counts / quality. sklearn is imported
+    lazily so this module still imports if scikit-learn is absent.
+    """
+    meta = {
+        "available": True,
+        "n_vehicles": 0,
+        "n_clusters": 0,
+        "noise_pct": float("nan"),
+        "silhouette": None,
+        "quality_label": "Weak",
+        "min_cluster_size": None,
+        "reason": None,
+    }
+
+    if df.empty:
+        return df.iloc[0:0].copy(), {**meta, "reason": "empty"}
+
+    work = df.copy()
+    has_br = (
+        work["has_realistic_br"].fillna(False)
+        if "has_realistic_br" in work.columns
+        else work["realistic_br"].notna()
+    )
+    mask = (
+        has_br
+        & work["combat_effectiveness"].notna()
+        & work["ground_frags_per_death"].notna()
+        & (work["total_battles_30d"].fillna(0) >= min_sample_battles)
+    )
+    cand = work[mask].copy()
+    n = len(cand)
+    meta["n_vehicles"] = n
+
+    if n < CLUSTER_MIN_VEHICLES:
+        return cand, {**meta, "reason": "too_few"}
+
+    try:
+        from sklearn.preprocessing import StandardScaler
+        from sklearn.cluster import HDBSCAN
+        from sklearn.metrics import silhouette_score
+    except ImportError:
+        return cand, {**meta, "available": False, "reason": "sklearn_missing"}
+
+    cand["log1p_sample_battles"] = np.log1p(cand["total_battles_30d"].fillna(0))
+    feats = cand[
+        ["combat_effectiveness", "ground_frags_per_death", "log1p_sample_battles"]
+    ].to_numpy(dtype=float)
+    z = StandardScaler().fit_transform(feats)
+    cand["z_ce"] = z[:, 0]
+    cand["z_kd"] = z[:, 1]
+    cand["z_log_battles"] = z[:, 2]
+
+    # WT BR slices are small and standout groups may be only ~3 vehicles, so use
+    # a low min_cluster_size / min_samples. (Larger values marked almost
+    # everything as noise on these spread-out performance clouds.)
+    if min_cluster_size is None:
+        min_cluster_size = 3
+    if min_samples is None:
+        min_samples = 2
+    model = HDBSCAN(
+        min_cluster_size=int(min_cluster_size),
+        min_samples=int(min_samples),
+        copy=True,
+    )
+    labels = model.fit_predict(z)
+    cand["cluster_id"] = labels
+
+    non_noise = labels != -1
+    n_clusters = int(len({c for c in labels if c != -1}))
+    noise_pct = float((~non_noise).mean() * 100.0)
+
+    silhouette = None
+    if n_clusters >= 2 and int(non_noise.sum()) > n_clusters:
+        try:
+            silhouette = float(silhouette_score(z[non_noise], labels[non_noise]))
+        except Exception:
+            silhouette = None
+
+    if n_clusters >= 2 and silhouette is not None and silhouette >= 0.5 and noise_pct < 30:
+        quality = "Strong"
+    elif n_clusters >= 2 and ((silhouette is not None and silhouette >= 0.25) or noise_pct < 50):
+        quality = "Moderate"
+    else:
+        quality = "Weak"
+
+    meta.update(
+        {
+            "n_clusters": n_clusters,
+            "noise_pct": noise_pct,
+            "silhouette": silhouette,
+            "quality_label": quality,
+            "min_cluster_size": int(min_cluster_size),
+            "reason": None if n_clusters >= 1 else "no_clusters",
+        }
+    )
+    return cand, meta
+
+
+def _classify_cluster(z_ce: float, z_kd: float, z_sb: float) -> str:
+    """Friendly archetype label from a cluster's standardized medians.
+
+    Priority order (first match wins):
+      1. Popular Strugglers  -> high sample battles + below-average CE
+      2. Core Meta           -> high CE + high K/D + high sample battles
+      3. Underplayed Meta    -> high CE + high K/D (not widely played)
+      4. Niche Signals       -> low sample battles (uncertain signal)
+      5. Off-Meta            -> low CE + low K/D
+      6. Solid Picks         -> everything else (mid)
+    """
+    hi, lo = CLUSTER_Z_HIGH, CLUSTER_Z_LOW
+    if z_sb >= hi and z_ce < 0:
+        return "Popular Strugglers"
+    if z_ce >= hi and z_kd >= hi and z_sb >= hi:
+        return "Core Meta"
+    if z_ce >= hi and z_kd >= hi:
+        return "Underplayed Meta"
+    if z_sb <= lo:
+        return "Niche Signals"
+    if z_ce <= lo and z_kd <= lo:
+        return "Off-Meta"
+    return "Solid Picks"
+
+
+def label_clusters(clustered_df: pd.DataFrame) -> pd.DataFrame:
+    """Add a friendly archetype label to each row.
+
+    Keeps raw ``cluster_id`` as the internal key. When two or more clusters map
+    to the same friendly label, a suffix (A, B, ...) is appended, ordered by
+    cluster mean CE descending, so labels stay unambiguous. HDBSCAN noise
+    (cluster_id == -1) is always labelled "Outliers".
+    """
+    out = clustered_df.copy()
+    if out.empty or "cluster_id" not in out.columns:
+        out["friendly_label_base"] = pd.Series(dtype="object")
+        out["friendly_label"] = pd.Series(dtype="object")
+        return out
+
+    non_noise = out[out["cluster_id"] != -1]
+    prof = non_noise.groupby("cluster_id")[["z_ce", "z_kd", "z_log_battles"]].median()
+    mean_ce = non_noise.groupby("cluster_id")["combat_effectiveness"].mean()
+
+    base_label = {-1: "Outliers"}
+    for cid, r in prof.iterrows():
+        base_label[cid] = _classify_cluster(r["z_ce"], r["z_kd"], r["z_log_battles"])
+
+    # Disambiguate duplicate friendly labels (excluding Outliers).
+    from collections import defaultdict
+
+    label_to_cids = defaultdict(list)
+    for cid, lab in base_label.items():
+        if cid != -1:
+            label_to_cids[lab].append(cid)
+
+    final = {-1: "Outliers"}
+    for lab, cids in label_to_cids.items():
+        if len(cids) == 1:
+            final[cids[0]] = lab
+        else:
+            ordered = sorted(cids, key=lambda c: mean_ce.get(c, float("-inf")), reverse=True)
+            for i, c in enumerate(ordered):
+                final[c] = f"{lab} {chr(65 + i)}"
+
+    out["friendly_label_base"] = out["cluster_id"].map(base_label)
+    out["friendly_label"] = out["cluster_id"].map(final)
+    return out

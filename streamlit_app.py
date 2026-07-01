@@ -85,6 +85,18 @@ def get_vehicle_agg(recent_daily_df: pd.DataFrame) -> pd.DataFrame:
     return vehicle_df
 
 
+@st.cache_data(ttl=60 * 60)
+def get_clusters(vehicle_df: pd.DataFrame, min_sample_battles: int):
+    """Cluster the given (already filtered) vehicle slice and attach friendly
+    archetype labels. Cached on the slice contents + control value."""
+    clustered, meta = features.build_vehicle_clusters(
+        vehicle_df, min_sample_battles=min_sample_battles
+    )
+    if not clustered.empty and "cluster_id" in clustered.columns:
+        clustered = features.label_clusters(clustered)
+    return clustered, meta
+
+
 # Data preparation, vehicle aggregation, scoring, and nation/BR aggregates now
 # live in features.py (pure pandas, reusable by offline scripts). The cached
 # wrappers above expose them to the app.
@@ -320,10 +332,11 @@ card_row2[2].metric("Rolling window", window_value, help=window_help, border=Tru
 # Tabs
 # ============================================================
 
-tab_nation, tab_rankings, tab_trends, tab_data = st.tabs(
+tab_nation, tab_rankings, tab_clusters, tab_trends, tab_data = st.tabs(
     [
         "Nation Meta",
         "Vehicle Rankings",
+        "Performance Clusters",
         "Trends",
         "Data Notes",
     ]
@@ -1141,6 +1154,297 @@ with tab_rankings:
                         width="stretch",
                         hide_index=True,
                     )
+
+
+# ============================================================
+# Performance Clusters tab
+# ============================================================
+
+with tab_clusters:
+    st.subheader("Performance Clusters")
+    st.caption(
+        "Find vehicle archetypes by BR-relative strength, combat efficiency, and "
+        "sample confidence."
+    )
+
+    with st.expander("How these clusters work", expanded=False):
+        st.markdown(
+            "HDBSCAN is a density-based clustering method. Instead of forcing every "
+            "vehicle into a fixed number of groups, it looks for natural dense "
+            "pockets in the data and can mark uncertain vehicles as noise/outliers. "
+            "That makes it useful for messy game-performance data where some "
+            "vehicles form clear groups and others are weird one-offs.\n\n"
+            "Clusters here use **only three signals**: **CE Score** (BR-relative "
+            "strength), **K/D** (combat efficiency), and **log1p(sample battles)** "
+            "(evidence strength). Win rate and frags per battle are shown as "
+            "**context only** — they do not form the clusters. Clustering runs on the "
+            "currently filtered slice, so archetypes change as you adjust the top "
+            "filters."
+        )
+
+    min_sb = st.slider(
+        "Minimum sample battles",
+        min_value=0,
+        max_value=500,
+        value=int(features.CLUSTER_MIN_SAMPLE_BATTLES),
+        step=25,
+        key="clusters_min_sample_battles",
+        help="Vehicles below this 30-day sample-battle count are excluded from clustering.",
+    )
+
+    # Missing-BR vehicles are excluded inside build_vehicle_clusters.
+    clustered_df, cluster_meta = get_clusters(filtered_vehicle_df, min_sb)
+
+    if not cluster_meta["available"]:
+        st.error(
+            "Clustering needs scikit-learn, which is not installed in this "
+            "environment. Add `scikit-learn>=1.5` to requirements.txt."
+        )
+    elif cluster_meta["reason"] in ("empty", "too_few") or clustered_df.empty:
+        st.warning(
+            f"Not enough vehicles to cluster under the current filters "
+            f"({cluster_meta['n_vehicles']} with a Realistic BR and ≥ {min_sb} "
+            f"sample battles; need at least {features.CLUSTER_MIN_VEHICLES}). "
+            "Widen the filters or lower the minimum sample battles."
+        )
+    else:
+        cdf = clustered_df.copy()
+
+        def _cluster_fmt_br(br):
+            return f"BR {br:.1f}" if pd.notna(br) else "BR N/A"
+
+        cdf["display_label"] = [
+            f"{n} — {c if pd.notna(c) else 'Unknown'}, {_cluster_fmt_br(b)}"
+            for n, c, b in zip(cdf["vehicle_name"], cdf["country"], cdf["realistic_br"])
+        ]
+
+        # --- 2. Quality cards ---
+        sil = cluster_meta["silhouette"]
+        qcard = st.columns(4)
+        qcard[0].metric("Vehicles clustered", f"{cluster_meta['n_vehicles']:,}", border=True)
+        qcard[1].metric("Clusters found", f"{cluster_meta['n_clusters']}", border=True)
+        qcard[2].metric("Outliers", f"{cluster_meta['noise_pct']:.0f}%", border=True)
+        qcard[3].metric(
+            "Cluster quality",
+            cluster_meta["quality_label"],
+            help=(f"Silhouette {sil:.2f} (rough guide only)" if sil is not None else "Silhouette n/a"),
+            border=True,
+        )
+
+        if cluster_meta["n_clusters"] == 0:
+            st.info(
+                "HDBSCAN did not find dense archetypes in this slice — every vehicle "
+                "is an outlier. This is common for small or very uniform slices. Try "
+                "a wider BR range or a lower minimum sample battles."
+            )
+        elif cluster_meta["n_clusters"] > 20 or (
+            cluster_meta["n_vehicles"] > 250 and cluster_meta["n_clusters"] > 25
+        ):
+            st.info(
+                "This slice produced many small archetypes. For a cleaner cluster "
+                "map, narrow the BR range or select a vehicle type."
+            )
+
+        # Canonical label order (+ any disambiguated suffixes appended).
+        label_order = [
+            "Core Meta",
+            "Underplayed Meta",
+            "Solid Picks",
+            "Popular Strugglers",
+            "Niche Signals",
+            "Off-Meta",
+            "Outliers",
+        ]
+        labels_present = set(cdf["friendly_label"].dropna())
+        present = [l for l in label_order if l in labels_present]
+        present += sorted(labels_present - set(present))
+
+        # --- 3. 3D cluster space ---
+        st.markdown("**Cluster feature space (3D)** — the exact features the model uses")
+        fig3d = px.scatter_3d(
+            cdf,
+            x="combat_effectiveness",
+            y="ground_frags_per_death",
+            z="log1p_sample_battles",
+            color="friendly_label",
+            category_orders={"friendly_label": present},
+            hover_name="display_label",
+            hover_data={
+                "display_label": False,
+                "country": True,
+                "realistic_br": ":.1f",
+                "vehicle_type": True,
+                "combat_effectiveness": ":.1f",
+                "ground_frags_per_death": ":.2f",
+                "total_battles_30d": ":,.0f",
+                "win_rate": ":.1f",
+                "ground_frags_per_battle": ":.2f",
+            },
+        )
+        fig3d.update_traces(marker=dict(size=4))
+        fig3d.update_layout(
+            height=600,
+            margin=dict(l=0, r=0, t=30, b=0),
+            legend_title_text="Archetype",
+            scene=dict(
+                xaxis_title="CE Score",
+                yaxis_title="K/D",
+                zaxis_title="log1p(sample battles)",
+            ),
+        )
+        st.plotly_chart(fig3d, width="stretch")
+
+        # --- 4. 2D CE vs K/D nation map (most readable) ---
+        st.markdown("**Archetype map — CE Score vs K/D** (point size = sample battles)")
+        fig2d = px.scatter(
+            cdf,
+            x="combat_effectiveness",
+            y="ground_frags_per_death",
+            size="total_battles_30d",
+            size_max=28,
+            color="friendly_label",
+            category_orders={"friendly_label": present},
+            opacity=0.8,
+            hover_name="display_label",
+            hover_data={
+                "display_label": False,
+                "friendly_label": True,
+                "country": True,
+                "realistic_br": ":.1f",
+                "vehicle_type": True,
+                "combat_effectiveness": ":.1f",
+                "ground_frags_per_death": ":.2f",
+                "total_battles_30d": ":,.0f",
+                "win_rate": ":.1f",
+                "ground_frags_per_battle": ":.2f",
+            },
+        )
+        fig2d.update_layout(
+            height=560,
+            margin=dict(l=10, r=10, t=30, b=10),
+            xaxis_title="CE Score",
+            yaxis_title="K/D (ground frags per death)",
+            legend_title_text="Archetype",
+        )
+        st.plotly_chart(fig2d, width="stretch")
+
+        # --- 5. Cluster profile summary ---
+        st.markdown("**Cluster profiles** (win rate & frags/battle are context only)")
+        prof = (
+            cdf.groupby("friendly_label")
+            .agg(
+                vehicles=("vehicle_slug", "nunique"),
+                avg_ce=("combat_effectiveness", "mean"),
+                avg_kd=("ground_frags_per_death", "mean"),
+                median_sample_battles=("total_battles_30d", "median"),
+                avg_win_rate=("win_rate", "mean"),
+                avg_frags_per_battle=("ground_frags_per_battle", "mean"),
+            )
+            .reset_index()
+        )
+        top_by_ce = (
+            cdf.sort_values("combat_effectiveness", ascending=False)
+            .groupby("friendly_label")["vehicle_name"].first()
+            .rename("top_vehicle")
+        )
+        prof = prof.merge(top_by_ce, on="friendly_label", how="left")
+        prof["_ord"] = prof["friendly_label"].map({l: i for i, l in enumerate(present)}).fillna(999)
+        prof = prof.sort_values("_ord").drop(columns="_ord")
+        st.dataframe(
+            prof,
+            width="stretch",
+            hide_index=True,
+            column_config={
+                "friendly_label": "Archetype",
+                "vehicles": st.column_config.NumberColumn("Vehicles", format="%d"),
+                "avg_ce": st.column_config.NumberColumn("Avg CE", format="%.1f"),
+                "avg_kd": st.column_config.NumberColumn("Avg K/D", format="%.2f"),
+                "median_sample_battles": st.column_config.NumberColumn("Median sample battles", format="%d"),
+                "avg_win_rate": st.column_config.NumberColumn("Avg win rate (ctx)", format="%.1f%%"),
+                "avg_frags_per_battle": st.column_config.NumberColumn("Avg frags/battle (ctx)", format="%.2f"),
+                "top_vehicle": "Top vehicle by CE",
+            },
+        )
+
+        # --- 6. Cluster drilldown ---
+        st.markdown("**Explore an archetype**")
+        drill = st.selectbox("Archetype", options=present, key="clusters_drill")
+        sub = cdf[cdf["friendly_label"] == drill]
+        if sub.empty:
+            st.info("No vehicles in this archetype.")
+        else:
+            st.caption(
+                f"**{drill}** — {sub['vehicle_slug'].nunique()} vehicles · "
+                f"avg CE {sub['combat_effectiveness'].mean():.1f} · "
+                f"avg K/D {sub['ground_frags_per_death'].mean():.2f} · "
+                f"median {int(sub['total_battles_30d'].median()):,} sample battles."
+            )
+            drill_a, drill_b = st.columns([3, 2], gap="large")
+            with drill_a:
+                st.markdown("Top vehicles by CE Score")
+                st.dataframe(
+                    sub.sort_values("combat_effectiveness", ascending=False)[
+                        [
+                            "display_label",
+                            "combat_effectiveness",
+                            "ground_frags_per_death",
+                            "total_battles_30d",
+                        ]
+                    ].head(10),
+                    width="stretch",
+                    hide_index=True,
+                    column_config={
+                        "display_label": "Vehicle",
+                        "combat_effectiveness": st.column_config.NumberColumn("CE Score", format="%.1f"),
+                        "ground_frags_per_death": st.column_config.NumberColumn("K/D", format="%.2f"),
+                        "total_battles_30d": st.column_config.NumberColumn("Sample battles", format="%d"),
+                    },
+                )
+            with drill_b:
+                st.markdown("Nation composition")
+                comp = (
+                    sub["country"].value_counts().rename_axis("Nation").reset_index(name="Vehicles")
+                )
+                st.dataframe(comp, width="stretch", hide_index=True)
+
+        # --- 7. Full clustered table (collapsed) ---
+        with st.expander("Full clustered vehicle table"):
+            full_cols = [
+                "display_label",
+                "vehicle_name",
+                "friendly_label",
+                "cluster_id",
+                "country",
+                "realistic_br",
+                "vehicle_type",
+                "combat_effectiveness",
+                "ground_frags_per_death",
+                "total_battles_30d",
+                "win_rate",
+                "ground_frags_per_battle",
+            ]
+            full_cols = [c for c in full_cols if c in cdf.columns]
+            st.dataframe(
+                cdf[full_cols].sort_values(
+                    ["friendly_label", "combat_effectiveness"], ascending=[True, False]
+                ),
+                width="stretch",
+                hide_index=True,
+                column_config={
+                    "display_label": "Vehicle (label)",
+                    "vehicle_name": "Name",
+                    "friendly_label": "Archetype",
+                    "cluster_id": st.column_config.NumberColumn("Cluster ID", format="%d"),
+                    "country": "Nation",
+                    "realistic_br": st.column_config.NumberColumn("BR", format="%.1f"),
+                    "vehicle_type": "Type",
+                    "combat_effectiveness": st.column_config.NumberColumn("CE Score", format="%.1f"),
+                    "ground_frags_per_death": st.column_config.NumberColumn("K/D", format="%.2f"),
+                    "total_battles_30d": st.column_config.NumberColumn("Sample battles", format="%d"),
+                    "win_rate": st.column_config.NumberColumn("Win rate (ctx)", format="%.1f%%"),
+                    "ground_frags_per_battle": st.column_config.NumberColumn("Frags/battle (ctx)", format="%.2f"),
+                },
+            )
 
 
 # ============================================================
