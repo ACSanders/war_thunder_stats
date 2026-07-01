@@ -1068,3 +1068,173 @@ def build_lineups(
         .head(top_k)
         .reset_index(drop=True)
     )
+
+
+# ============================================================
+# Meta Signals (v1): Rising Performers + Underplayed Meta
+# ============================================================
+# Daily Performance Score is a *daily BR-relative analogue* of the Combat
+# Effectiveness Score, used only for trend detection. It mirrors CE's structure
+# (log1p K/D & frags per battle, within-BR robust z, same weights, 50 + 15*z)
+# but is computed per day WITHOUT empirical-Bayes shrinkage (daily battle counts
+# are too small for per-day shrinkage). The official 30-day CE is unchanged.
+META_RELIABILITY_PRIOR = 50          # reliability = battles / (battles + 50)
+MOMENTUM_MIN_OBSERVED = 20           # min observed scored days for a momentum signal
+MOMENTUM_MIN_SAMPLE_BATTLES = 50     # min 30-day sample battles for a momentum signal
+MOMENTUM_WINDOW = 10                 # days averaged at each end
+META_VALUE_MIN_SAMPLE_BATTLES = 25   # default floor for Underplayed Meta
+
+# Daily Performance Score uses the same core metrics/weights as CE (minus the
+# sample-confidence term, which is meaningless per day).
+_DAILY_SCORE_WEIGHTS = {
+    "ground_frags_per_death": 0.40,
+    "ground_frags_per_battle": 0.40,
+    "win_rate": 0.15,
+}
+
+
+def build_daily_br_score(recent_df: pd.DataFrame) -> pd.DataFrame:
+    """Daily BR-relative Performance Score (CE-like) per vehicle per day.
+
+    For each date, within each exact BR, log1p-transform K/D & frags per battle,
+    robust-z each metric, combine with the CE weights (renormalized over the
+    metrics available that day), and map to 50 + 15*z clipped to 0-100.
+    Returns columns: vehicle_slug, date, daily_score. Computed on the FULL daily
+    cross-section so the within-BR distribution is stable.
+    """
+    if recent_df.empty:
+        return pd.DataFrame(columns=["vehicle_slug", "date", "daily_score"])
+
+    df = recent_df.dropna(subset=["realistic_br"]).copy()
+    if df.empty:
+        return pd.DataFrame(columns=["vehicle_slug", "date", "daily_score"])
+
+    metrics = [m for m in _DAILY_SCORE_WEIGHTS if m in df.columns]
+    parts = []
+    for _, day in df.groupby("date"):
+        br = day["realistic_br"]
+        num = pd.Series(0.0, index=day.index)
+        den = pd.Series(0.0, index=day.index)
+        for m in metrics:
+            w = _DAILY_SCORE_WEIGHTS[m]
+            vals = np.log1p(day[m]) if m in CE_LOG1P_METRICS else day[m]
+            z = _within_br_robust_z(vals, br)
+            avail = z.notna()
+            num = num + (w * z).where(avail, 0.0)
+            den = den + pd.Series(w, index=day.index).where(avail, 0.0)
+        z_total = num / den.where(den > 0)
+        out_day = day[["vehicle_slug", "date"]].copy()
+        out_day["daily_score"] = (SCORE_CENTER + SCORE_SLOPE * z_total).clip(0, 100)
+        parts.append(out_day)
+
+    return pd.concat(parts, ignore_index=True)
+
+
+def build_momentum(
+    daily_score_df: pd.DataFrame,
+    vehicle_agg_df: pd.DataFrame,
+    min_observed: int = MOMENTUM_MIN_OBSERVED,
+    min_sample_battles: int = MOMENTUM_MIN_SAMPLE_BATTLES,
+    window: int = MOMENTUM_WINDOW,
+) -> pd.DataFrame:
+    """Per-vehicle Momentum Score from the daily Performance Score series.
+
+    momentum = ce_gain * coverage_weight * reliability, where
+      ce_gain     = mean(last `window` scored days) - mean(first `window`)
+      coverage    = min(observed_scored_days / 30, 1)
+      reliability = sample_battles / (sample_battles + META_RELIABILITY_PRIOR)
+
+    Requires >= min_observed scored days and >= min_sample_battles. Returned for
+    ALL qualifying vehicles (the app filters to the top-deck slice by slug).
+    """
+    if daily_score_df.empty or vehicle_agg_df.empty:
+        return pd.DataFrame()
+
+    scored = daily_score_df.dropna(subset=["daily_score"]).sort_values(["vehicle_slug", "date"])
+    rows = []
+    for slug, g in scored.groupby("vehicle_slug"):
+        n = len(g)
+        if n < min_observed:
+            continue
+        early = float(g["daily_score"].head(window).mean())
+        late = float(g["daily_score"].tail(window).mean())
+        rows.append(
+            {
+                "vehicle_slug": slug,
+                "observed_scored_days": n,
+                "early_ce": round(early, 1),
+                "late_ce": round(late, 1),
+                "ce_gain": round(late - early, 1),
+            }
+        )
+    if not rows:
+        return pd.DataFrame()
+
+    mom = pd.DataFrame(rows)
+    ctx_cols = [
+        c for c in [
+            "vehicle_slug", "vehicle_name", "country", "vehicle_type",
+            "realistic_br", "combat_effectiveness", "ground_frags_per_death",
+            "ground_frags_per_battle", "win_rate", "total_battles_30d",
+            "has_realistic_br", "is_premium",
+        ]
+        if c in vehicle_agg_df.columns
+    ]
+    mom = mom.merge(vehicle_agg_df[ctx_cols], on="vehicle_slug", how="left")
+
+    mom = mom[
+        mom.get("has_realistic_br", True).fillna(False)
+        & (mom["total_battles_30d"].fillna(0) >= min_sample_battles)
+    ].copy()
+    if mom.empty:
+        return mom
+
+    coverage = (mom["observed_scored_days"] / 30).clip(upper=1.0)
+    reliability = mom["total_battles_30d"] / (mom["total_battles_30d"] + META_RELIABILITY_PRIOR)
+    mom["momentum_score"] = (mom["ce_gain"] * coverage * reliability).round(2)
+    return mom.sort_values("momentum_score", ascending=False).reset_index(drop=True)
+
+
+def build_meta_value(
+    vehicle_df: pd.DataFrame,
+    min_sample_battles: int = META_VALUE_MIN_SAMPLE_BATTLES,
+) -> pd.DataFrame:
+    """Underplayed Meta: Meta Value Score on the (already filtered) 30-day
+    aggregate, using percentiles within this slice.
+
+    performance_strength = 0.50*CE_pct + 0.30*KD_pct + 0.20*fpb_pct
+    underplay_strength   = 1 - sample_battles_pct
+    reliability          = sample_battles / (sample_battles + 50)
+    meta_value = 100 * performance_strength * (0.50 + 0.50*underplay_strength) * reliability
+    """
+    if vehicle_df.empty:
+        return pd.DataFrame()
+
+    has_br = (
+        vehicle_df["has_realistic_br"].fillna(False)
+        if "has_realistic_br" in vehicle_df.columns
+        else vehicle_df["realistic_br"].notna()
+    )
+    d = vehicle_df[
+        has_br
+        & vehicle_df["combat_effectiveness"].notna()
+        & vehicle_df["ground_frags_per_death"].notna()
+        & vehicle_df["ground_frags_per_battle"].notna()
+        & (vehicle_df["total_battles_30d"].fillna(0) >= min_sample_battles)
+    ].copy()
+    if d.empty:
+        return d
+
+    d["ce_pct"] = d["combat_effectiveness"].rank(pct=True)
+    d["kd_pct"] = d["ground_frags_per_death"].rank(pct=True)
+    d["fpb_pct"] = d["ground_frags_per_battle"].rank(pct=True)
+    d["sample_battles_pct"] = d["total_battles_30d"].rank(pct=True)
+
+    perf = 0.50 * d["ce_pct"] + 0.30 * d["kd_pct"] + 0.20 * d["fpb_pct"]
+    underplay = 1.0 - d["sample_battles_pct"]
+    reliability = d["total_battles_30d"] / (d["total_battles_30d"] + META_RELIABILITY_PRIOR)
+
+    d["performance_strength"] = perf
+    d["underplay_strength"] = underplay
+    d["meta_value_score"] = (100.0 * perf * (0.50 + 0.50 * underplay) * reliability).round(2)
+    return d.sort_values("meta_value_score", ascending=False).reset_index(drop=True)
