@@ -7,3 +7,4 @@ lxml
 plotly
 pyarrow
 python-dotenv
+scikit-learn>=1.5
