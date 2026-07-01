@@ -104,6 +104,22 @@ def get_lineups(candidate_df: pd.DataFrame, size: int, prefer_diversity: bool):
     return features.build_lineups(candidate_df, size, prefer_diversity=prefer_diversity)
 
 
+@st.cache_data(ttl=60 * 60)
+def get_momentum(recent_daily_df: pd.DataFrame, vehicle_agg_df: pd.DataFrame):
+    """Momentum table for ALL qualifying vehicles (filter-independent, so the
+    heavy daily-score computation runs once). Also returns the daily score
+    series for trend lines. The tab filters results to the top-deck slice."""
+    daily = features.build_daily_br_score(recent_daily_df)
+    momentum = features.build_momentum(daily, vehicle_agg_df)
+    return daily, momentum
+
+
+@st.cache_data(ttl=60 * 60)
+def get_meta_value(vehicle_df: pd.DataFrame, min_sample_battles: int):
+    """Underplayed-Meta table on the filtered slice."""
+    return features.build_meta_value(vehicle_df, min_sample_battles=min_sample_battles)
+
+
 # Data preparation, vehicle aggregation, scoring, and nation/BR aggregates now
 # live in features.py (pure pandas, reusable by offline scripts). The cached
 # wrappers above expose them to the app.
@@ -348,11 +364,12 @@ card_row2[2].metric("Rolling window", window_value, help=window_help, border=Tru
 # Tabs
 # ============================================================
 
-tab_nation, tab_rankings, tab_clusters, tab_lineup = st.tabs(
+tab_nation, tab_rankings, tab_clusters, tab_meta, tab_lineup = st.tabs(
     [
         "Nation Meta",
         "Vehicle Rankings",
         "Performance Clusters",
+        "Meta Signals",
         "Lineup Builder",
     ]
 )
@@ -1459,6 +1476,252 @@ with tab_clusters:
                     "win_rate": st.column_config.NumberColumn("Win rate (ctx)", format="%.1f%%"),
                     "ground_frags_per_battle": st.column_config.NumberColumn("Frags/battle (ctx)", format="%.2f"),
                 },
+            )
+
+
+# ============================================================
+# Meta Signals tab
+# ============================================================
+
+with tab_meta:
+    st.subheader("Meta Signals")
+    st.caption(
+        "What is changing and what is being overlooked in the current slice. "
+        "Uses the top filter deck."
+    )
+
+    def _meta_fmt_br(b):
+        return f"BR {b:.1f}" if pd.notna(b) else "BR N/A"
+
+    filtered_slugs = set(filtered_vehicle_df["vehicle_slug"])
+
+    # ---------------- Section 1: Rising Performers ----------------
+    st.markdown("### Rising Performers")
+    st.caption(
+        "Vehicles whose daily BR-relative performance improved over the rolling "
+        "30-day window (min 20 observed days, min 50 sample battles)."
+    )
+
+    daily_score_df, momentum_all = get_momentum(recent_df, vehicle_30d_df)
+    momentum = (
+        momentum_all[momentum_all["vehicle_slug"].isin(filtered_slugs)].copy()
+        if not momentum_all.empty
+        else momentum_all
+    )
+
+    if momentum.empty:
+        st.info(
+            "No vehicles meet the Rising Performers thresholds under the current "
+            "filters (need ≥ 20 observed days and ≥ 50 sample battles)."
+        )
+    else:
+        momentum["display_label"] = [
+            f"{n} — {c if pd.notna(c) else 'Unknown'}, {_meta_fmt_br(b)}"
+            for n, c, b in zip(momentum["vehicle_name"], momentum["country"], momentum["realistic_br"])
+        ]
+        rising_n = st.slider(
+            "Top N rising", 5, 25, 12, 1, key="meta_rising_n"
+        )
+        top_rise = momentum.head(rising_n)
+
+        # Bar chart by Momentum Score.
+        bar_rise = top_rise.sort_values("momentum_score", ascending=True)
+        rise_fig = px.bar(
+            bar_rise, x="momentum_score", y="display_label", orientation="h",
+            color="country",
+            hover_data=[
+                c for c in ["realistic_br", "ce_gain", "early_ce", "late_ce",
+                            "total_battles_30d", "combat_effectiveness"]
+                if c in bar_rise.columns
+            ],
+        )
+        rise_fig.update_layout(
+            xaxis_title="Momentum Score", yaxis_title=None,
+            height=max(320, 30 * len(bar_rise) + 120),
+            margin=dict(l=10, r=10, t=20, b=10), legend_title_text="Nation",
+        )
+        st.plotly_chart(rise_fig, width="stretch")
+
+        # Daily Performance Score trend lines for the top risers.
+        st.markdown("**Daily Performance Score trend** (BR-relative, CE-like)")
+        trend = daily_score_df[daily_score_df["vehicle_slug"].isin(top_rise["vehicle_slug"])].copy()
+        trend = trend.merge(
+            top_rise[["vehicle_slug", "display_label"]], on="vehicle_slug", how="left"
+        ).dropna(subset=["daily_score"])
+        if not trend.empty:
+            trend_fig = px.line(
+                trend.sort_values("date"), x="date", y="daily_score", color="display_label",
+            )
+            trend_fig.add_hline(y=50, line_dash="dot", opacity=0.5, annotation_text="BR average (50)")
+            trend_fig.update_layout(
+                xaxis_title="Date", yaxis_title="Daily Performance Score",
+                height=460, margin=dict(l=10, r=10, t=20, b=10), legend_title_text="Vehicle",
+            )
+            st.plotly_chart(trend_fig, width="stretch")
+
+        with st.expander("Show Rising Performers table"):
+            rise_cols = [
+                "display_label", "realistic_br", "vehicle_type", "early_ce",
+                "late_ce", "ce_gain", "observed_scored_days", "total_battles_30d",
+                "combat_effectiveness", "momentum_score",
+            ]
+            rise_cols = [c for c in rise_cols if c in top_rise.columns]
+            st.dataframe(
+                top_rise[rise_cols], width="stretch", hide_index=True,
+                column_config={
+                    "display_label": "Vehicle",
+                    "realistic_br": st.column_config.NumberColumn("BR", format="%.1f"),
+                    "vehicle_type": "Type",
+                    "early_ce": st.column_config.NumberColumn("Early", format="%.1f"),
+                    "late_ce": st.column_config.NumberColumn("Late", format="%.1f"),
+                    "ce_gain": st.column_config.NumberColumn("Gain", format="%.1f"),
+                    "observed_scored_days": st.column_config.NumberColumn("Days", format="%d"),
+                    "total_battles_30d": st.column_config.NumberColumn("Sample battles", format="%d"),
+                    "combat_effectiveness": st.column_config.NumberColumn("CE Score", format="%.1f"),
+                    "momentum_score": st.column_config.NumberColumn("Momentum", format="%.2f"),
+                },
+            )
+
+        with st.expander("How Momentum Score works"):
+            st.markdown(
+                "The **Daily Performance Score** is a daily BR-relative analogue "
+                "used only for trend detection — it is **not** the official 30-day "
+                "CE Score. For each date:\n\n"
+                "- K/D and frags per battle are log-transformed (they are skewed).\n"
+                "- K/D, frags per battle, and win rate are robust z-scored within "
+                "exact BR for that date, then combined with CE's metric weights.\n"
+                "- The result is mapped to a 0–100 scale where 50 is roughly "
+                "BR-average.\n"
+                "- Unlike CE, it applies no per-day sample smoothing (daily battle "
+                "counts are too small)."
+            )
+            st.code(
+                """
+early_score = mean of the first 10 observed daily scores
+late_score  = mean of the last  10 observed daily scores
+gain        = late_score - early_score
+coverage    = min(observed_days / 30, 1)
+reliability = sample_battles / (sample_battles + 50)
+
+Momentum Score = gain × coverage × reliability
+                """.strip()
+            )
+
+    st.divider()
+
+    # ---------------- Section 2: Underplayed Meta ----------------
+    st.markdown("### Underplayed Meta")
+    st.caption(
+        "Strong, lethal vehicles with relatively low sample battles in the "
+        "current slice — overlooked opportunities with enough data to trust."
+    )
+
+    uc1, uc2 = st.columns([2, 1], gap="large")
+    with uc1:
+        meta_min_sb = st.slider(
+            "Minimum sample battles", 0, 500,
+            int(features.META_VALUE_MIN_SAMPLE_BATTLES), 25, key="meta_min_sb",
+        )
+    with uc2:
+        meta_n = st.slider("Top N", 5, 25, 12, 1, key="meta_value_n")
+
+    meta_val = get_meta_value(filtered_vehicle_df, meta_min_sb)
+
+    if meta_val.empty:
+        st.info(
+            "No vehicles meet the Underplayed Meta threshold under the current "
+            "filters. Lower the minimum sample battles or widen the filters."
+        )
+    else:
+        meta_val = meta_val.copy()
+        meta_val["display_label"] = [
+            f"{n} — {c if pd.notna(c) else 'Unknown'}, {_meta_fmt_br(b)}"
+            for n, c, b in zip(meta_val["vehicle_name"], meta_val["country"], meta_val["realistic_br"])
+        ]
+        top_meta = meta_val.head(meta_n)
+
+        # Opportunity Map: sample-battle percentile vs CE, size = Meta Value.
+        st.markdown("**Opportunity map** — strong but low-usage vehicles sit upper-left")
+        opp_fig = px.scatter(
+            meta_val, x="sample_battles_pct", y="combat_effectiveness",
+            size="meta_value_score", size_max=26, color="country",
+            hover_name="display_label",
+            hover_data={
+                "sample_battles_pct": ":.2f",
+                "combat_effectiveness": ":.1f",
+                "realistic_br": ":.1f",
+                "vehicle_type": True,
+                "ground_frags_per_death": ":.2f",
+                "ground_frags_per_battle": ":.2f",
+                "total_battles_30d": ":,.0f",
+                "meta_value_score": ":.1f",
+            },
+        )
+        opp_fig.update_layout(
+            height=520, margin=dict(l=10, r=10, t=20, b=10),
+            xaxis_title="Sample-battle percentile (lower = less played)",
+            yaxis_title="CE Score", legend_title_text="Nation",
+        )
+        st.plotly_chart(opp_fig, width="stretch")
+
+        # Bar chart by Meta Value Score.
+        bar_meta = top_meta.sort_values("meta_value_score", ascending=True)
+        meta_fig = px.bar(
+            bar_meta, x="meta_value_score", y="display_label", orientation="h",
+            color="vehicle_type",
+            hover_data=[
+                c for c in ["realistic_br", "combat_effectiveness",
+                            "ground_frags_per_death", "ground_frags_per_battle",
+                            "total_battles_30d"]
+                if c in bar_meta.columns
+            ],
+        )
+        meta_fig.update_layout(
+            xaxis_title="Meta Value Score", yaxis_title=None,
+            height=max(320, 30 * len(bar_meta) + 120),
+            margin=dict(l=10, r=10, t=20, b=10), legend_title_text="Type",
+        )
+        st.plotly_chart(meta_fig, width="stretch")
+
+        with st.expander("Show Underplayed Meta table"):
+            meta_cols = [
+                "display_label", "realistic_br", "vehicle_type",
+                "combat_effectiveness", "ground_frags_per_death",
+                "ground_frags_per_battle", "win_rate", "total_battles_30d",
+                "meta_value_score",
+            ]
+            meta_cols = [c for c in meta_cols if c in top_meta.columns]
+            st.dataframe(
+                top_meta[meta_cols], width="stretch", hide_index=True,
+                column_config={
+                    "display_label": "Vehicle",
+                    "realistic_br": st.column_config.NumberColumn("BR", format="%.1f"),
+                    "vehicle_type": "Type",
+                    "combat_effectiveness": st.column_config.NumberColumn("CE Score", format="%.1f"),
+                    "ground_frags_per_death": st.column_config.NumberColumn("K/D", format="%.2f"),
+                    "ground_frags_per_battle": st.column_config.NumberColumn("Frags / battle", format="%.2f"),
+                    "win_rate": st.column_config.NumberColumn("Win rate (ctx)", format="%.1f%%"),
+                    "total_battles_30d": st.column_config.NumberColumn("Sample battles", format="%d"),
+                    "meta_value_score": st.column_config.NumberColumn("Meta Value", format="%.1f"),
+                },
+            )
+
+        with st.expander("How Meta Value Score works"):
+            st.markdown(
+                "Percentiles are computed within the currently filtered slice and "
+                "scaled from 0 to 1 internally. Battle counts are ThunderSkill "
+                "tracked-user sample battles, not global War Thunder totals."
+            )
+            st.code(
+                """
+performance_strength = 0.50×CE pct + 0.30×K/D pct + 0.20×frags-per-battle pct
+underplay_strength   = 1 - sample-battles pct
+reliability          = sample_battles / (sample_battles + 50)
+
+Meta Value Score = 100 × performance_strength
+                       × (0.50 + 0.50 × underplay_strength)
+                       × reliability
+                """.strip()
             )
 
 
