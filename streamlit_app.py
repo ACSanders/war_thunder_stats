@@ -188,7 +188,6 @@ def _br_range_options(df: pd.DataFrame) -> list:
 br_range_options = _br_range_options(vehicle_30d_df)
 country_options = sorted(vehicle_30d_df["country"].dropna().unique())
 type_options = sorted(vehicle_30d_df["vehicle_type"].dropna().unique())
-max_battles = int(max(100, vehicle_30d_df["battles"].max()))
 
 with st.container(border=True):
     st.markdown("**Filters** · empty pill groups mean *all*")
@@ -230,24 +229,6 @@ with st.container(border=True):
         with tog_b:
             show_marketplace = st.toggle("Marketplace", value=True, key="flt_marketplace")
 
-        with st.popover("More filters", width="stretch"):
-            min_battles = st.slider(
-                "Minimum 30-day sample battles",
-                min_value=0,
-                max_value=max_battles,
-                value=50,
-                step=10,
-                key="flt_min_battles",
-            )
-            min_days_observed = st.slider(
-                "Minimum days observed",
-                min_value=1,
-                max_value=30,
-                value=10,
-                step=1,
-                key="flt_min_days",
-            )
-
 # Normalize widget return values (empty multi -> all; None single -> All).
 selected_ranges = selected_ranges or []
 selected_countries = selected_countries or []
@@ -258,12 +239,6 @@ if premium_filter is None:
 
 def apply_vehicle_filters(df: pd.DataFrame) -> pd.DataFrame:
     out = df.copy()
-
-    if "battles" in out.columns:
-        out = out[out["battles"].fillna(0) >= min_battles]
-
-    if "days_observed" in out.columns:
-        out = out[out["days_observed"].fillna(0) >= min_days_observed]
 
     if selected_ranges and "br_range_label" in out.columns:
         out = out[out["br_range_label"].isin(selected_ranges)]
@@ -307,7 +282,10 @@ total_battles = int(filtered_vehicle_df["battles"].fillna(0).sum())
 n_nations = filtered_vehicle_df["country"].nunique()
 avg_ce = filtered_vehicle_df["combat_effectiveness"].mean()
 avg_ce_str = f"{avg_ce:.1f}" if pd.notna(avg_ce) else "N/A"
-n_ready = int(filtered_vehicle_df.get("is_analysis_ready", pd.Series(dtype=bool)).sum())
+
+# Median vehicle-level win rate (win_rate is 0-100; not battle-weighted).
+median_wr = filtered_vehicle_df["win_rate"].median(skipna=True)
+median_wr_str = f"{median_wr:.1f}%" if pd.notna(median_wr) else "—"
 
 if not recent_df.empty and recent_df["date"].notna().any():
     window_min = recent_df["date"].min()
@@ -326,7 +304,7 @@ card_row1[2].metric("Nations", f"{n_nations}", border=True)
 
 card_row2 = st.columns(3)
 card_row2[0].metric("Avg CE Score", avg_ce_str, border=True)
-card_row2[1].metric("Analysis-ready", f"{n_ready:,}", border=True)
+card_row2[1].metric("Median WR", median_wr_str, border=True)
 card_row2[2].metric("Rolling window", window_value, help=window_help, border=True)
 
 
@@ -555,13 +533,79 @@ with tab_nation:
 
         st.divider()
 
-        # --- 4. Nation summary ---
-        st.subheader("Nation strength summary")
+        # --- 4. Nation strength (dumbbell + summary table) ---
+        st.subheader("Nation strength")
 
         nation_summary = features.build_nation_summary(filtered_vehicle_df)
         if nation_summary.empty:
             st.info("No nation summary available under the current filters.")
         else:
+            # Dumbbell: Median CE -> Avg CE per nation, sorted by Avg CE desc.
+            dumbbell = nation_summary.dropna(subset=["avg_ce"]).copy()
+            if dumbbell.empty:
+                st.info("No scored nations to plot under the current filters.")
+            else:
+                # Ascending order so the highest Avg CE sits at the top of the chart.
+                dumbbell = dumbbell.sort_values("avg_ce", ascending=True)
+                nations = dumbbell["country"].tolist()
+                customdata = np.column_stack(
+                    [
+                        dumbbell["median_ce"].to_numpy(),
+                        dumbbell["avg_ce"].to_numpy(),
+                        dumbbell["top_br_range"].fillna("—").astype(str).to_numpy(),
+                        dumbbell["vehicles"].to_numpy(),
+                        dumbbell["battles"].to_numpy(),
+                    ]
+                )
+                hover = (
+                    "<b>%{y}</b><br>"
+                    "Avg CE: %{customdata[1]:.1f}<br>"
+                    "Median CE: %{customdata[0]:.1f}<br>"
+                    "Top BR range: %{customdata[2]}<br>"
+                    "Vehicles: %{customdata[3]:.0f}<br>"
+                    "Sample battles: %{customdata[4]:,.0f}"
+                    "<extra></extra>"
+                )
+
+                db_fig = go.Figure()
+                # Thin connecting segments (one per nation).
+                for _, r in dumbbell.iterrows():
+                    db_fig.add_trace(
+                        go.Scatter(
+                            x=[r["median_ce"], r["avg_ce"]],
+                            y=[r["country"], r["country"]],
+                            mode="lines",
+                            line=dict(color="#5A6472", width=3),
+                            showlegend=False,
+                            hoverinfo="skip",
+                        )
+                    )
+                db_fig.add_trace(
+                    go.Scatter(
+                        x=dumbbell["median_ce"], y=nations, mode="markers",
+                        name="Median CE",
+                        marker=dict(color="#6EA8FF", size=11, symbol="circle"),
+                        customdata=customdata, hovertemplate=hover,
+                    )
+                )
+                db_fig.add_trace(
+                    go.Scatter(
+                        x=dumbbell["avg_ce"], y=nations, mode="markers",
+                        name="Avg CE",
+                        marker=dict(color="#E8743B", size=13, symbol="diamond"),
+                        customdata=customdata, hovertemplate=hover,
+                    )
+                )
+                db_fig.update_layout(
+                    xaxis_title="Combat Effectiveness Score",
+                    yaxis_title=None,
+                    height=max(320, 34 * len(nations) + 120),
+                    margin=dict(l=10, r=10, t=30, b=10),
+                    legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+                )
+                st.plotly_chart(db_fig, width="stretch")
+
+            st.markdown("**Nation strength summary**")
             st.dataframe(
                 nation_summary,
                 width="stretch",
