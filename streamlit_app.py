@@ -432,8 +432,8 @@ with tab_nation:
             st.caption(
                 "Heatmap reflects the active filters. Blank cells mean either no "
                 "vehicles passed the current filters, no win-rate signal was "
-                "available, or vehicles in that nation/BR range are missing BR "
-                "metadata in the source data."
+                "available, or some source rows return N/A for BR metadata and are "
+                "omitted from BR-range cells."
             )
 
         st.divider()
@@ -747,6 +747,14 @@ with tab_rankings:
         if not vehicle_row.empty:
             row = vehicle_row.iloc[0]
 
+            if not bool(row.get("has_realistic_br", True)):
+                st.warning(
+                    "No Realistic BR is available from ThunderSkill for this "
+                    "vehicle. It is kept in the dataset because sample performance "
+                    "data exists, but it is omitted from BR-normalized views such "
+                    "as CE Score, BR heatmaps, and BR grouping."
+                )
+
             card_left, card_right = st.columns([1, 2], gap="large")
 
             with card_left:
@@ -979,11 +987,47 @@ Combat Effectiveness Score = clip(50 + 15 × z_total, 0, 100)
         "Vehicles without a Realistic BR are not scored."
     )
 
+    st.subheader("Vehicles without a Realistic BR")
     st.info(
-        "Vehicles missing `realistic_br` in the source data cannot appear in "
-        "BR-range charts (including the Nation × BR Range heatmap) until the "
-        "pipeline recovers or backfills their BR metadata."
+        "ThunderSkill returns **N/A** for BR metadata (country / type / battle "
+        "rating) on a subset of vehicles, so they have no Realistic BR here. "
+        "These rows are **kept** because their performance / sample data may "
+        "still be real, but they are **omitted from BR-normalized views** — the "
+        "Combat Effectiveness Score, the Nation × BR Range heatmap, and BR "
+        "grouping — to avoid assigning them an incorrect BR."
     )
+
+    excluded_no_br = vehicle_30d_df[~vehicle_30d_df["has_realistic_br"]].copy()
+    st.metric("Excluded — missing BR metadata", f"{len(excluded_no_br):,}")
+
+    if not excluded_no_br.empty:
+        with st.expander("Show vehicles excluded for missing BR (top by sample battles)"):
+            excluded_cols = [
+                c for c in [
+                    "vehicle_name",
+                    "vehicle_slug",
+                    "country",
+                    "rank",
+                    "total_battles_30d",
+                    "observed_days",
+                ]
+                if c in excluded_no_br.columns
+            ]
+            st.dataframe(
+                excluded_no_br[excluded_cols]
+                .sort_values("total_battles_30d", ascending=False)
+                .head(30),
+                width="stretch",
+                hide_index=True,
+                column_config={
+                    "vehicle_name": "Vehicle",
+                    "vehicle_slug": "Slug",
+                    "country": "Nation",
+                    "rank": st.column_config.NumberColumn("Rank", format="%d"),
+                    "total_battles_30d": st.column_config.NumberColumn("Sample battles", format="%d"),
+                    "observed_days": st.column_config.NumberColumn("Days", format="%d"),
+                },
+            )
 
     st.subheader("Current filtered vehicle dataframe")
 
