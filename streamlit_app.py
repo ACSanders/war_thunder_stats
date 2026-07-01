@@ -339,13 +339,12 @@ card_row2[2].metric("Rolling window", window_value, help=window_help, border=Tru
 # Tabs
 # ============================================================
 
-tab_nation, tab_rankings, tab_clusters, tab_lineup, tab_data = st.tabs(
+tab_nation, tab_rankings, tab_clusters, tab_lineup = st.tabs(
     [
         "Nation Meta",
         "Vehicle Rankings",
         "Performance Clusters",
         "Lineup Builder",
-        "Data Notes",
     ]
 )
 
@@ -1691,52 +1690,17 @@ with tab_lineup:
 
 
 # ============================================================
-# Data Notes tab
+# Footer
 # ============================================================
 
-with tab_data:
-    st.subheader("Dataset notes")
+st.divider()
 
-    st.write(
-        "The app loads the latest automated ThunderSkill CSV from GitHub. "
-        "The scraper collects up to 30 chart observations per Realistic Ground vehicle."
-    )
-
-    st.subheader("About battle counts")
-    st.info(
-        "Battle counts here come from ThunderSkill's **tracked-user sample** — "
-        "players who have linked their account — not global War Thunder battle "
-        "totals. Absolute numbers are therefore small, and low counts for rare, "
-        "event, or minor-nation vehicles are expected. They remain useful as a "
-        "**sample-size / confidence weight**: the Combat Effectiveness Score "
-        "uses them to pull low-sample vehicles toward their BR average. "
-        "(`index_battles` is essentially the same window sample, pre-summed.)"
-    )
-
-    c1, c2, c3 = st.columns(3)
-    c1.metric("Raw rows", f"{len(raw_df):,}")
-    c2.metric("Raw vehicles", f"{raw_df['vehicle_slug'].nunique():,}")
-    c3.metric("Recent rows", f"{len(recent_df):,}")
-
-    c4, c5, c6 = st.columns(3)
-    c4.metric("30-day vehicle rows", f"{len(vehicle_30d_df):,}")
-    c5.metric("Filtered vehicles", f"{len(filtered_vehicle_df):,}")
-    c6.metric("Filtered sample battles", f"{int(filtered_vehicle_df['battles'].fillna(0).sum()):,}")
-
-    if "date" in raw_df.columns:
-        st.write("Raw date range:", raw_df["date"].min(), "to", raw_df["date"].max())
-        st.write("App recent date range:", recent_df["date"].min(), "to", recent_df["date"].max())
-
-    st.subheader("Combat Effectiveness Score")
-
+with st.expander("Combat Effectiveness Score & data notes"):
     st.write(
         "The Combat Effectiveness Score measures how much a vehicle overperforms "
-        "the average for its **exact BR**. Each metric is smoothed toward the BR "
-        "average using an empirical-Bayes weight "
-        "(reliability = battles / (battles + 100)), so low-battle vehicles are "
-        "pulled toward average and do not dominate. Smoothed metrics are then "
-        "compared to the BR's distribution with a robust (median / MAD) z-score "
-        "and combined:"
+        "the average for its exact BR. Each metric is smoothed toward the BR "
+        "average using an empirical-Bayes-style reliability weight, so low-battle "
+        "vehicles are pulled toward average and do not dominate."
     )
 
     st.code(
@@ -1745,97 +1709,20 @@ z_total =
   0.40 × z(K/D, ground frags per death)
 + 0.40 × z(ground frags per battle)
 + 0.15 × z(win rate)
-+ 0.05 × z(data confidence = log1p(battles))
++ 0.05 × z(data confidence = log1p(sample battles))
 
 Combat Effectiveness Score = clip(50 + 15 × z_total, 0, 100)
         """.strip()
     )
 
     st.write(
-        "K/D and frags per battle are log1p-transformed before smoothing because "
+        "K/D and frags per battle are log-transformed before smoothing because "
         "they are skewed. 50 is roughly BR-average, ~65 is a strong step above, "
-        "and ~95+ is exceptional. The top vehicle in a BR is not automatically "
-        "100. Efficiency is intentionally excluded (it is already a composite). "
-        "Vehicles without a Realistic BR are not scored."
+        "and ~95+ is exceptional. ThunderSkill efficiency is intentionally "
+        "excluded because it is already a composite. Vehicles without Realistic "
+        "BR are not scored in BR-normalized views. Battle counts are ThunderSkill "
+        "tracked-user sample battles, not global War Thunder totals."
     )
-
-    st.subheader("Vehicles without a Realistic BR")
-    st.info(
-        "ThunderSkill returns **N/A** for BR metadata (country / type / battle "
-        "rating) on a subset of vehicles, so they have no Realistic BR here. "
-        "These rows are **kept** because their performance / sample data may "
-        "still be real, but they are **omitted from BR-normalized views** — the "
-        "Combat Effectiveness Score, the Nation × BR Range heatmap, and BR "
-        "grouping — to avoid assigning them an incorrect BR."
-    )
-
-    excluded_no_br = vehicle_30d_df[~vehicle_30d_df["has_realistic_br"]].copy()
-    st.metric("Excluded — missing BR metadata", f"{len(excluded_no_br):,}")
-
-    if not excluded_no_br.empty:
-        with st.expander("Show vehicles excluded for missing BR (top by sample battles)"):
-            excluded_cols = [
-                c for c in [
-                    "vehicle_name",
-                    "vehicle_slug",
-                    "country",
-                    "rank",
-                    "total_battles_30d",
-                    "observed_days",
-                ]
-                if c in excluded_no_br.columns
-            ]
-            st.dataframe(
-                excluded_no_br[excluded_cols]
-                .sort_values("total_battles_30d", ascending=False)
-                .head(30),
-                width="stretch",
-                hide_index=True,
-                column_config={
-                    "vehicle_name": "Vehicle",
-                    "vehicle_slug": "Slug",
-                    "country": "Nation",
-                    "rank": st.column_config.NumberColumn("Rank", format="%d"),
-                    "total_battles_30d": st.column_config.NumberColumn("Sample battles", format="%d"),
-                    "observed_days": st.column_config.NumberColumn("Days", format="%d"),
-                },
-            )
-
-    st.subheader("Current filtered vehicle dataframe")
-
-    preview_cols = [
-        "vehicle_name",
-        "country",
-        "vehicle_type",
-        "realistic_br",
-        "br_range_label",
-        "battles",
-        "days_observed",
-        "win_rate",
-        "ground_frags_per_battle",
-        "ground_frags_per_death",
-        "efficiency",
-        "combat_effectiveness",
-        "combat_effectiveness_legacy",
-        "is_analysis_ready",
-    ]
-    preview_cols = [c for c in preview_cols if c in filtered_vehicle_df.columns]
-
-    st.dataframe(
-        filtered_vehicle_df[preview_cols]
-        .sort_values("combat_effectiveness", ascending=False)
-        .head(100),
-        width="stretch",
-        hide_index=True,
-        height=500,
-    )
-
-
-# ============================================================
-# Footer
-# ============================================================
-
-st.divider()
 
 st.caption(
     "Independent data science project by Adam Sanders / "
