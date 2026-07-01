@@ -1,8 +1,8 @@
 # War Thunder Stats
 
-**A data science dashboard for War Thunder Realistic Ground vehicle performance, lineup building, and meta analysis.**
+**A data science dashboard for War Thunder Realistic Ground vehicle performance, meta signals, lineup building, and vehicle analysis.**
 
-[Live app](https://war-thunder-stats.com) · [Render deployment](https://warthunderstats.onrender.com)
+[Live app](https://warthunderstats.app) · [Alternate domain](https://war-thunder-stats.com) · [Render deployment](https://warthunderstats.onrender.com)
 
 ---
 
@@ -10,24 +10,29 @@
 
 **War Thunder Stats** is an applied data science project that turns ThunderSkill vehicle performance data into an interactive Streamlit analytics product. The app is designed to help players explore the ground-vehicle meta using empirical performance signals rather than anecdotal tier lists.
 
-The project combines a custom data pipeline, feature engineering, composite scoring, similarity modeling, clustering, and lineup optimization into a polished public web app.
+The project combines a custom data pipeline, feature engineering, composite scoring, similarity modeling, density-based clustering, trend detection, underplayed-vehicle discovery, and lineup optimization into a polished public web app.
 
-The app currently includes four core views:
+The app currently includes five core views:
 
 1. **Nation Meta** — compare national performance across BR ranges.
 2. **Vehicle Rankings** — rank and inspect vehicles by Combat Effectiveness.
 3. **Performance Clusters** — discover statistical vehicle archetypes with HDBSCAN.
-4. **Lineup Builder** — generate same-nation BR-bounded lineups using CE Score and role variety.
+4. **Meta Signals** — identify rising performers and underplayed high-value vehicles.
+5. **Lineup Builder** — generate same-nation BR-bounded lineups using CE Score and role variety.
 
 ---
 
 ## Live App
 
-The app is deployed on Render:
+The app is deployed on Render with a custom domain:
+
+**https://warthunderstats.app**
+
+The app is also reachable through:
 
 **https://war-thunder-stats.com**
 
-The app is also reachable through Render's default subdomain:
+Render's default subdomain:
 
 **https://warthunderstats.onrender.com**
 
@@ -57,7 +62,7 @@ Important caveat:
 
 > Battle counts in the app are labeled as **sample battles** because they represent ThunderSkill tracked-user samples, not global War Thunder totals.
 
-Vehicles with missing Realistic BR metadata are preserved in the raw/processed data, but they are excluded from BR-normalized views because Combat Effectiveness is explicitly BR-relative.
+Vehicles with missing Realistic BR metadata are preserved in the raw/processed data, but they are excluded from BR-normalized views because Combat Effectiveness and other BR-relative views require valid BR context.
 
 ---
 
@@ -241,7 +246,93 @@ The tab also includes a busy-slice warning when a broad filter creates too many 
 
 ---
 
-### 4. Lineup Builder
+### 4. Meta Signals
+
+The Meta Signals tab looks for movement and overlooked value inside the current filter slice. It is designed to answer two questions:
+
+1. Which vehicles are improving over the rolling 30-day window?
+2. Which strong vehicles appear underplayed relative to their performance?
+
+The tab has two sections:
+
+#### Rising Performers
+
+Rising Performers uses a **Daily Performance Score** to identify vehicles with meaningful improvement during the rolling 30-day window.
+
+The Daily Performance Score is a daily BR-relative analogue of CE Score used only for trend detection. It is not the official 30-day CE Score.
+
+Each day, within each exact BR:
+
+- K/D and frags per battle are log-transformed to reduce skew.
+- K/D, frags per battle, and win rate are robust z-scored against same-BR vehicles.
+- The weighted score is mapped to a 0-100 scale, where 50 is roughly BR-average.
+- No per-day sample smoothing is applied because daily battle counts are often too small.
+
+Momentum is calculated as:
+
+```text
+early_score = mean of the first 10 observed daily scores
+late_score  = mean of the last 10 observed daily scores
+gain        = late_score - early_score
+coverage    = min(observed_days / 30, 1)
+reliability = sample_battles / (sample_battles + 50)
+
+Momentum Score = gain × coverage × reliability
+```
+
+This rewards vehicles that show meaningful improvement, have enough observed days, and have enough sample battles to make the trend more credible.
+
+Outputs include:
+
+- Top rising vehicles by Momentum Score
+- Daily Performance Score trend chart
+- CE=50 reference line
+- Compact Rising Performers table
+- Formula and interpretation expander
+
+#### Underplayed Meta
+
+Underplayed Meta identifies vehicles that look strong and lethal but are not among the most-played vehicles in the current filtered slice.
+
+The metric is **Meta Value Score**.
+
+Percentiles are computed within the currently filtered slice and scaled from 0 to 1 internally. Battle counts are ThunderSkill tracked-user sample battles, not global War Thunder totals.
+
+```text
+performance_strength =
+  0.50 × CE percentile
++ 0.30 × K/D percentile
++ 0.20 × frags-per-battle percentile
+
+underplay_strength = 1 - sample-battles percentile
+reliability        = sample_battles / (sample_battles + 50)
+
+Meta Value Score = 100 × performance_strength
+                       × (0.50 + 0.50 × underplay_strength)
+                       × reliability
+```
+
+Interpretation:
+
+- **performance_strength** rewards high CE, K/D, and frags per battle.
+- **underplay_strength** rewards lower battle volume relative to the filtered slice.
+- **reliability** prevents very tiny samples from dominating.
+- The final score surfaces vehicles that are both strong and relatively underplayed.
+
+Outputs include:
+
+- Opportunity Map: sample-battle percentile vs CE Score
+- Point size by Meta Value Score
+- Nation-colored scatter points
+- Top Meta Value Score bar chart
+- Underplayed Meta results table
+- Formula and interpretation expander
+
+This tab makes the app less static by highlighting both emerging performers and overlooked high-value vehicles.
+
+---
+
+### 5. Lineup Builder
 
 The Lineup Builder replaces a basic trends view with a more practical decision-support tool.
 
@@ -307,6 +398,9 @@ Modeling / analytics:
 - Empirical-Bayes-style smoothing
 - Robust BR-relative z-scoring
 - Composite metric design
+- Daily trend scoring
+- Momentum scoring
+- Underplayed-vehicle value scoring
 - K-nearest-neighbor similarity search
 - HDBSCAN density clustering
 - Combination search for lineup optimization
@@ -341,7 +435,7 @@ war_thunder_stats/
 Key files:
 
 - `streamlit_app.py` — Streamlit UI and tab layout
-- `features.py` — feature engineering, scoring, clustering, similarity, and lineup helpers
+- `features.py` — feature engineering, scoring, clustering, similarity, meta-signal, and lineup helpers
 - `requirements.txt` — Python dependencies
 - `data/processed/ground_realistic_30_days_latest.csv` — latest app-ready data snapshot
 
@@ -358,12 +452,14 @@ It demonstrates:
 - Converts messy third-party game-performance data into a usable analytical product.
 - Designs user-facing metrics that are interpretable and aligned with player decisions.
 - Balances statistical rigor with practical usability.
+- Turns static rankings into actionable discovery and recommendation workflows.
 
 ### Metric design
 
 - Builds a transparent composite metric.
 - Uses BR-relative comparisons instead of global rankings.
 - Applies reliability weighting to reduce low-sample overreaction.
+- Designs separate metrics for ranking, trend detection, underplayed discovery, clustering, and lineup optimization.
 - Avoids opaque third-party composite metrics when they duplicate the role of the custom score.
 
 ### Machine learning and unsupervised learning
@@ -372,6 +468,13 @@ It demonstrates:
 - Uses HDBSCAN to discover density-based vehicle archetypes.
 - Handles outliers and weak cluster structure transparently.
 - Separates modeling features from contextual display features to avoid noisy cluster bias.
+
+### Trend detection and opportunity scoring
+
+- Computes a daily BR-relative performance score for trend detection.
+- Uses early-window vs late-window comparison to detect meaningful performance movement.
+- Applies coverage and reliability weighting to reduce noise from sparse daily observations.
+- Uses percentile-based opportunity scoring to surface strong but underplayed vehicles.
 
 ### Optimization and recommendation
 
@@ -385,7 +488,7 @@ It demonstrates:
 - Uses cron for scheduled updates.
 - Maintains a GitHub-backed data/app workflow.
 - Deploys a production Streamlit app on Render.
-- Configures a custom domain through Cloudflare.
+- Configures custom domains through Cloudflare.
 
 ---
 
@@ -400,6 +503,9 @@ Important limitations:
 - High or low performance can reflect player selection effects.
 - Win rate is influenced by team, matchmaking, nation popularity, and lineup context.
 - CE Score measures observed overperformance within BR, not intrinsic vehicle power.
+- Daily Performance Score is a trend-detection analogue, not the official CE Score.
+- Momentum Score can be influenced by sparse or unstable daily samples.
+- Meta Value Score is slice-relative and should be interpreted as an exploratory signal.
 - Clusters are slice-relative and should be interpreted as exploratory archetypes.
 - Lineup Builder recommendations are data-backed suggestions, not guarantees of in-game performance.
 
@@ -411,12 +517,12 @@ The app is best used as a structured analytical tool for exploring the meta, not
 
 Potential next improvements:
 
-- Add a dedicated Hidden Gems / Undervalued Vehicles view.
+- Add historical snapshot comparisons across multiple pipeline refreshes.
 - Add stronger lineup constraints such as requiring at least one light tank, SPAA, or tank destroyer.
 - Add lineup comparison mode.
-- Add historical trend snapshots after multiple data refreshes.
-- Precompute cluster labels in the pipeline if app-side clustering becomes expensive.
-- Add custom caching or static artifact generation for faster Render loads.
+- Add BR-specific annotations for notable vehicles and meta shifts.
+- Add performance caching or precomputed artifacts for faster Render loads.
+- Precompute cluster labels or meta-signal outputs in the pipeline if app-side computation becomes expensive.
 - Expand beyond Realistic Ground to other modes if the data quality supports it.
 
 ---
@@ -428,5 +534,3 @@ Independent data science project by **Adam Sanders / War Thunder Stats**.
 Data source: **ThunderSkill**.
 
 This project is not affiliated with Gaijin Entertainment or ThunderSkill.
-
-
