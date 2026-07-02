@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -euo pipefail
 
 cd /root/war-thunder-data-pipeline
 
@@ -8,6 +8,10 @@ source .venv/bin/activate
 echo "============================================================"
 echo "Starting ThunderSkill pipeline at $(date -u)"
 echo "============================================================"
+
+echo "Syncing with origin/main before pipeline run..."
+git fetch origin main
+git rebase origin/main
 
 python pull_thunderskill.py
 
@@ -23,7 +27,12 @@ if git diff --cached --quiet; then
     echo "No data changes to commit."
 else
     git commit -m "Update ThunderSkill data $(date -u +%Y-%m-%d)"
-    git push
+
+    echo "Syncing with origin/main before push..."
+    git fetch origin main
+    git rebase origin/main
+
+    git push origin main
 fi
 
 echo "Done at $(date -u)"
