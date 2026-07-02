@@ -5,6 +5,7 @@ of truth for:
 
   * cleaning / typing the raw ThunderSkill CSV          -> clean_daily()
   * safe metadata fallbacks (country / type / rank)     -> apply_metadata_fallbacks()
+  * manual War Thunder Wiki BR overrides                -> apply_wiki_br_overrides()
   * the recent 30-day window                            -> recent_window()
   * the one-row-per-vehicle aggregate                   -> build_vehicle_agg()
   * BR-relative Combat Effectiveness Score              -> add_combat_effectiveness()
@@ -276,6 +277,87 @@ def clean_daily(raw_df: pd.DataFrame) -> pd.DataFrame:
     df = apply_metadata_fallbacks(df)
 
     return df
+
+
+# ============================================================
+# Manual War Thunder Wiki BR overrides
+# ============================================================
+# ThunderSkill occasionally exposes stale realistic_br / arcade_br /
+# simulator_br metadata after War Thunder changes a vehicle's BR (e.g.
+# ussr_kv_1s: ThunderSkill reports 4.0, the official Wiki reports 4.3). This
+# lets a small, manually-maintained lookup CSV correct those columns before
+# CE / clustering / any other BR-relative feature is computed.
+
+WIKI_BR_LOOKUP_COLS = ["wiki_arcade_br", "wiki_realistic_br", "wiki_simulator_br"]
+
+# ThunderSkill BR column -> the wiki lookup column that can override it.
+_BR_OVERRIDE_MAP = {
+    "arcade_br": "wiki_arcade_br",
+    "realistic_br": "wiki_realistic_br",
+    "simulator_br": "wiki_simulator_br",
+}
+
+
+def apply_wiki_br_overrides(df: pd.DataFrame, lookup_df: pd.DataFrame | None) -> pd.DataFrame:
+    """Override stale ThunderSkill BR columns with trusted War Thunder Wiki values.
+
+    Merges ``lookup_df`` onto ``df`` by vehicle_slug and prefers each wiki_*_br
+    column wherever it is non-null; ThunderSkill values are kept for rows the
+    lookup doesn't cover. Original ThunderSkill BRs are preserved as
+    thunderskill_arcade_br / thunderskill_realistic_br / thunderskill_simulator_br
+    so both are inspectable. Adds br_overridden (bool) and br_source
+    ("war_thunder_wiki" or "thunderskill").
+
+    Safe no-op (returns ``df`` unchanged) if ``df`` has no vehicle_slug column,
+    or ``lookup_df`` is None/empty, has no vehicle_slug column, or has none of
+    the wiki_*_br columns. Supports any number of lookup rows without code
+    changes.
+    """
+    if "vehicle_slug" not in df.columns:
+        return df
+
+    if lookup_df is None or lookup_df.empty or "vehicle_slug" not in lookup_df.columns:
+        return df
+
+    wiki_cols = [c for c in WIKI_BR_LOOKUP_COLS if c in lookup_df.columns]
+    if not wiki_cols:
+        return df
+
+    lookup = lookup_df[["vehicle_slug", *wiki_cols]].copy()
+    lookup["vehicle_slug"] = _clean_text_series(lookup["vehicle_slug"])
+    lookup = lookup.dropna(subset=["vehicle_slug"]).drop_duplicates(
+        subset="vehicle_slug", keep="last"
+    )
+
+    for col in wiki_cols:
+        lookup[col] = pd.to_numeric(lookup[col], errors="coerce")
+
+    out = df.copy()
+
+    for br_col, saved_col in [
+        ("arcade_br", "thunderskill_arcade_br"),
+        ("realistic_br", "thunderskill_realistic_br"),
+        ("simulator_br", "thunderskill_simulator_br"),
+    ]:
+        if br_col in out.columns:
+            out[saved_col] = out[br_col]
+
+    out = out.merge(lookup, on="vehicle_slug", how="left")
+
+    overridden = pd.Series(False, index=out.index)
+    for br_col, wiki_col in _BR_OVERRIDE_MAP.items():
+        if br_col not in out.columns or wiki_col not in out.columns:
+            continue
+        has_override = out[wiki_col].notna()
+        out[br_col] = out[wiki_col].where(has_override, out[br_col])
+        overridden = overridden | has_override
+
+    out["br_overridden"] = overridden
+    out["br_source"] = np.where(overridden, "war_thunder_wiki", "thunderskill")
+
+    out = out.drop(columns=wiki_cols)
+
+    return out
 
 
 def recent_window(df: pd.DataFrame, days: int = RECENT_WINDOW_DAYS) -> pd.DataFrame:

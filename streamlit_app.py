@@ -41,6 +41,10 @@ DATA_URL = (
     "main/data/processed/ground_realistic_30_days_latest.csv"
 )
 
+WIKI_BR_LOOKUP_PATH = (
+    Path(__file__).resolve().parent / "data" / "metadata" / "wiki_ground_br_lookup.csv"
+)
+
 
 # ============================================================
 # Data loading
@@ -65,6 +69,21 @@ def load_data(url: str) -> pd.DataFrame:
 def get_cleaned_daily(raw_df: pd.DataFrame) -> pd.DataFrame:
     """cleaned_daily_df: one typed, backfilled row per vehicle per day."""
     return features.clean_daily(raw_df)
+
+
+def load_wiki_br_lookup(path: Path) -> pd.DataFrame | None:
+    """Load the manual War Thunder Wiki BR override CSV, if present and valid.
+
+    Not cached: it's a tiny local file and this keeps a lookup-file edit
+    picked up on the next rerun without needing to bust a cache. Any read
+    failure is swallowed so the app quietly falls back to ThunderSkill BRs.
+    """
+    if not path.exists():
+        return None
+    try:
+        return pd.read_csv(path)
+    except Exception:
+        return None
 
 
 @st.cache_data(ttl=60 * 60)
@@ -191,6 +210,8 @@ except Exception as e:
     st.stop()
 
 cleaned_daily_df = get_cleaned_daily(raw_df)
+wiki_br_lookup_df = load_wiki_br_lookup(WIKI_BR_LOOKUP_PATH)
+cleaned_daily_df = features.apply_wiki_br_overrides(cleaned_daily_df, wiki_br_lookup_df)
 recent_df = get_recent_daily(cleaned_daily_df)
 vehicle_30d_df = get_vehicle_agg(recent_df)
 
