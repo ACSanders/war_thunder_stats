@@ -17,7 +17,9 @@ Two modes:
   existing trusted rows (preserving rows for vehicles this run didn't
   successfully re-check); validates the merged result against strict
   thresholds; and only then atomically replaces the real lookup file. If
-  validation fails, the real lookup file is left untouched. --dry-run runs
+  validation fails, the real lookup file is left untouched AND the process
+  exits with status 1 (including under --dry-run, so a failing dry run is
+  observable to a caller like CI without grepping stdout). --dry-run runs
   the full pipeline (including validation) without ever writing the real
   lookup file, so it's safe to preview what a run would do.
 
@@ -33,6 +35,7 @@ Usage:
 import argparse
 import os
 import random
+import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -372,7 +375,7 @@ def run_write_lookup(
         print("VALIDATION FAILED -- real lookup file NOT modified:")
         for reason in failures:
             print(f"  - {reason}")
-        return
+        sys.exit(1)
 
     print("Validation passed.")
     print(f"Candidate lookup rows (existing + refreshed): {len(candidate_df)}")
