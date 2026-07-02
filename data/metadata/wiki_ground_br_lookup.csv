@@ -1,2 +1,1183 @@
 vehicle_slug,vehicle_name,wiki_arcade_br,wiki_realistic_br,wiki_simulator_br,wiki_url,checked_at,notes
-ussr_kv_1s,KV-1S,,4.3,,https://wiki.warthunder.com/unit/ussr_kv_1s,2026-07-01,ThunderSkill showed 4.0 RB; official Wiki shows 4.3 RB
+cn_al_khalid_1,Al-Khalid-I,,11.7,,https://wiki.warthunder.com/unit/cn_al_khalid_1,2026-07-02T05:48:14.557484+00:00,Official War Thunder Wiki RB BR
+cn_antelope_tc_1l_ads,Antelope,,10.0,,https://wiki.warthunder.com/unit/cn_antelope_tc_1l_ads,2026-07-02T05:48:15.789110+00:00,Official War Thunder Wiki RB BR
+cn_cm11,CM11,,9.3,,https://wiki.warthunder.com/unit/cn_cm11,2026-07-02T05:48:18.365207+00:00,Official War Thunder Wiki RB BR
+cn_cm_25,CM25,,8.7,,https://wiki.warthunder.com/unit/cn_cm_25,2026-07-02T05:48:19.894466+00:00,Official War Thunder Wiki RB BR
+cn_cm_34,CM34,,9.3,,https://wiki.warthunder.com/unit/cn_cm_34,2026-07-02T05:48:21.657334+00:00,Official War Thunder Wiki RB BR
+cn_gmc_cckw_353_m45_quad,CCKW 353 (M45),,2.3,,https://wiki.warthunder.com/unit/cn_gmc_cckw_353_m45_quad,2026-07-02T05:48:23.775588+00:00,Official War Thunder Wiki RB BR
+cn_hj_9,AFT09,,9.0,,https://wiki.warthunder.com/unit/cn_hj_9,2026-07-02T05:48:26.230808+00:00,Official War Thunder Wiki RB BR
+cn_hq_11,HQ11,,12.7,,https://wiki.warthunder.com/unit/cn_hq_11,2026-07-02T05:48:28.235521+00:00,Official War Thunder Wiki RB BR
+cn_hq_17,HQ17,,11.7,,https://wiki.warthunder.com/unit/cn_hq_17,2026-07-02T05:48:29.912893+00:00,Official War Thunder Wiki RB BR
+cn_is_2_1943,␗IS-2,,6.3,,https://wiki.warthunder.com/unit/cn_is_2_1943,2026-07-02T05:48:31.970682+00:00,Official War Thunder Wiki RB BR
+cn_is_2_1943_no402,IS-2 No.402,,6.3,,https://wiki.warthunder.com/unit/cn_is_2_1943_no402,2026-07-02T05:48:33.408396+00:00,Official War Thunder Wiki RB BR
+cn_is_2_1944,␗IS-2 (1944),,6.7,,https://wiki.warthunder.com/unit/cn_is_2_1944,2026-07-02T05:48:35.449735+00:00,Official War Thunder Wiki RB BR
+cn_isu_122,␗ISU-122,,5.3,,https://wiki.warthunder.com/unit/cn_isu_122,2026-07-02T05:48:37.058677+00:00,Official War Thunder Wiki RB BR
+cn_isu_152,␗ISU-152,,4.7,,https://wiki.warthunder.com/unit/cn_isu_152,2026-07-02T05:48:39.298863+00:00,Official War Thunder Wiki RB BR
+cn_lvt_4_zis_2,LVT(A)(4) (ZiS-2),,2.3,,https://wiki.warthunder.com/unit/cn_lvt_4_zis_2,2026-07-02T05:48:41.092559+00:00,Official War Thunder Wiki RB BR
+cn_m10,␗M10 GMC,,3.3,,https://wiki.warthunder.com/unit/cn_m10,2026-07-02T05:48:42.766948+00:00,Official War Thunder Wiki RB BR
+cn_m113a1_tow,␗M113A1 (TOW),,8.3,,https://wiki.warthunder.com/unit/cn_m113a1_tow,2026-07-02T05:48:45.261406+00:00,Official War Thunder Wiki RB BR
+cn_m18_hellcat,␗M18 GMC,,6.0,,https://wiki.warthunder.com/unit/cn_m18_hellcat,2026-07-02T05:48:47.310441+00:00,Official War Thunder Wiki RB BR
+cn_m1a2t,M1A2T,,12.7,,https://wiki.warthunder.com/unit/cn_m1a2t,2026-07-02T05:48:49.869433+00:00,Official War Thunder Wiki RB BR
+cn_m24_chaffee,␗M24,,4.0,,https://wiki.warthunder.com/unit/cn_m24_chaffee,2026-07-02T05:48:51.900518+00:00,Official War Thunder Wiki RB BR
+cn_m36,␗M36 GMC,,5.3,,https://wiki.warthunder.com/unit/cn_m36,2026-07-02T05:48:54.088674+00:00,Official War Thunder Wiki RB BR
+cn_m3a3_stuart,␗M3A3 Stuart,,2.7,,https://wiki.warthunder.com/unit/cn_m3a3_stuart,2026-07-02T05:48:55.731227+00:00,Official War Thunder Wiki RB BR
+cn_m3a3_stuart_1st_ptg,␗M3A3 (1st PTG),,2.7,,https://wiki.warthunder.com/unit/cn_m3a3_stuart_1st_ptg,2026-07-02T05:48:57.562602+00:00,Official War Thunder Wiki RB BR
+cn_m41_a3_walker_bulldog,␗M41A3,,5.7,,https://wiki.warthunder.com/unit/cn_m41_a3_walker_bulldog,2026-07-02T05:48:59.644988+00:00,Official War Thunder Wiki RB BR
+cn_m42_duster,␗M42,,4.0,,https://wiki.warthunder.com/unit/cn_m42_duster,2026-07-02T05:49:01.846502+00:00,Official War Thunder Wiki RB BR
+cn_m48a1_patton_III,␗M48A1,,7.7,,https://wiki.warthunder.com/unit/cn_m48a1_patton_III,2026-07-02T05:49:04.542208+00:00,Official War Thunder Wiki RB BR
+cn_m4a1_76w_sherman,␗M4A1 (75) W,,4.0,,https://wiki.warthunder.com/unit/cn_m4a1_76w_sherman,2026-07-02T05:49:06.433211+00:00,Official War Thunder Wiki RB BR
+cn_m4a4_sherman,␗M4A4,,3.7,,https://wiki.warthunder.com/unit/cn_m4a4_sherman,2026-07-02T05:49:08.973698+00:00,Official War Thunder Wiki RB BR
+cn_m4a4_sherman_1st_ptg,␗M4A4 (1st PTG),,3.7,,https://wiki.warthunder.com/unit/cn_m4a4_sherman_1st_ptg,2026-07-02T05:49:10.777887+00:00,Official War Thunder Wiki RB BR
+cn_m55,␗M55,,4.0,,https://wiki.warthunder.com/unit/cn_m55,2026-07-02T05:49:12.777212+00:00,Official War Thunder Wiki RB BR
+cn_m5a1_stuart,␗M5A1,,2.7,,https://wiki.warthunder.com/unit/cn_m5a1_stuart,2026-07-02T05:49:15.354746+00:00,Official War Thunder Wiki RB BR
+cn_m60a3_tts,␗M60A3 TTS,,9.0,,https://wiki.warthunder.com/unit/cn_m60a3_tts,2026-07-02T05:49:17.509957+00:00,Official War Thunder Wiki RB BR
+cn_m8_greyhound,␗M8 LAC,,1.0,,https://wiki.warthunder.com/unit/cn_m8_greyhound,2026-07-02T05:49:19.322883+00:00,Official War Thunder Wiki RB BR
+cn_m8_scott,␗M8 HMC,,1.3,,https://wiki.warthunder.com/unit/cn_m8_scott,2026-07-02T05:49:21.664370+00:00,Official War Thunder Wiki RB BR
+cn_m_41d,M41D,,8.0,,https://wiki.warthunder.com/unit/cn_m_41d,2026-07-02T05:49:24.167255+00:00,Official War Thunder Wiki RB BR
+cn_mbt2000,MBT-2000,,11.7,,https://wiki.warthunder.com/unit/cn_mbt2000,2026-07-02T05:49:26.733524+00:00,Official War Thunder Wiki RB BR
+cn_mbt2000_sm,◍MBT-2000,,11.7,,https://wiki.warthunder.com/unit/cn_mbt2000_sm,2026-07-02T05:49:28.719921+00:00,Official War Thunder Wiki RB BR
+cn_object_122tm,"Object 122MT ""MC""",,8.7,,https://wiki.warthunder.com/unit/cn_object_122tm,2026-07-02T05:49:30.779750+00:00,Official War Thunder Wiki RB BR
+cn_object_211,Object 211,,5.0,,https://wiki.warthunder.com/unit/cn_object_211,2026-07-02T05:49:32.804746+00:00,Official War Thunder Wiki RB BR
+cn_oplot_t,Oplot-M,,12.3,,https://wiki.warthunder.com/unit/cn_oplot_t,2026-07-02T05:49:35.217707+00:00,Official War Thunder Wiki RB BR
+cn_pgz_04a,PGZ04A,,9.3,,https://wiki.warthunder.com/unit/cn_pgz_04a,2026-07-02T05:49:36.883258+00:00,Official War Thunder Wiki RB BR
+cn_pgz_09,PGZ09,,9.0,,https://wiki.warthunder.com/unit/cn_pgz_09,2026-07-02T05:49:38.910670+00:00,Official War Thunder Wiki RB BR
+cn_pgz_625_fb10,CS/SA5,,12.0,,https://wiki.warthunder.com/unit/cn_pgz_625_fb10,2026-07-02T05:49:40.832812+00:00,Official War Thunder Wiki RB BR
+cn_plz_05,PLZ05,,7.7,,https://wiki.warthunder.com/unit/cn_plz_05,2026-07-02T05:49:43.313261+00:00,Official War Thunder Wiki RB BR
+cn_plz_83,PLZ83,,6.3,,https://wiki.warthunder.com/unit/cn_plz_83,2026-07-02T05:49:44.966518+00:00,Official War Thunder Wiki RB BR
+cn_plz_83_130,PLZ83-130,,7.3,,https://wiki.warthunder.com/unit/cn_plz_83_130,2026-07-02T05:49:47.332811+00:00,Official War Thunder Wiki RB BR
+cn_pt_76,␗PT-76,,5.0,,https://wiki.warthunder.com/unit/cn_pt_76,2026-07-02T05:49:49.589821+00:00,Official War Thunder Wiki RB BR
+cn_ptl_02,PTL02,,9.0,,https://wiki.warthunder.com/unit/cn_ptl_02,2026-07-02T05:49:51.599285+00:00,Official War Thunder Wiki RB BR
+cn_ptz_89,PTZ89,,9.0,,https://wiki.warthunder.com/unit/cn_ptz_89,2026-07-02T05:49:53.363404+00:00,Official War Thunder Wiki RB BR
+cn_qn506,QN506,,10.0,,https://wiki.warthunder.com/unit/cn_qn506,2026-07-02T05:49:55.722272+00:00,Official War Thunder Wiki RB BR
+cn_sdkfz_222_early,␗Sd.Kfz.222,,1.3,,https://wiki.warthunder.com/unit/cn_sdkfz_222_early,2026-07-02T05:49:57.586483+00:00,Official War Thunder Wiki RB BR
+cn_su_100_1945,␗SU-100,,6.0,,https://wiki.warthunder.com/unit/cn_su_100_1945,2026-07-02T05:49:59.172565+00:00,Official War Thunder Wiki RB BR
+cn_su_76m_1943,␗SU-76M,,2.0,,https://wiki.warthunder.com/unit/cn_su_76m_1943,2026-07-02T05:50:00.897941+00:00,Official War Thunder Wiki RB BR
+cn_t_26_1940,␗T-26,,1.0,,https://wiki.warthunder.com/unit/cn_t_26_1940,2026-07-02T05:50:03.144577+00:00,Official War Thunder Wiki RB BR
+cn_t_26_no531,T-26 No.531,,1.0,,https://wiki.warthunder.com/unit/cn_t_26_no531,2026-07-02T05:50:05.352313+00:00,Official War Thunder Wiki RB BR
+cn_t_34_1942,␗T-34 (1943),,4.0,,https://wiki.warthunder.com/unit/cn_t_34_1942,2026-07-02T05:50:07.830309+00:00,Official War Thunder Wiki RB BR
+cn_t_34_85_d_5t,␗Т-34-85 (S-53),,5.7,,https://wiki.warthunder.com/unit/cn_t_34_85_d_5t,2026-07-02T05:50:10.162309+00:00,Official War Thunder Wiki RB BR
+cn_t_34_85_zis_53_no215,T-34-85 No.215,,5.7,,https://wiki.warthunder.com/unit/cn_t_34_85_zis_53_no215,2026-07-02T05:50:12.672087+00:00,Official War Thunder Wiki RB BR
+cn_t_62,Т-62 №545,,8.7,,https://wiki.warthunder.com/unit/cn_t_62,2026-07-02T05:50:14.478399+00:00,Official War Thunder Wiki RB BR
+cn_t_80ud_478be,T-80UD/BE,,11.0,,https://wiki.warthunder.com/unit/cn_t_80ud_478be,2026-07-02T05:50:16.825130+00:00,Official War Thunder Wiki RB BR
+cn_tor_m1,Tor-M1,,11.3,,https://wiki.warthunder.com/unit/cn_tor_m1,2026-07-02T05:50:19.005131+00:00,Official War Thunder Wiki RB BR
+cn_type_58,Т-34-85 Gai,,5.7,,https://wiki.warthunder.com/unit/cn_type_58,2026-07-02T05:50:20.866038+00:00,Official War Thunder Wiki RB BR
+cn_type_59,Type 59,,8.0,,https://wiki.warthunder.com/unit/cn_type_59,2026-07-02T05:50:23.080347+00:00,Official War Thunder Wiki RB BR
+cn_type_59d,ZTZ59D1,,8.3,,https://wiki.warthunder.com/unit/cn_type_59d,2026-07-02T05:50:25.586394+00:00,Official War Thunder Wiki RB BR
+cn_type_62,Type 62,,6.7,,https://wiki.warthunder.com/unit/cn_type_62,2026-07-02T05:50:28.092498+00:00,Official War Thunder Wiki RB BR
+cn_type_63_I,Type 63-I,,6.3,,https://wiki.warthunder.com/unit/cn_type_63_I,2026-07-02T05:50:30.606239+00:00,Official War Thunder Wiki RB BR
+cn_type_64,M64,,6.0,,https://wiki.warthunder.com/unit/cn_type_64,2026-07-02T05:50:32.585073+00:00,Official War Thunder Wiki RB BR
+cn_type_65_aa,Phòng không T-34,,5.0,,https://wiki.warthunder.com/unit/cn_type_65_aa,2026-07-02T05:50:34.719161+00:00,Official War Thunder Wiki RB BR
+cn_type_69,Type 69,,8.0,,https://wiki.warthunder.com/unit/cn_type_69,2026-07-02T05:50:37.161417+00:00,Official War Thunder Wiki RB BR
+cn_type_69_2a,Type 69-IIa,,8.3,,https://wiki.warthunder.com/unit/cn_type_69_2a,2026-07-02T05:50:39.760384+00:00,Official War Thunder Wiki RB BR
+cn_type_69_2g,T-69 II G,,9.0,,https://wiki.warthunder.com/unit/cn_type_69_2g,2026-07-02T05:50:42.462530+00:00,Official War Thunder Wiki RB BR
+cn_type_86,ZBD86,,8.0,,https://wiki.warthunder.com/unit/cn_type_86,2026-07-02T05:50:44.244863+00:00,Official War Thunder Wiki RB BR
+cn_type_97_chi_ha,␗Chi-Ha,,1.3,,https://wiki.warthunder.com/unit/cn_type_97_chi_ha,2026-07-02T05:50:45.762750+00:00,Official War Thunder Wiki RB BR
+cn_type_97_kai,␗Chi-Ha Kai,,2.3,,https://wiki.warthunder.com/unit/cn_type_97_kai,2026-07-02T05:50:47.964097+00:00,Official War Thunder Wiki RB BR
+cn_vt_4,VT4,,12.3,,https://wiki.warthunder.com/unit/cn_vt_4,2026-07-02T05:50:50.653161+00:00,Official War Thunder Wiki RB BR
+cn_vt_4b,VT4A1,,12.7,,https://wiki.warthunder.com/unit/cn_vt_4b,2026-07-02T05:50:52.928126+00:00,Official War Thunder Wiki RB BR
+cn_vt_5,VT5,,11.7,,https://wiki.warthunder.com/unit/cn_vt_5,2026-07-02T05:50:54.739131+00:00,Official War Thunder Wiki RB BR
+cn_wma_301,WMA301,,9.0,,https://wiki.warthunder.com/unit/cn_wma_301,2026-07-02T05:50:56.459603+00:00,Official War Thunder Wiki RB BR
+cn_wz_1001,WZ1001(E) LCT,,12.3,,https://wiki.warthunder.com/unit/cn_wz_1001,2026-07-02T05:50:58.465228+00:00,Official War Thunder Wiki RB BR
+cn_wz_141,WZ141-1,,6.7,,https://wiki.warthunder.com/unit/cn_wz_141,2026-07-02T05:51:00.789339+00:00,Official War Thunder Wiki RB BR
+cn_wz_305,WZ305,,8.0,,https://wiki.warthunder.com/unit/cn_wz_305,2026-07-02T05:51:02.810135+00:00,Official War Thunder Wiki RB BR
+cn_zbd_04a,ZBD04A,,10.0,,https://wiki.warthunder.com/unit/cn_zbd_04a,2026-07-02T05:51:05.483890+00:00,Official War Thunder Wiki RB BR
+cn_zsd63_pg87,ZSD63/PG87,,5.7,,https://wiki.warthunder.com/unit/cn_zsd63_pg87,2026-07-02T05:51:07.500835+00:00,Official War Thunder Wiki RB BR
+cn_zsl_92,ZSL92,,6.3,,https://wiki.warthunder.com/unit/cn_zsl_92,2026-07-02T05:51:09.737280+00:00,Official War Thunder Wiki RB BR
+cn_ztl_11,ZLT11,,9.7,,https://wiki.warthunder.com/unit/cn_ztl_11,2026-07-02T05:51:11.880182+00:00,Official War Thunder Wiki RB BR
+cn_zts_63_1980,ZTS63,,7.7,,https://wiki.warthunder.com/unit/cn_zts_63_1980,2026-07-02T05:51:14.260649+00:00,Official War Thunder Wiki RB BR
+cn_ztz_59a,ZTZ59A,,8.0,,https://wiki.warthunder.com/unit/cn_ztz_59a,2026-07-02T05:51:16.899977+00:00,Official War Thunder Wiki RB BR
+cn_ztz_88a,ZTZ88A,,9.0,,https://wiki.warthunder.com/unit/cn_ztz_88a,2026-07-02T05:51:19.210049+00:00,Official War Thunder Wiki RB BR
+cn_ztz_88b,ZTZ88B,,9.0,,https://wiki.warthunder.com/unit/cn_ztz_88b,2026-07-02T05:51:21.064877+00:00,Official War Thunder Wiki RB BR
+cn_ztz_96,ZTZ96,,9.3,,https://wiki.warthunder.com/unit/cn_ztz_96,2026-07-02T05:51:23.868921+00:00,Official War Thunder Wiki RB BR
+cn_ztz_96a,ZTZ96A,,10.3,,https://wiki.warthunder.com/unit/cn_ztz_96a,2026-07-02T05:51:26.288688+00:00,Official War Thunder Wiki RB BR
+cn_ztz_96a_prot,ZTZ96A (P),,10.3,,https://wiki.warthunder.com/unit/cn_ztz_96a_prot,2026-07-02T05:51:28.162747+00:00,Official War Thunder Wiki RB BR
+cn_ztz_96b,ZTZ96B,,11.7,,https://wiki.warthunder.com/unit/cn_ztz_96b,2026-07-02T05:51:30.034306+00:00,Official War Thunder Wiki RB BR
+cn_ztz_99,ZTZ99-II,,11.0,,https://wiki.warthunder.com/unit/cn_ztz_99,2026-07-02T05:51:32.549585+00:00,Official War Thunder Wiki RB BR
+cn_ztz_99_w,ZTZ99-III,,11.0,,https://wiki.warthunder.com/unit/cn_ztz_99_w,2026-07-02T05:51:34.424361+00:00,Official War Thunder Wiki RB BR
+cn_ztz_99a,ZTZ99A,,12.3,,https://wiki.warthunder.com/unit/cn_ztz_99a,2026-07-02T05:51:36.158463+00:00,Official War Thunder Wiki RB BR
+fr_amc_34,AMC.34 YR,,1.0,,https://wiki.warthunder.com/unit/fr_amc_34,2026-07-02T05:51:37.889740+00:00,Official War Thunder Wiki RB BR
+fr_amc_35,AMC.35 (ACG.1),,1.3,,https://wiki.warthunder.com/unit/fr_amc_35,2026-07-02T05:51:39.498370+00:00,Official War Thunder Wiki RB BR
+fr_amd_35,AMD.35,,1.0,,https://wiki.warthunder.com/unit/fr_amd_35,2026-07-02T05:51:41.394020+00:00,Official War Thunder Wiki RB BR
+fr_amd_35_kwk39,AMD.35 (PaK),,2.7,,https://wiki.warthunder.com/unit/fr_amd_35_kwk39,2026-07-02T05:51:43.273484+00:00,Official War Thunder Wiki RB BR
+fr_amd_35_sa35,AMD.35 (SA35),,1.7,,https://wiki.warthunder.com/unit/fr_amd_35_sa35,2026-07-02T05:51:45.026711+00:00,Official War Thunder Wiki RB BR
+fr_aml_90,AML-90,,7.7,,https://wiki.warthunder.com/unit/fr_aml_90,2026-07-02T05:51:46.397815+00:00,Official War Thunder Wiki RB BR
+fr_amr_35_zt3,AMR.35 ZT3,,1.0,,https://wiki.warthunder.com/unit/fr_amr_35_zt3,2026-07-02T05:51:48.844309+00:00,Official War Thunder Wiki RB BR
+fr_amx_10m_acra,AMX-10M,,7.3,,https://wiki.warthunder.com/unit/fr_amx_10m_acra,2026-07-02T05:51:51.272572+00:00,Official War Thunder Wiki RB BR
+fr_amx_10p,AMX-10P,,6.3,,https://wiki.warthunder.com/unit/fr_amx_10p,2026-07-02T05:51:53.217948+00:00,Official War Thunder Wiki RB BR
+fr_amx_10rc,AMX-10RC,,8.3,,https://wiki.warthunder.com/unit/fr_amx_10rc,2026-07-02T05:51:55.123018+00:00,Official War Thunder Wiki RB BR
+fr_amx_13_75,AMX-13,,7.0,,https://wiki.warthunder.com/unit/fr_amx_13_75,2026-07-02T05:51:57.175218+00:00,Official War Thunder Wiki RB BR
+fr_amx_13_75_ss11,AMX-13 (SS.11),,7.0,,https://wiki.warthunder.com/unit/fr_amx_13_75_ss11,2026-07-02T05:51:59.210749+00:00,Official War Thunder Wiki RB BR
+fr_amx_13_90,AMX-13-90,,7.7,,https://wiki.warthunder.com/unit/fr_amx_13_90,2026-07-02T05:52:01.036601+00:00,Official War Thunder Wiki RB BR
+fr_amx_13_chaffee,AMX-13-M24,,4.0,,https://wiki.warthunder.com/unit/fr_amx_13_chaffee,2026-07-02T05:52:03.083205+00:00,Official War Thunder Wiki RB BR
+fr_amx_13_dca_40,AMX-13 DCA 40,,5.0,,https://wiki.warthunder.com/unit/fr_amx_13_dca_40,2026-07-02T05:52:05.081296+00:00,Official War Thunder Wiki RB BR
+fr_amx_13_fl_11,AMX-13 (FL11),,4.3,,https://wiki.warthunder.com/unit/fr_amx_13_fl_11,2026-07-02T05:52:07.449420+00:00,Official War Thunder Wiki RB BR
+fr_amx_13_hot,AMX-13 (HOT),,8.3,,https://wiki.warthunder.com/unit/fr_amx_13_hot,2026-07-02T05:52:09.449655+00:00,Official War Thunder Wiki RB BR
+fr_amx_30,AMX-30,,8.0,,https://wiki.warthunder.com/unit/fr_amx_30,2026-07-02T05:52:11.825876+00:00,Official War Thunder Wiki RB BR
+fr_amx_30_1972,AMX-30 (1972),,8.0,,https://wiki.warthunder.com/unit/fr_amx_30_1972,2026-07-02T05:52:14.341846+00:00,Official War Thunder Wiki RB BR
+fr_amx_30_ACRA,AMX-30 ACRA,,8.3,,https://wiki.warthunder.com/unit/fr_amx_30_ACRA,2026-07-02T05:52:17.041174+00:00,Official War Thunder Wiki RB BR
+fr_amx_30_auf_1,AuF1,,7.0,,https://wiki.warthunder.com/unit/fr_amx_30_auf_1,2026-07-02T05:52:19.304883+00:00,Official War Thunder Wiki RB BR
+fr_amx_30_b2,AMX-30B2,,8.7,,https://wiki.warthunder.com/unit/fr_amx_30_b2,2026-07-02T05:52:21.290784+00:00,Official War Thunder Wiki RB BR
+fr_amx_30_b2_brenus,AMX-30B2 BRENUS,,8.7,,https://wiki.warthunder.com/unit/fr_amx_30_b2_brenus,2026-07-02T05:52:24.009488+00:00,Official War Thunder Wiki RB BR
+fr_amx_30_dca,AMX-30 DCA,,8.7,,https://wiki.warthunder.com/unit/fr_amx_30_dca,2026-07-02T05:52:26.274011+00:00,Official War Thunder Wiki RB BR
+fr_amx_30_roland,Roland 1,,9.7,,https://wiki.warthunder.com/unit/fr_amx_30_roland,2026-07-02T05:52:28.797587+00:00,Official War Thunder Wiki RB BR
+fr_amx_30_super,AMX-30 Super,,9.3,,https://wiki.warthunder.com/unit/fr_amx_30_super,2026-07-02T05:52:30.730062+00:00,Official War Thunder Wiki RB BR
+fr_amx_32,AMX-32,,9.7,,https://wiki.warthunder.com/unit/fr_amx_32,2026-07-02T05:52:32.695089+00:00,Official War Thunder Wiki RB BR
+fr_amx_32_105,AMX-32 (105),,9.3,,https://wiki.warthunder.com/unit/fr_amx_32_105,2026-07-02T05:52:35.135079+00:00,Official War Thunder Wiki RB BR
+fr_amx_40,AMX-40,,10.0,,https://wiki.warthunder.com/unit/fr_amx_40,2026-07-02T05:52:37.444211+00:00,Official War Thunder Wiki RB BR
+fr_amx_50,AMX-50 (TOA100),,7.7,,https://wiki.warthunder.com/unit/fr_amx_50,2026-07-02T05:52:40.003311+00:00,Official War Thunder Wiki RB BR
+fr_amx_50_1950,AMX-50 (TO90/930),,8.0,,https://wiki.warthunder.com/unit/fr_amx_50_1950,2026-07-02T05:52:41.956967+00:00,Official War Thunder Wiki RB BR
+fr_amx_50_foch,AMX-50 Foch,,7.3,,https://wiki.warthunder.com/unit/fr_amx_50_foch,2026-07-02T05:52:44.231781+00:00,Official War Thunder Wiki RB BR
+fr_amx_50_surbaisse,AMX-50 Surbaissé,,7.7,,https://wiki.warthunder.com/unit/fr_amx_50_surbaisse,2026-07-02T05:52:46.014811+00:00,Official War Thunder Wiki RB BR
+fr_amx_50_surblinde,AMX-50 Surblindé,,7.7,,https://wiki.warthunder.com/unit/fr_amx_50_surblinde,2026-07-02T05:52:48.340031+00:00,Official War Thunder Wiki RB BR
+fr_amx_elc_901,ELC 901,,6.3,,https://wiki.warthunder.com/unit/fr_amx_elc_901,2026-07-02T05:52:50.767006+00:00,Official War Thunder Wiki RB BR
+fr_amx_elc_bis,ELC bis,,6.3,,https://wiki.warthunder.com/unit/fr_amx_elc_bis,2026-07-02T05:52:52.710349+00:00,Official War Thunder Wiki RB BR
+fr_amx_m4,AMX M4,,7.0,,https://wiki.warthunder.com/unit/fr_amx_m4,2026-07-02T05:52:54.574033+00:00,Official War Thunder Wiki RB BR
+fr_amx_vtt_dca,VTT DCA,,3.0,,https://wiki.warthunder.com/unit/fr_amx_vtt_dca,2026-07-02T05:52:56.706053+00:00,Official War Thunder Wiki RB BR
+fr_arl_44,ARL-44,,5.3,,https://wiki.warthunder.com/unit/fr_arl_44,2026-07-02T05:52:58.764693+00:00,Official War Thunder Wiki RB BR
+fr_arl_44_acl1,ARL-44 (ACL-1),,3.7,,https://wiki.warthunder.com/unit/fr_arl_44_acl1,2026-07-02T05:53:01.420367+00:00,Official War Thunder Wiki RB BR
+fr_b1_bis,B1 bis,,2.3,,https://wiki.warthunder.com/unit/fr_b1_bis,2026-07-02T05:53:03.177323+00:00,Official War Thunder Wiki RB BR
+fr_b1_ter,B1 ter,,2.7,,https://wiki.warthunder.com/unit/fr_b1_ter,2026-07-02T05:53:05.107845+00:00,Official War Thunder Wiki RB BR
+fr_bat_chat_25t,Char 25t,,8.0,,https://wiki.warthunder.com/unit/fr_bat_chat_25t,2026-07-02T05:53:07.633273+00:00,Official War Thunder Wiki RB BR
+fr_cckw_353_bofors,CCKW 353 AA,,2.3,,https://wiki.warthunder.com/unit/fr_cckw_353_bofors,2026-07-02T05:53:09.586758+00:00,Official War Thunder Wiki RB BR
+fr_char_2c,2C,,2.3,,https://wiki.warthunder.com/unit/fr_char_2c,2026-07-02T05:53:12.230116+00:00,Official War Thunder Wiki RB BR
+fr_char_2c_bis,2C bis,,1.7,,https://wiki.warthunder.com/unit/fr_char_2c_bis,2026-07-02T05:53:14.318422+00:00,Official War Thunder Wiki RB BR
+fr_citroen_kegresse_p4t,P.7.T AA,,1.3,,https://wiki.warthunder.com/unit/fr_citroen_kegresse_p4t,2026-07-02T05:53:16.195926+00:00,Official War Thunder Wiki RB BR
+fr_crotale_ng,ItO 90M,,12.0,,https://wiki.warthunder.com/unit/fr_crotale_ng,2026-07-02T05:53:17.560449+00:00,Official War Thunder Wiki RB BR
+fr_crusader_mk_2,Crusader Mk.II,,2.7,,https://wiki.warthunder.com/unit/fr_crusader_mk_2,2026-07-02T05:53:19.415663+00:00,Official War Thunder Wiki RB BR
+fr_cv_9035_nl,CV 9035NL,,9.7,,https://wiki.warthunder.com/unit/fr_cv_9035_nl,2026-07-02T05:53:22.022612+00:00,Official War Thunder Wiki RB BR
+fr_fcm_36,FCM.36,,1.0,,https://wiki.warthunder.com/unit/fr_fcm_36,2026-07-02T05:53:24.003564+00:00,Official War Thunder Wiki RB BR
+fr_hotchkiss_h35,H.35,,1.0,,https://wiki.warthunder.com/unit/fr_hotchkiss_h35,2026-07-02T05:53:25.248395+00:00,Official War Thunder Wiki RB BR
+fr_hotchkiss_h39,H.39,,1.0,,https://wiki.warthunder.com/unit/fr_hotchkiss_h39,2026-07-02T05:53:27.235624+00:00,Official War Thunder Wiki RB BR
+fr_hotchkiss_h39_cambronne,"H.39 ""Cambronne""",,1.0,,https://wiki.warthunder.com/unit/fr_hotchkiss_h39_cambronne,2026-07-02T05:53:29.383969+00:00,Official War Thunder Wiki RB BR
+fr_jaguar_ebrc,EBRC Jaguar,,11.0,,https://wiki.warthunder.com/unit/fr_jaguar_ebrc,2026-07-02T05:53:31.714954+00:00,Official War Thunder Wiki RB BR
+fr_leclerc_azur,Leclerc AZUR,,12.7,,https://wiki.warthunder.com/unit/fr_leclerc_azur,2026-07-02T05:53:34.149015+00:00,Official War Thunder Wiki RB BR
+fr_leclerc_s1,Leclerc,,12.7,,https://wiki.warthunder.com/unit/fr_leclerc_s1,2026-07-02T05:53:36.651665+00:00,Official War Thunder Wiki RB BR
+fr_leclerc_s2,Leclerc S2,,12.7,,https://wiki.warthunder.com/unit/fr_leclerc_s2,2026-07-02T05:53:39.163518+00:00,Official War Thunder Wiki RB BR
+fr_leclerc_sxxi,Leclerc SXXI,,12.7,,https://wiki.warthunder.com/unit/fr_leclerc_sxxi,2026-07-02T05:53:41.009265+00:00,Official War Thunder Wiki RB BR
+fr_leopard_2a4nl,Leopard 2A4NL,,10.7,,https://wiki.warthunder.com/unit/fr_leopard_2a4nl,2026-07-02T05:53:42.999654+00:00,Official War Thunder Wiki RB BR
+fr_leopard_2a4nl_les,Leopard 2 (OTCo),,10.7,,https://wiki.warthunder.com/unit/fr_leopard_2a4nl_les,2026-07-02T05:53:45.013335+00:00,Official War Thunder Wiki RB BR
+fr_leopard_2a5nl,Leopard 2A5NL,,12.3,,https://wiki.warthunder.com/unit/fr_leopard_2a5nl,2026-07-02T05:53:47.308819+00:00,Official War Thunder Wiki RB BR
+fr_leopard_2a6nl,Leopard 2A6NL,,12.7,,https://wiki.warthunder.com/unit/fr_leopard_2a6nl,2026-07-02T05:53:49.461906+00:00,Official War Thunder Wiki RB BR
+fr_lorraine_100,CA Lorraine,,6.0,,https://wiki.warthunder.com/unit/fr_lorraine_100,2026-07-02T05:53:51.784276+00:00,Official War Thunder Wiki RB BR
+fr_lorraine_155,Lorraine 155 Mle.50,,4.3,,https://wiki.warthunder.com/unit/fr_lorraine_155,2026-07-02T05:53:53.716780+00:00,Official War Thunder Wiki RB BR
+fr_lorraine_37l,Lorraine 37L,,1.3,,https://wiki.warthunder.com/unit/fr_lorraine_37l,2026-07-02T05:53:56.050186+00:00,Official War Thunder Wiki RB BR
+fr_lorraine_40t,Lorraine 40t,,7.7,,https://wiki.warthunder.com/unit/fr_lorraine_40t,2026-07-02T05:53:58.174495+00:00,Official War Thunder Wiki RB BR
+fr_lvt_bofors,LVT-4/40,,3.7,,https://wiki.warthunder.com/unit/fr_lvt_bofors,2026-07-02T05:54:00.050517+00:00,Official War Thunder Wiki RB BR
+fr_m10,M10 GMC,,3.3,,https://wiki.warthunder.com/unit/fr_m10,2026-07-02T05:54:01.959719+00:00,Official War Thunder Wiki RB BR
+fr_m26_pershing,M26,,6.7,,https://wiki.warthunder.com/unit/fr_m26_pershing,2026-07-02T05:54:03.937510+00:00,Official War Thunder Wiki RB BR
+fr_m36b2_cefeo,M36B2,,5.7,,https://wiki.warthunder.com/unit/fr_m36b2_cefeo,2026-07-02T05:54:05.886856+00:00,Official War Thunder Wiki RB BR
+fr_m3a3_stuart,M3A3 Stuart,,2.7,,https://wiki.warthunder.com/unit/fr_m3a3_stuart,2026-07-02T05:54:08.413637+00:00,Official War Thunder Wiki RB BR
+fr_m44,M44,,4.0,,https://wiki.warthunder.com/unit/fr_m44,2026-07-02T05:54:10.843967+00:00,Official War Thunder Wiki RB BR
+fr_m46_patton,M46,,7.0,,https://wiki.warthunder.com/unit/fr_m46_patton,2026-07-02T05:54:12.952862+00:00,Official War Thunder Wiki RB BR
+fr_m4a1_sherman,M4A1,,3.7,,https://wiki.warthunder.com/unit/fr_m4a1_sherman,2026-07-02T05:54:15.008868+00:00,Official War Thunder Wiki RB BR
+fr_m4a1_sherman_fl_10,M4A1 (FL10),,5.0,,https://wiki.warthunder.com/unit/fr_m4a1_sherman_fl_10,2026-07-02T05:54:17.363267+00:00,Official War Thunder Wiki RB BR
+fr_m4a3_105_sherman,M4A3 (105),,3.0,,https://wiki.warthunder.com/unit/fr_m4a3_105_sherman,2026-07-02T05:54:19.354988+00:00,Official War Thunder Wiki RB BR
+fr_m4a3e2_sherman_jumbo,M4A3E2,,5.7,,https://wiki.warthunder.com/unit/fr_m4a3e2_sherman_jumbo,2026-07-02T05:54:21.483415+00:00,Official War Thunder Wiki RB BR
+fr_m4a4_cn_75_50,M4A4 (SA50),,5.0,,https://wiki.warthunder.com/unit/fr_m4a4_cn_75_50,2026-07-02T05:54:23.260139+00:00,Official War Thunder Wiki RB BR
+fr_m4a4_sherman,M4A4,,3.7,,https://wiki.warthunder.com/unit/fr_m4a4_sherman,2026-07-02T05:54:25.102894+00:00,Official War Thunder Wiki RB BR
+fr_m55,M55,,4.0,,https://wiki.warthunder.com/unit/fr_m55,2026-07-02T05:54:26.670804+00:00,Official War Thunder Wiki RB BR
+fr_marder_clovis,CLOVIS,,8.0,,https://wiki.warthunder.com/unit/fr_marder_clovis,2026-07-02T05:54:28.624389+00:00,Official War Thunder Wiki RB BR
+fr_marder_df_105,DF105,,8.0,,https://wiki.warthunder.com/unit/fr_marder_df_105,2026-07-02T05:54:30.534524+00:00,Official War Thunder Wiki RB BR
+fr_mars_15,MARS 15,,8.3,,https://wiki.warthunder.com/unit/fr_mars_15,2026-07-02T05:54:32.414437+00:00,Official War Thunder Wiki RB BR
+fr_msc,MSC,,11.0,,https://wiki.warthunder.com/unit/fr_msc,2026-07-02T05:54:35.050609+00:00,Official War Thunder Wiki RB BR
+fr_panhard_ebr_1951,E.B.R. (1951),,5.3,,https://wiki.warthunder.com/unit/fr_panhard_ebr_1951,2026-07-02T05:54:37.624721+00:00,Official War Thunder Wiki RB BR
+fr_panhard_ebr_1954,E.B.R. (1954),,7.0,,https://wiki.warthunder.com/unit/fr_panhard_ebr_1954,2026-07-02T05:54:39.261803+00:00,Official War Thunder Wiki RB BR
+fr_panhard_ebr_1963,E.B.R. (1963),,7.7,,https://wiki.warthunder.com/unit/fr_panhard_ebr_1963,2026-07-02T05:54:41.441806+00:00,Official War Thunder Wiki RB BR
+fr_pzkpfw_V_panther_dauphine,Panther «Dauphine»,,6.0,,https://wiki.warthunder.com/unit/fr_pzkpfw_V_panther_dauphine,2026-07-02T05:54:43.566406+00:00,Official War Thunder Wiki RB BR
+fr_renault_d2,D2,,1.3,,https://wiki.warthunder.com/unit/fr_renault_d2,2026-07-02T05:54:45.357082+00:00,Official War Thunder Wiki RB BR
+fr_renault_r39,R.35 (SA38),,1.0,,https://wiki.warthunder.com/unit/fr_renault_r39,2026-07-02T05:54:47.716832+00:00,Official War Thunder Wiki RB BR
+fr_saint_chamond,St-Chamond,,1.0,,https://wiki.warthunder.com/unit/fr_saint_chamond,2026-07-02T05:54:49.856238+00:00,Official War Thunder Wiki RB BR
+fr_samp_t_fcs,FSAF SAMP/T (Mamba) (СОЦ),,12.7,,https://wiki.warthunder.com/unit/fr_samp_t_fcs,2026-07-02T05:54:51.498382+00:00,Official War Thunder Wiki RB BR
+fr_sk105_a2,SK-105A2,,8.7,,https://wiki.warthunder.com/unit/fr_sk105_a2,2026-07-02T05:54:55.406862+00:00,Official War Thunder Wiki RB BR
+fr_somua_s35,S.35,,1.3,,https://wiki.warthunder.com/unit/fr_somua_s35,2026-07-02T05:54:57.678381+00:00,Official War Thunder Wiki RB BR
+fr_somua_sau40,SAu 40,,1.7,,https://wiki.warthunder.com/unit/fr_somua_sau40,2026-07-02T05:54:59.326822+00:00,Official War Thunder Wiki RB BR
+fr_somua_sm,Somua SM,,7.7,,https://wiki.warthunder.com/unit/fr_somua_sm,2026-07-02T05:55:01.647559+00:00,Official War Thunder Wiki RB BR
+fr_tpk_641_vpc,TPK 6.41,,5.7,,https://wiki.warthunder.com/unit/fr_tpk_641_vpc,2026-07-02T05:55:04.324238+00:00,Official War Thunder Wiki RB BR
+fr_vab_santal,SANTAL,,9.3,,https://wiki.warthunder.com/unit/fr_vab_santal,2026-07-02T05:55:06.336006+00:00,Official War Thunder Wiki RB BR
+fr_vbci,VBCI,,9.3,,https://wiki.warthunder.com/unit/fr_vbci,2026-07-02T05:55:08.590668+00:00,Official War Thunder Wiki RB BR
+fr_vbci2_mct30,VBCI-2 (MCT30),,9.7,,https://wiki.warthunder.com/unit/fr_vbci2_mct30,2026-07-02T05:55:11.052249+00:00,Official War Thunder Wiki RB BR
+fr_vcac_mephisto,MEPHISTO,,8.7,,https://wiki.warthunder.com/unit/fr_vcac_mephisto,2026-07-02T05:55:12.998575+00:00,Official War Thunder Wiki RB BR
+fr_vextra_105,Vextra 105,,10.0,,https://wiki.warthunder.com/unit/fr_vextra_105,2026-07-02T05:55:15.736090+00:00,Official War Thunder Wiki RB BR
+germ_9a33bm3,◊Osa-AK,,10.3,,https://wiki.warthunder.com/unit/germ_9a33bm3,2026-07-02T05:55:17.981662+00:00,Official War Thunder Wiki RB BR
+germ_9a35_m,Стрела-10М,,10.3,,https://wiki.warthunder.com/unit/germ_9a35_m,2026-07-02T05:55:19.887401+00:00,Official War Thunder Wiki RB BR
+germ_a7v,A7V,,1.0,,https://wiki.warthunder.com/unit/germ_a7v,2026-07-02T05:55:22.324472+00:00,Official War Thunder Wiki RB BR
+germ_amd_35_kwk,Pz.Sp.Wg.P204(f) KwK,,2.0,,https://wiki.warthunder.com/unit/germ_amd_35_kwk,2026-07-02T05:55:23.967339+00:00,Official War Thunder Wiki RB BR
+germ_amd_35_kwk39,Pz.Sp.Wg.P204(f) PaK,,2.7,,https://wiki.warthunder.com/unit/germ_amd_35_kwk39,2026-07-02T05:55:26.142413+00:00,Official War Thunder Wiki RB BR
+germ_begleitpanzer_57,Begleitpanzer 57,,9.7,,https://wiki.warthunder.com/unit/germ_begleitpanzer_57,2026-07-02T05:55:27.936166+00:00,Official War Thunder Wiki RB BR
+germ_beutepanzer_mk_iv,Beutepanzer IV,,1.0,,https://wiki.warthunder.com/unit/germ_beutepanzer_mk_iv,2026-07-02T05:55:29.810186+00:00,Official War Thunder Wiki RB BR
+germ_bmp_1_ddr,SPz BMP-1,,8.0,,https://wiki.warthunder.com/unit/germ_bmp_1_ddr,2026-07-02T05:55:32.095366+00:00,Official War Thunder Wiki RB BR
+germ_boxer_3105,Boxer MGS,,10.3,,https://wiki.warthunder.com/unit/germ_boxer_3105,2026-07-02T05:55:34.029489+00:00,Official War Thunder Wiki RB BR
+germ_boxer_swatrinf,sWaTrgInf,,10.7,,https://wiki.warthunder.com/unit/germ_boxer_swatrinf,2026-07-02T05:55:36.342616+00:00,Official War Thunder Wiki RB BR
+germ_erprobungstrager_3_achs_turm,Turm III,,8.7,,https://wiki.warthunder.com/unit/germ_erprobungstrager_3_achs_turm,2026-07-02T05:55:37.871084+00:00,Official War Thunder Wiki RB BR
+germ_flakpanzer_38t_Gepard,Flakpanzer 38,,1.7,,https://wiki.warthunder.com/unit/germ_flakpanzer_38t_Gepard,2026-07-02T05:55:39.505093+00:00,Official War Thunder Wiki RB BR
+germ_flakpanzer_IV_Kugelblitz,Kugelblitz,,6.7,,https://wiki.warthunder.com/unit/germ_flakpanzer_IV_Kugelblitz,2026-07-02T05:55:42.059930+00:00,Official War Thunder Wiki RB BR
+germ_flakpanzer_IV_Ostwind,Ostwind,,3.3,,https://wiki.warthunder.com/unit/germ_flakpanzer_IV_Ostwind,2026-07-02T05:55:44.198044+00:00,Official War Thunder Wiki RB BR
+germ_flakpanzer_IV_Ostwind_2,Ostwind II,,5.3,,https://wiki.warthunder.com/unit/germ_flakpanzer_IV_Ostwind_2,2026-07-02T05:55:46.728506+00:00,Official War Thunder Wiki RB BR
+germ_flakpanzer_IV_Ostwind_2_net,Ostwind Ost,,5.3,,https://wiki.warthunder.com/unit/germ_flakpanzer_IV_Ostwind_2_net,2026-07-02T05:55:49.353593+00:00,Official War Thunder Wiki RB BR
+germ_flakpanzer_IV_Wirbelwind,Wirbelwind,,3.7,,https://wiki.warthunder.com/unit/germ_flakpanzer_IV_Wirbelwind,2026-07-02T05:55:51.831196+00:00,Official War Thunder Wiki RB BR
+germ_flakpanzer_I_ausf_A,Flakpanzer I,,1.3,,https://wiki.warthunder.com/unit/germ_flakpanzer_I_ausf_A,2026-07-02T05:55:53.575575+00:00,Official War Thunder Wiki RB BR
+germ_flakpanzer_V_Coelian,Flakpanzer 341,,7.0,,https://wiki.warthunder.com/unit/germ_flakpanzer_V_Coelian,2026-07-02T05:55:55.810343+00:00,Official War Thunder Wiki RB BR
+germ_flakpanzer_zerstorer_45,Zerstörer 45,,6.0,,https://wiki.warthunder.com/unit/germ_flakpanzer_zerstorer_45,2026-07-02T05:55:57.556210+00:00,Official War Thunder Wiki RB BR
+germ_flakpz_1a2_Gepard,Gepard 1A2,,9.7,,https://wiki.warthunder.com/unit/germ_flakpz_1a2_Gepard,2026-07-02T05:55:59.756820+00:00,Official War Thunder Wiki RB BR
+germ_flakpz_I_Gepard,Gepard,,8.3,,https://wiki.warthunder.com/unit/germ_flakpz_I_Gepard,2026-07-02T05:56:02.420278+00:00,Official War Thunder Wiki RB BR
+germ_flarakpz_1,FlaRakPz 1,,10.0,,https://wiki.warthunder.com/unit/germ_flarakpz_1,2026-07-02T05:56:04.886471+00:00,Official War Thunder Wiki RB BR
+germ_flarakrad,FlaRakRad,,11.7,,https://wiki.warthunder.com/unit/germ_flarakrad,2026-07-02T05:56:06.680923+00:00,Official War Thunder Wiki RB BR
+germ_garford_putilov,Garford-Beute,,1.0,,https://wiki.warthunder.com/unit/germ_garford_putilov,2026-07-02T05:56:09.071017+00:00,Official War Thunder Wiki RB BR
+germ_infanterie_kampfpanzer_churchill,Pz.Kpfw. Churchill,,4.0,,https://wiki.warthunder.com/unit/germ_infanterie_kampfpanzer_churchill,2026-07-02T05:56:11.618386+00:00,Official War Thunder Wiki RB BR
+germ_iris_slm_fcs,IRIS-T SLM (СОЦ),,12.7,,https://wiki.warthunder.com/unit/germ_iris_slm_fcs,2026-07-02T05:56:14.203011+00:00,Official War Thunder Wiki RB BR
+germ_jaguar_2,Jaguar 2,,8.7,,https://wiki.warthunder.com/unit/germ_jaguar_2,2026-07-02T05:56:17.695119+00:00,Official War Thunder Wiki RB BR
+germ_jgdpz_38t,Jagdpanzer 38(t),,4.3,,https://wiki.warthunder.com/unit/germ_jgdpz_38t,2026-07-02T05:56:19.399313+00:00,Official War Thunder Wiki RB BR
+germ_jgdpz_IV_L48,Jagdpanzer IV,,4.3,,https://wiki.warthunder.com/unit/germ_jgdpz_IV_L48,2026-07-02T05:56:21.596332+00:00,Official War Thunder Wiki RB BR
+germ_kanonenjagdpanzer,JPz 4-5,,6.3,,https://wiki.warthunder.com/unit/germ_kanonenjagdpanzer,2026-07-02T05:56:23.474908+00:00,Official War Thunder Wiki RB BR
+germ_kpz_70,KPz-70,,9.3,,https://wiki.warthunder.com/unit/germ_kpz_70,2026-07-02T05:56:25.302768+00:00,Official War Thunder Wiki RB BR
+germ_kpz_t72m1,◊T-72M1,,9.3,,https://wiki.warthunder.com/unit/germ_kpz_t72m1,2026-07-02T05:56:27.421299+00:00,Official War Thunder Wiki RB BR
+germ_kv_1B_finland,KV-IB,,4.3,,https://wiki.warthunder.com/unit/germ_kv_1B_finland,2026-07-02T05:56:30.089317+00:00,Official War Thunder Wiki RB BR
+germ_kv_1_kwk_40,KW I C 756 (r),,5.0,,https://wiki.warthunder.com/unit/germ_kv_1_kwk_40,2026-07-02T05:56:32.372141+00:00,Official War Thunder Wiki RB BR
+germ_kv_2_754r,KW II 754 (r),,3.7,,https://wiki.warthunder.com/unit/germ_kv_2_754r,2026-07-02T05:56:34.204475+00:00,Official War Thunder Wiki RB BR
+germ_le_kpz_m41,leKPz M41,,6.7,,https://wiki.warthunder.com/unit/germ_le_kpz_m41,2026-07-02T05:56:36.413836+00:00,Official War Thunder Wiki RB BR
+germ_leopard_1a5,Leopard 1A5,,9.3,,https://wiki.warthunder.com/unit/germ_leopard_1a5,2026-07-02T05:56:38.304546+00:00,Official War Thunder Wiki RB BR
+germ_leopard_2_pt14,PT-16/T14 mod.,,11.0,,https://wiki.warthunder.com/unit/germ_leopard_2_pt14,2026-07-02T05:56:40.963808+00:00,Official War Thunder Wiki RB BR
+germ_leopard_2a4,Leopard 2A4,,10.7,,https://wiki.warthunder.com/unit/germ_leopard_2a4,2026-07-02T05:56:42.748394+00:00,Official War Thunder Wiki RB BR
+germ_leopard_2a4_pzbtl_123,Leopard 2 (PzBtl 123),,10.7,,https://wiki.warthunder.com/unit/germ_leopard_2a4_pzbtl_123,2026-07-02T05:56:45.549667+00:00,Official War Thunder Wiki RB BR
+germ_leopard_2a4m_can,Leopard 2A4M,,12.0,,https://wiki.warthunder.com/unit/germ_leopard_2a4m_can,2026-07-02T05:56:47.681568+00:00,Official War Thunder Wiki RB BR
+germ_leopard_2a4m_can_sm,◍Leopard 2A4M,,12.0,,https://wiki.warthunder.com/unit/germ_leopard_2a4m_can_sm,2026-07-02T05:56:49.903000+00:00,Official War Thunder Wiki RB BR
+germ_leopard_2a5,Leopard 2A5,,12.3,,https://wiki.warthunder.com/unit/germ_leopard_2a5,2026-07-02T05:56:51.489871+00:00,Official War Thunder Wiki RB BR
+germ_leopard_2a5_pso,Leopard 2 PSO,,12.7,,https://wiki.warthunder.com/unit/germ_leopard_2a5_pso,2026-07-02T05:56:53.212849+00:00,Official War Thunder Wiki RB BR
+germ_leopard_2a5_yt_cup_2019,␙Leopard 2A5,,12.3,,https://wiki.warthunder.com/unit/germ_leopard_2a5_yt_cup_2019,2026-07-02T05:56:55.353437+00:00,Official War Thunder Wiki RB BR
+germ_leopard_2a6,Leopard 2A6,,12.7,,https://wiki.warthunder.com/unit/germ_leopard_2a6,2026-07-02T05:56:57.349947+00:00,Official War Thunder Wiki RB BR
+germ_leopard_2a7v,Leopard 2A7V,,12.7,,https://wiki.warthunder.com/unit/germ_leopard_2a7v,2026-07-02T05:56:59.072330+00:00,Official War Thunder Wiki RB BR
+germ_leopard_2av,Leopard 2AV,,10.3,,https://wiki.warthunder.com/unit/germ_leopard_2av,2026-07-02T05:57:01.888176+00:00,Official War Thunder Wiki RB BR
+germ_leopard_2k,Leopard 2K,,10.0,,https://wiki.warthunder.com/unit/germ_leopard_2k,2026-07-02T05:57:04.115013+00:00,Official War Thunder Wiki RB BR
+germ_leopard_2pl,Leopard 2 PL,,12.3,,https://wiki.warthunder.com/unit/germ_leopard_2pl,2026-07-02T05:57:06.675591+00:00,Official War Thunder Wiki RB BR
+germ_leopard_I,Leopard I,,8.0,,https://wiki.warthunder.com/unit/germ_leopard_I,2026-07-02T05:57:09.323309+00:00,Official War Thunder Wiki RB BR
+germ_leopard_I_a1,Leopard A1A1,,9.0,,https://wiki.warthunder.com/unit/germ_leopard_I_a1,2026-07-02T05:57:11.696351+00:00,Official War Thunder Wiki RB BR
+germ_leopard_a1a1_120,Leopard A1A1 (L/44),,9.3,,https://wiki.warthunder.com/unit/germ_leopard_a1a1_120,2026-07-02T05:57:13.295028+00:00,Official War Thunder Wiki RB BR
+germ_leopard_c2_mexas,C2A1,,9.3,,https://wiki.warthunder.com/unit/germ_leopard_c2_mexas,2026-07-02T05:57:15.353033+00:00,Official War Thunder Wiki RB BR
+germ_m109g,M109G,,6.0,,https://wiki.warthunder.com/unit/germ_m109g,2026-07-02T05:57:17.485928+00:00,Official War Thunder Wiki RB BR
+germ_m44,M44,,4.0,,https://wiki.warthunder.com/unit/germ_m44,2026-07-02T05:57:19.708444+00:00,Official War Thunder Wiki RB BR
+germ_m55,◄M55,,4.0,,https://wiki.warthunder.com/unit/germ_m55,2026-07-02T05:57:21.713838+00:00,Official War Thunder Wiki RB BR
+germ_marder_1a1,Marder A1-,,7.7,,https://wiki.warthunder.com/unit/germ_marder_1a1,2026-07-02T05:57:24.175853+00:00,Official War Thunder Wiki RB BR
+germ_marder_1a3,Marder 1A3,,8.0,,https://wiki.warthunder.com/unit/germ_marder_1a3,2026-07-02T05:57:26.167677+00:00,Official War Thunder Wiki RB BR
+germ_marder_clovis,CLOVIS,,8.0,,https://wiki.warthunder.com/unit/germ_marder_clovis,2026-07-02T05:57:28.693817+00:00,Official War Thunder Wiki RB BR
+germ_marder_df_105,DF105,,8.0,,https://wiki.warthunder.com/unit/germ_marder_df_105,2026-07-02T05:57:30.922765+00:00,Official War Thunder Wiki RB BR
+germ_mkpz_m47,mKPz M47 G,,7.3,,https://wiki.warthunder.com/unit/germ_mkpz_m47,2026-07-02T05:57:33.681070+00:00,Official War Thunder Wiki RB BR
+germ_mkpz_m48a2c,M48A2 C,,7.7,,https://wiki.warthunder.com/unit/germ_mkpz_m48a2c,2026-07-02T05:57:35.570072+00:00,Official War Thunder Wiki RB BR
+germ_mkpz_m48a2ga2,M48A2 G A2,,8.3,,https://wiki.warthunder.com/unit/germ_mkpz_m48a2ga2,2026-07-02T05:57:37.961212+00:00,Official War Thunder Wiki RB BR
+germ_mkpz_super_m48,M48 Super,,9.3,,https://wiki.warthunder.com/unit/germ_mkpz_super_m48,2026-07-02T05:57:39.867961+00:00,Official War Thunder Wiki RB BR
+germ_nbfz_VI,Nb.Fz.,,1.3,,https://wiki.warthunder.com/unit/germ_nbfz_VI,2026-07-02T05:57:42.063578+00:00,Official War Thunder Wiki RB BR
+germ_panther_II,Panther II,,7.0,,https://wiki.warthunder.com/unit/germ_panther_II,2026-07-02T05:57:43.988556+00:00,Official War Thunder Wiki RB BR
+germ_panzerbefelhswagen_IV_ausf_J,Pz.Bfw.IV,,4.0,,https://wiki.warthunder.com/unit/germ_panzerbefelhswagen_IV_ausf_J,2026-07-02T05:57:45.844068+00:00,Official War Thunder Wiki RB BR
+germ_panzerbefelhswagen_VI_P,Pz.Bfw.VI (P),,5.7,,https://wiki.warthunder.com/unit/germ_panzerbefelhswagen_VI_P,2026-07-02T05:57:47.938826+00:00,Official War Thunder Wiki RB BR
+germ_panzerbefelhswagen_jagdpanther,Bfw. Jagdpanther G1,,6.3,,https://wiki.warthunder.com/unit/germ_panzerbefelhswagen_jagdpanther,2026-07-02T05:57:50.003808+00:00,Official War Thunder Wiki RB BR
+germ_panzerjager_1,Panzerjäger I,,1.3,,https://wiki.warthunder.com/unit/germ_panzerjager_1,2026-07-02T05:57:51.673075+00:00,Official War Thunder Wiki RB BR
+germ_panzerjager_nashorn,Nashorn,,5.3,,https://wiki.warthunder.com/unit/germ_panzerjager_nashorn,2026-07-02T05:57:53.534906+00:00,Official War Thunder Wiki RB BR
+germ_panzerjager_panther,Jagdpanther G1,,6.3,,https://wiki.warthunder.com/unit/germ_panzerjager_panther,2026-07-02T05:57:55.561837+00:00,Official War Thunder Wiki RB BR
+germ_panzerjager_tiger,Jagdtiger,,6.7,,https://wiki.warthunder.com/unit/germ_panzerjager_tiger,2026-07-02T05:57:57.204432+00:00,Official War Thunder Wiki RB BR
+germ_panzerjager_tiger_P_elefant,Elefant,,6.7,,https://wiki.warthunder.com/unit/germ_panzerjager_tiger_P_elefant,2026-07-02T05:57:59.337414+00:00,Official War Thunder Wiki RB BR
+germ_panzerjager_tiger_P_ferdinand,Ferdinand,,6.7,,https://wiki.warthunder.com/unit/germ_panzerjager_tiger_P_ferdinand,2026-07-02T05:58:01.198596+00:00,Official War Thunder Wiki RB BR
+germ_panzerwerfer_42,15 cm Pz.W.42,,2.3,,https://wiki.warthunder.com/unit/germ_panzerwerfer_42,2026-07-02T05:58:03.526703+00:00,Official War Thunder Wiki RB BR
+germ_pz_IV_L70,Panzer IV/70(V),,5.7,,https://wiki.warthunder.com/unit/germ_pz_IV_L70,2026-07-02T05:58:05.370064+00:00,Official War Thunder Wiki RB BR
+germ_pz_IV_L70_A,Panzer IV/70(A),,4.3,,https://wiki.warthunder.com/unit/germ_pz_IV_L70_A,2026-07-02T05:58:07.800846+00:00,Official War Thunder Wiki RB BR
+germ_pzh_2000,PzH 2000,,7.7,,https://wiki.warthunder.com/unit/germ_pzh_2000,2026-07-02T05:58:09.810437+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_35t,Pz.35(t),,1.0,,https://wiki.warthunder.com/unit/germ_pzkpfw_35t,2026-07-02T05:58:11.638276+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_38t_Aufklarungspanzer,Sd.Kfz. 140/1,,2.0,,https://wiki.warthunder.com/unit/germ_pzkpfw_38t_Aufklarungspanzer,2026-07-02T05:58:13.450594+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_38t_Marder_III,Marder III,,2.3,,https://wiki.warthunder.com/unit/germ_pzkpfw_38t_Marder_III,2026-07-02T05:58:15.191168+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_38t_Marder_III_ausf_H,Marder III H,,3.0,,https://wiki.warthunder.com/unit/germ_pzkpfw_38t_Marder_III_ausf_H,2026-07-02T05:58:16.781789+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_38t_ausf_A,Pz.38(t) A,,1.3,,https://wiki.warthunder.com/unit/germ_pzkpfw_38t_ausf_A,2026-07-02T05:58:18.856243+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_38t_ausf_F,Pz.38(t) F,,2.3,,https://wiki.warthunder.com/unit/germ_pzkpfw_38t_ausf_F,2026-07-02T05:58:21.266532+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_38t_na,Pz.38(t) n.A.,,2.3,,https://wiki.warthunder.com/unit/germ_pzkpfw_38t_na,2026-07-02T05:58:23.260396+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_III_ausf_B,Pz.III B,,1.0,,https://wiki.warthunder.com/unit/germ_pzkpfw_III_ausf_B,2026-07-02T05:58:25.569849+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_III_ausf_E,Pz.III E,,1.0,,https://wiki.warthunder.com/unit/germ_pzkpfw_III_ausf_E,2026-07-02T05:58:27.790186+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_III_ausf_F,Pz.III F,,1.3,,https://wiki.warthunder.com/unit/germ_pzkpfw_III_ausf_F,2026-07-02T05:58:29.473091+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_III_ausf_J,Pz.III J1,,2.7,,https://wiki.warthunder.com/unit/germ_pzkpfw_III_ausf_J,2026-07-02T05:58:31.894180+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_III_ausf_J_L42,Pz.III J,,2.3,,https://wiki.warthunder.com/unit/germ_pzkpfw_III_ausf_J_L42,2026-07-02T05:58:34.286748+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_III_ausf_J_td,Pz.III J1 TD,,2.7,,https://wiki.warthunder.com/unit/germ_pzkpfw_III_ausf_J_td,2026-07-02T05:58:36.515327+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_III_ausf_L,Pz.III L,,3.0,,https://wiki.warthunder.com/unit/germ_pzkpfw_III_ausf_L,2026-07-02T05:58:38.405138+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_III_ausf_M,Pz.III M,,3.3,,https://wiki.warthunder.com/unit/germ_pzkpfw_III_ausf_M,2026-07-02T05:58:40.710661+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_III_ausf_N,Pz.III N,,3.3,,https://wiki.warthunder.com/unit/germ_pzkpfw_III_ausf_N,2026-07-02T05:58:43.399320+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_II_ausf_C,Pz.II C,,1.3,,https://wiki.warthunder.com/unit/germ_pzkpfw_II_ausf_C,2026-07-02T05:58:45.768229+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_II_ausf_C_DAK,Pz.II С (DAK),,1.3,,https://wiki.warthunder.com/unit/germ_pzkpfw_II_ausf_C_DAK,2026-07-02T05:58:47.533796+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_II_ausf_C_td,Pz.II C TD,,1.3,,https://wiki.warthunder.com/unit/germ_pzkpfw_II_ausf_C_td,2026-07-02T05:58:49.232722+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_II_ausf_F,Pz.II F,,1.7,,https://wiki.warthunder.com/unit/germ_pzkpfw_II_ausf_F,2026-07-02T05:58:51.074876+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_II_ausf_H,Pz.II H,,2.7,,https://wiki.warthunder.com/unit/germ_pzkpfw_II_ausf_H,2026-07-02T05:58:53.163012+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_IV_ausf_C,Pz.IV C,,1.3,,https://wiki.warthunder.com/unit/germ_pzkpfw_IV_ausf_C,2026-07-02T05:58:55.721974+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_IV_ausf_E,Pz.IV E,,2.0,,https://wiki.warthunder.com/unit/germ_pzkpfw_IV_ausf_E,2026-07-02T05:58:57.806898+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_IV_ausf_F,Pz.IV F1,,2.3,,https://wiki.warthunder.com/unit/germ_pzkpfw_IV_ausf_F,2026-07-02T05:58:59.794655+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_IV_ausf_F2,Pz.IV F2,,3.3,,https://wiki.warthunder.com/unit/germ_pzkpfw_IV_ausf_F2,2026-07-02T05:59:01.769071+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_IV_ausf_G,Pz.IV G,,3.7,,https://wiki.warthunder.com/unit/germ_pzkpfw_IV_ausf_G,2026-07-02T05:59:04.331039+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_IV_ausf_H,Pz.IV H,,4.0,,https://wiki.warthunder.com/unit/germ_pzkpfw_IV_ausf_H,2026-07-02T05:59:06.214918+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_IV_ausf_J,Pz.IV J,,4.0,,https://wiki.warthunder.com/unit/germ_pzkpfw_IV_ausf_J,2026-07-02T05:59:08.140689+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_Maus,Maus,,7.7,,https://wiki.warthunder.com/unit/germ_pzkpfw_Maus,2026-07-02T05:59:10.707990+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_VI_ausf_b_tiger_IIh,Tiger II (H),,6.7,,https://wiki.warthunder.com/unit/germ_pzkpfw_VI_ausf_b_tiger_IIh,2026-07-02T05:59:13.400398+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_VI_ausf_b_tiger_IIh_kwk46,Tiger II (10.5 cm Kw.K),,7.0,,https://wiki.warthunder.com/unit/germ_pzkpfw_VI_ausf_b_tiger_IIh_kwk46,2026-07-02T05:59:15.958621+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_VI_ausf_b_tiger_IIh_sla,Tiger II (H) Sla.16,,6.7,,https://wiki.warthunder.com/unit/germ_pzkpfw_VI_ausf_b_tiger_IIh_sla,2026-07-02T05:59:18.211661+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_VI_ausf_b_tiger_IIp,Tiger II (P),,6.7,,https://wiki.warthunder.com/unit/germ_pzkpfw_VI_ausf_b_tiger_IIp,2026-07-02T05:59:20.815055+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_VI_ausf_e_tiger,Tiger E,,6.0,,https://wiki.warthunder.com/unit/germ_pzkpfw_VI_ausf_e_tiger,2026-07-02T05:59:23.464405+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_VI_ausf_h1_tiger,Tiger H1,,5.7,,https://wiki.warthunder.com/unit/germ_pzkpfw_VI_ausf_h1_tiger,2026-07-02T05:59:25.267643+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_VI_ausf_h1_tiger_animal_version,␠Tiger,,5.7,,https://wiki.warthunder.com/unit/germ_pzkpfw_VI_ausf_h1_tiger_animal_version,2026-07-02T05:59:27.103695+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_VI_ausf_h1_tiger_east,Tiger Ost,,5.7,,https://wiki.warthunder.com/unit/germ_pzkpfw_VI_ausf_h1_tiger_east,2026-07-02T05:59:28.963066+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_VI_ausf_h1_tiger_west,Tiger West,,5.7,,https://wiki.warthunder.com/unit/germ_pzkpfw_VI_ausf_h1_tiger_west,2026-07-02T05:59:31.105607+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_VI_tiger_P,VK 45.01 (P),,5.3,,https://wiki.warthunder.com/unit/germ_pzkpfw_VI_tiger_P,2026-07-02T05:59:33.263394+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_V_ausf_a_panther,Panther A,,6.0,,https://wiki.warthunder.com/unit/germ_pzkpfw_V_ausf_a_panther,2026-07-02T05:59:35.493628+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_V_ausf_d_panther,Panther D,,5.3,,https://wiki.warthunder.com/unit/germ_pzkpfw_V_ausf_d_panther,2026-07-02T05:59:37.463096+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_V_ausf_f_panther,Panther F,,6.0,,https://wiki.warthunder.com/unit/germ_pzkpfw_V_ausf_f_panther,2026-07-02T05:59:39.897363+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_V_ausf_g_panther,Panther G,,6.0,,https://wiki.warthunder.com/unit/germ_pzkpfw_V_ausf_g_panther,2026-07-02T05:59:41.727338+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_V_ersatz_m10,Ersatz M10,,6.0,,https://wiki.warthunder.com/unit/germ_pzkpfw_V_ersatz_m10,2026-07-02T05:59:44.068087+00:00,Official War Thunder Wiki RB BR
+germ_pzkpfw_e_100,E-100,,7.7,,https://wiki.warthunder.com/unit/germ_pzkpfw_e_100,2026-07-02T05:59:46.265092+00:00,Official War Thunder Wiki RB BR
+germ_pzsfl_IVa_dickermax,Dicker Max,,3.7,,https://wiki.warthunder.com/unit/germ_pzsfl_IVa_dickermax,2026-07-02T05:59:48.007947+00:00,Official War Thunder Wiki RB BR
+germ_pzsflk40_sturer_emil,Sturer Emil,,4.0,,https://wiki.warthunder.com/unit/germ_pzsflk40_sturer_emil,2026-07-02T05:59:50.476817+00:00,Official War Thunder Wiki RB BR
+germ_radpanzer_90,Radkampfwagen 90,,10.0,,https://wiki.warthunder.com/unit/germ_radpanzer_90,2026-07-02T05:59:52.397802+00:00,Official War Thunder Wiki RB BR
+germ_raketenjagdpanzer_2,RakJPz 2,,8.0,,https://wiki.warthunder.com/unit/germ_raketenjagdpanzer_2,2026-07-02T05:59:54.287193+00:00,Official War Thunder Wiki RB BR
+germ_raketenjagdpanzer_2_hot,RakJPz 2 (HOT),,8.3,,https://wiki.warthunder.com/unit/germ_raketenjagdpanzer_2_hot,2026-07-02T05:59:56.256378+00:00,Official War Thunder Wiki RB BR
+germ_ru251,Ru 251,,7.3,,https://wiki.warthunder.com/unit/germ_ru251,2026-07-02T05:59:58.812336+00:00,Official War Thunder Wiki RB BR
+germ_schutzenpanzer_puma,PUMA,,10.3,,https://wiki.warthunder.com/unit/germ_schutzenpanzer_puma,2026-07-02T06:00:00.581067+00:00,Official War Thunder Wiki RB BR
+germ_schutzenpanzer_puma_vjtf,PUMA VJTF,,11.0,,https://wiki.warthunder.com/unit/germ_schutzenpanzer_puma_vjtf,2026-07-02T06:00:03.029014+00:00,Official War Thunder Wiki RB BR
+germ_sdkfz_221_s_pz_b_41,Sd.Kfz.221 (s.Pz.B.41),,1.0,,https://wiki.warthunder.com/unit/germ_sdkfz_221_s_pz_b_41,2026-07-02T06:00:05.239416+00:00,Official War Thunder Wiki RB BR
+germ_sdkfz_222,Sd.Kfz.222,,2.0,,https://wiki.warthunder.com/unit/germ_sdkfz_222,2026-07-02T06:00:07.277023+00:00,Official War Thunder Wiki RB BR
+germ_sdkfz_234_1,Sd.Kfz.234/1,,2.0,,https://wiki.warthunder.com/unit/germ_sdkfz_234_1,2026-07-02T06:00:09.195590+00:00,Official War Thunder Wiki RB BR
+germ_sdkfz_234_2,Sd.Kfz.234/2,,3.7,,https://wiki.warthunder.com/unit/germ_sdkfz_234_2,2026-07-02T06:00:11.089844+00:00,Official War Thunder Wiki RB BR
+germ_sdkfz_234_2_mod,"Sd.Kfz.234/2 ""Biene""",,3.7,,https://wiki.warthunder.com/unit/germ_sdkfz_234_2_mod,2026-07-02T06:00:13.026401+00:00,Official War Thunder Wiki RB BR
+germ_sdkfz_234_2_td,Sd.Kfz.234/2 TD,,3.7,,https://wiki.warthunder.com/unit/germ_sdkfz_234_2_td,2026-07-02T06:00:14.680881+00:00,Official War Thunder Wiki RB BR
+germ_sdkfz_234_3,Sd.Kfz.234/3,,2.0,,https://wiki.warthunder.com/unit/germ_sdkfz_234_3,2026-07-02T06:00:16.556323+00:00,Official War Thunder Wiki RB BR
+germ_sdkfz_234_4,Sd.Kfz.234/4,,4.7,,https://wiki.warthunder.com/unit/germ_sdkfz_234_4,2026-07-02T06:00:18.298123+00:00,Official War Thunder Wiki RB BR
+germ_sdkfz_251_10,Sd.Kfz.251/10,,1.0,,https://wiki.warthunder.com/unit/germ_sdkfz_251_10,2026-07-02T06:00:19.795959+00:00,Official War Thunder Wiki RB BR
+germ_sdkfz_251_21,Sd.Kfz.251/21,,3.3,,https://wiki.warthunder.com/unit/germ_sdkfz_251_21,2026-07-02T06:00:21.746257+00:00,Official War Thunder Wiki RB BR
+germ_sdkfz_251_22,Sd.Kfz.251/22,,3.0,,https://wiki.warthunder.com/unit/germ_sdkfz_251_22,2026-07-02T06:00:23.420516+00:00,Official War Thunder Wiki RB BR
+germ_sdkfz_251_9,Sd.Kfz.251/9,,1.3,,https://wiki.warthunder.com/unit/germ_sdkfz_251_9,2026-07-02T06:00:25.198778+00:00,Official War Thunder Wiki RB BR
+germ_sdkfz_6_2_flak36,Sd.Kfz. 6/2,,2.3,,https://wiki.warthunder.com/unit/germ_sdkfz_6_2_flak36,2026-07-02T06:00:27.151417+00:00,Official War Thunder Wiki RB BR
+germ_sdkfz_9_flak37,"8,8 cm Flak 37 Sfl.",,4.0,,https://wiki.warthunder.com/unit/germ_sdkfz_9_flak37,2026-07-02T06:00:28.832923+00:00,Official War Thunder Wiki RB BR
+germ_sk105_a2,JaPz.K A2,,8.7,,https://wiki.warthunder.com/unit/germ_sk105_a2,2026-07-02T06:00:31.539730+00:00,Official War Thunder Wiki RB BR
+germ_sppz2_luchs_a2,Luchs A2,,7.3,,https://wiki.warthunder.com/unit/germ_sppz2_luchs_a2,2026-07-02T06:00:33.462017+00:00,Official War Thunder Wiki RB BR
+germ_spz_12_3,SPz 12-3 LGS,,7.0,,https://wiki.warthunder.com/unit/germ_spz_12_3,2026-07-02T06:00:35.809042+00:00,Official War Thunder Wiki RB BR
+germ_spz_oerlikon_raketenautomat,Raketenautomat,,8.0,,https://wiki.warthunder.com/unit/germ_spz_oerlikon_raketenautomat,2026-07-02T06:00:38.080195+00:00,Official War Thunder Wiki RB BR
+germ_stug_III_ausf_A,StuG III A,,2.3,,https://wiki.warthunder.com/unit/germ_stug_III_ausf_A,2026-07-02T06:00:40.309935+00:00,Official War Thunder Wiki RB BR
+germ_stug_III_ausf_F,StuG III F,,3.3,,https://wiki.warthunder.com/unit/germ_stug_III_ausf_F,2026-07-02T06:00:42.071817+00:00,Official War Thunder Wiki RB BR
+germ_stug_III_ausf_G,StuG III G,,4.0,,https://wiki.warthunder.com/unit/germ_stug_III_ausf_G,2026-07-02T06:00:44.611710+00:00,Official War Thunder Wiki RB BR
+germ_stuh_III_ausf_G,StuH 42 G,,3.0,,https://wiki.warthunder.com/unit/germ_stuh_III_ausf_G,2026-07-02T06:00:46.976645+00:00,Official War Thunder Wiki RB BR
+germ_sturmmorser_sturmtiger,38 cm Sturmmörser,,5.7,,https://wiki.warthunder.com/unit/germ_sturmmorser_sturmtiger,2026-07-02T06:00:49.712273+00:00,Official War Thunder Wiki RB BR
+germ_sturmpanzer_II,Sturmpanzer II,,1.0,,https://wiki.warthunder.com/unit/germ_sturmpanzer_II,2026-07-02T06:00:52.007064+00:00,Official War Thunder Wiki RB BR
+germ_sturmpanzer_IV_brummbar,Brummbär,,4.3,,https://wiki.warthunder.com/unit/germ_sturmpanzer_IV_brummbar,2026-07-02T06:00:54.333627+00:00,Official War Thunder Wiki RB BR
+germ_t_34_747,T 34 747 (r),,4.3,,https://wiki.warthunder.com/unit/germ_t_34_747,2026-07-02T06:00:55.972333+00:00,Official War Thunder Wiki RB BR
+germ_th_400,R400,,9.7,,https://wiki.warthunder.com/unit/germ_th_400,2026-07-02T06:00:58.585984+00:00,Official War Thunder Wiki RB BR
+germ_th_800_bismark,Class 3 (P),,9.0,,https://wiki.warthunder.com/unit/germ_th_800_bismark,2026-07-02T06:01:01.174812+00:00,Official War Thunder Wiki RB BR
+germ_thyssen_henschel_tam,TAM,,9.0,,https://wiki.warthunder.com/unit/germ_thyssen_henschel_tam,2026-07-02T06:01:03.308708+00:00,Official War Thunder Wiki RB BR
+germ_thyssen_henschel_tam_2c,TAM 2C,,10.3,,https://wiki.warthunder.com/unit/germ_thyssen_henschel_tam_2c,2026-07-02T06:01:05.572506+00:00,Official War Thunder Wiki RB BR
+germ_thyssen_henschel_tam_2ip,TAM 2IP,,9.3,,https://wiki.warthunder.com/unit/germ_thyssen_henschel_tam_2ip,2026-07-02T06:01:08.261547+00:00,Official War Thunder Wiki RB BR
+germ_vilkas,Vilkas,,10.7,,https://wiki.warthunder.com/unit/germ_vilkas,2026-07-02T06:01:10.353196+00:00,Official War Thunder Wiki RB BR
+germ_vk_3002m,VK 3002 (M),,5.0,,https://wiki.warthunder.com/unit/germ_vk_3002m,2026-07-02T06:01:12.731154+00:00,Official War Thunder Wiki RB BR
+germ_vsw_flak_41,VFW,,5.7,,https://wiki.warthunder.com/unit/germ_vsw_flak_41,2026-07-02T06:01:15.057000+00:00,Official War Thunder Wiki RB BR
+germ_vt_1_2,VT1-2,,8.7,,https://wiki.warthunder.com/unit/germ_vt_1_2,2026-07-02T06:01:16.789136+00:00,Official War Thunder Wiki RB BR
+germ_waffentrager_krupp_steyr,Waffenträger,,5.7,,https://wiki.warthunder.com/unit/germ_waffentrager_krupp_steyr,2026-07-02T06:01:18.603084+00:00,Official War Thunder Wiki RB BR
+germ_wiesel_1_mk20,Wiesel 1A4,,7.3,,https://wiki.warthunder.com/unit/germ_wiesel_1_mk20,2026-07-02T06:01:21.016721+00:00,Official War Thunder Wiki RB BR
+germ_wiesel_1_tow,Wiesel 1A2,,9.7,,https://wiki.warthunder.com/unit/germ_wiesel_1_tow,2026-07-02T06:01:22.847989+00:00,Official War Thunder Wiki RB BR
+germ_wiesel_2_adwc,Ozelot,,9.7,,https://wiki.warthunder.com/unit/germ_wiesel_2_adwc,2026-07-02T06:01:25.266171+00:00,Official War Thunder Wiki RB BR
+il_aml_90,AML-90,,7.7,,https://wiki.warthunder.com/unit/il_aml_90,2026-07-02T06:01:27.611166+00:00,Official War Thunder Wiki RB BR
+il_amx_13_75,AMX-13,,7.0,,https://wiki.warthunder.com/unit/il_amx_13_75,2026-07-02T06:01:29.733243+00:00,Official War Thunder Wiki RB BR
+il_centurion_mk_5_shot,Sho't,,7.7,,https://wiki.warthunder.com/unit/il_centurion_mk_5_shot,2026-07-02T06:01:31.905248+00:00,Official War Thunder Wiki RB BR
+il_centurion_shot_kal_alef,Sho't Kal Alef,,8.0,,https://wiki.warthunder.com/unit/il_centurion_shot_kal_alef,2026-07-02T06:01:34.140764+00:00,Official War Thunder Wiki RB BR
+il_centurion_shot_kal_d,Sho't Kal Dalet,,9.0,,https://wiki.warthunder.com/unit/il_centurion_shot_kal_d,2026-07-02T06:01:36.350886+00:00,Official War Thunder Wiki RB BR
+il_centurion_shot_kal_gimel,Sho't Kal Gimel,,8.7,,https://wiki.warthunder.com/unit/il_centurion_shot_kal_gimel,2026-07-02T06:01:38.498774+00:00,Official War Thunder Wiki RB BR
+il_eitan,Eitan (P),,11.3,,https://wiki.warthunder.com/unit/il_eitan,2026-07-02T06:01:41.178954+00:00,Official War Thunder Wiki RB BR
+il_m109,M109,,6.0,,https://wiki.warthunder.com/unit/il_m109,2026-07-02T06:01:43.521160+00:00,Official War Thunder Wiki RB BR
+il_m109a1,Rochev,,6.3,,https://wiki.warthunder.com/unit/il_m109a1,2026-07-02T06:01:45.888335+00:00,Official War Thunder Wiki RB BR
+il_m113_hvms,Bardelas/60mm HVMS,,7.7,,https://wiki.warthunder.com/unit/il_m113_hvms,2026-07-02T06:01:48.180151+00:00,Official War Thunder Wiki RB BR
+il_m113a1_tow,Giraf,,8.3,,https://wiki.warthunder.com/unit/il_m113a1_tow,2026-07-02T06:01:50.006251+00:00,Official War Thunder Wiki RB BR
+il_m163_vulcan,Hovet,,7.3,,https://wiki.warthunder.com/unit/il_m163_vulcan,2026-07-02T06:01:52.049617+00:00,Official War Thunder Wiki RB BR
+il_m48a1_patton_III,Magach 1,,7.7,,https://wiki.warthunder.com/unit/il_m48a1_patton_III,2026-07-02T06:01:53.893005+00:00,Official War Thunder Wiki RB BR
+il_m_51,M-51,,6.3,,https://wiki.warthunder.com/unit/il_m_51,2026-07-02T06:01:56.262112+00:00,Official War Thunder Wiki RB BR
+il_m_51_w,M-51 (W),,6.3,,https://wiki.warthunder.com/unit/il_m_51_w,2026-07-02T06:01:57.975223+00:00,Official War Thunder Wiki RB BR
+il_machbet,Machbet,,9.3,,https://wiki.warthunder.com/unit/il_machbet,2026-07-02T06:01:59.894404+00:00,Official War Thunder Wiki RB BR
+il_magach_2,Magach 2,,7.7,,https://wiki.warthunder.com/unit/il_magach_2,2026-07-02T06:02:02.083836+00:00,Official War Thunder Wiki RB BR
+il_magach_3,Magach 3 (ERA),,8.0,,https://wiki.warthunder.com/unit/il_magach_3,2026-07-02T06:02:04.107874+00:00,Official War Thunder Wiki RB BR
+il_magach_3_idf,Magach 3,,8.0,,https://wiki.warthunder.com/unit/il_magach_3_idf,2026-07-02T06:02:06.566327+00:00,Official War Thunder Wiki RB BR
+il_magach_5,Magach 5,,8.0,,https://wiki.warthunder.com/unit/il_magach_5,2026-07-02T06:02:09.366628+00:00,Official War Thunder Wiki RB BR
+il_magach_6,Magach 6,,8.0,,https://wiki.warthunder.com/unit/il_magach_6,2026-07-02T06:02:11.332131+00:00,Official War Thunder Wiki RB BR
+il_magach_6_rocket,Magach Hydra,,8.7,,https://wiki.warthunder.com/unit/il_magach_6_rocket,2026-07-02T06:02:13.889908+00:00,Official War Thunder Wiki RB BR
+il_magach_6a,Magach 6A,,8.0,,https://wiki.warthunder.com/unit/il_magach_6a,2026-07-02T06:02:15.992103+00:00,Official War Thunder Wiki RB BR
+il_magach_6b,Magach 6B,,8.7,,https://wiki.warthunder.com/unit/il_magach_6b,2026-07-02T06:02:18.041071+00:00,Official War Thunder Wiki RB BR
+il_magach_6b_gal,Magach 6B Gal,,9.3,,https://wiki.warthunder.com/unit/il_magach_6b_gal,2026-07-02T06:02:19.830855+00:00,Official War Thunder Wiki RB BR
+il_magach_6b_gal_batash,Gal Batash,,9.3,,https://wiki.warthunder.com/unit/il_magach_6b_gal_batash,2026-07-02T06:02:21.666307+00:00,Official War Thunder Wiki RB BR
+il_magach_6c,Magach 6C,,9.3,,https://wiki.warthunder.com/unit/il_magach_6c,2026-07-02T06:02:23.571356+00:00,Official War Thunder Wiki RB BR
+il_magach_6m,Magach 6M,,9.0,,https://wiki.warthunder.com/unit/il_magach_6m,2026-07-02T06:02:26.197746+00:00,Official War Thunder Wiki RB BR
+il_magach_6r,Magach 6R,,8.7,,https://wiki.warthunder.com/unit/il_magach_6r,2026-07-02T06:02:28.257466+00:00,Official War Thunder Wiki RB BR
+il_magach_7c,Magach 7C,,9.3,,https://wiki.warthunder.com/unit/il_magach_7c,2026-07-02T06:02:30.767120+00:00,Official War Thunder Wiki RB BR
+il_merkava_mk_1,Merkava Mk.1,,9.3,,https://wiki.warthunder.com/unit/il_merkava_mk_1,2026-07-02T06:02:32.754499+00:00,Official War Thunder Wiki RB BR
+il_merkava_mk_1b,Merkava Mk.1B,,9.7,,https://wiki.warthunder.com/unit/il_merkava_mk_1b,2026-07-02T06:02:34.489628+00:00,Official War Thunder Wiki RB BR
+il_merkava_mk_2b_early,Merkava Mk.2B,,9.7,,https://wiki.warthunder.com/unit/il_merkava_mk_2b_early,2026-07-02T06:02:36.551641+00:00,Official War Thunder Wiki RB BR
+il_merkava_mk_2d,Merkava Mk.2D,,10.0,,https://wiki.warthunder.com/unit/il_merkava_mk_2d,2026-07-02T06:02:38.851785+00:00,Official War Thunder Wiki RB BR
+il_merkava_mk_3_raam_segol,Ra'am Sagol,,11.3,,https://wiki.warthunder.com/unit/il_merkava_mk_3_raam_segol,2026-07-02T06:02:40.742463+00:00,Official War Thunder Wiki RB BR
+il_merkava_mk_3b,Merkava Mk.3B,,11.3,,https://wiki.warthunder.com/unit/il_merkava_mk_3b,2026-07-02T06:02:42.695326+00:00,Official War Thunder Wiki RB BR
+il_merkava_mk_3c,Merkava Mk.3C,,11.3,,https://wiki.warthunder.com/unit/il_merkava_mk_3c,2026-07-02T06:02:44.976739+00:00,Official War Thunder Wiki RB BR
+il_merkava_mk_4_lic,Merkava Mk.4 LIC,,12.3,,https://wiki.warthunder.com/unit/il_merkava_mk_4_lic,2026-07-02T06:02:46.893792+00:00,Official War Thunder Wiki RB BR
+il_merkava_mk_4b,Merkava Mk.4B,,12.3,,https://wiki.warthunder.com/unit/il_merkava_mk_4b,2026-07-02T06:02:49.514580+00:00,Official War Thunder Wiki RB BR
+il_merkava_mk_4m,Merkava Mk.4M,,12.7,,https://wiki.warthunder.com/unit/il_merkava_mk_4m,2026-07-02T06:02:51.728134+00:00,Official War Thunder Wiki RB BR
+il_mim_72_chaparral,Imp.Chaparral,,9.3,,https://wiki.warthunder.com/unit/il_mim_72_chaparral,2026-07-02T06:02:53.960859+00:00,Official War Thunder Wiki RB BR
+il_namer_rcws_30,Namer 30,,11.3,,https://wiki.warthunder.com/unit/il_namer_rcws_30,2026-07-02T06:02:56.437047+00:00,Official War Thunder Wiki RB BR
+il_namer_tsrikhon,Namer Tsrikhon,,11.3,,https://wiki.warthunder.com/unit/il_namer_tsrikhon,2026-07-02T06:02:58.976623+00:00,Official War Thunder Wiki RB BR
+il_sabra_mk1,Sabra Mk.I,,10.0,,https://wiki.warthunder.com/unit/il_sabra_mk1,2026-07-02T06:03:00.892311+00:00,Official War Thunder Wiki RB BR
+il_sholef,Sholef,,7.3,,https://wiki.warthunder.com/unit/il_sholef,2026-07-02T06:03:03.395282+00:00,Official War Thunder Wiki RB BR
+il_spyder_aio,SPYDER,,12.7,,https://wiki.warthunder.com/unit/il_spyder_aio,2026-07-02T06:03:05.346413+00:00,Official War Thunder Wiki RB BR
+il_ss_11_halftrack,Zachlam Tager,,6.7,,https://wiki.warthunder.com/unit/il_ss_11_halftrack,2026-07-02T06:03:07.565234+00:00,Official War Thunder Wiki RB BR
+il_tcm_20,TCM-20,,4.3,,https://wiki.warthunder.com/unit/il_tcm_20,2026-07-02T06:03:09.670386+00:00,Official War Thunder Wiki RB BR
+il_tiran_4,Tiran 4,,8.0,,https://wiki.warthunder.com/unit/il_tiran_4,2026-07-02T06:03:12.221786+00:00,Official War Thunder Wiki RB BR
+il_tiran_4_sh,Tiran 4S,,8.0,,https://wiki.warthunder.com/unit/il_tiran_4_sh,2026-07-02T06:03:14.297816+00:00,Official War Thunder Wiki RB BR
+il_tiran_6,Tiran 6,,8.7,,https://wiki.warthunder.com/unit/il_tiran_6,2026-07-02T06:03:16.835200+00:00,Official War Thunder Wiki RB BR
+il_zsu_23_4,ZSU-23-4,,8.0,,https://wiki.warthunder.com/unit/il_zsu_23_4,2026-07-02T06:03:18.716669+00:00,Official War Thunder Wiki RB BR
+il_zsu_57_2,ZSU-57-2,,7.0,,https://wiki.warthunder.com/unit/il_zsu_57_2,2026-07-02T06:03:20.736761+00:00,Official War Thunder Wiki RB BR
+it_2s1,◔2S1,,6.0,,https://wiki.warthunder.com/unit/it_2s1,2026-07-02T06:03:23.207517+00:00,Official War Thunder Wiki RB BR
+it_39m_csaba,Csaba,,1.0,,https://wiki.warthunder.com/unit/it_39m_csaba,2026-07-02T06:03:25.811223+00:00,Official War Thunder Wiki RB BR
+it_40_43m_zrinyi_2,Zrinyi II,,2.7,,https://wiki.warthunder.com/unit/it_40_43m_zrinyi_2,2026-07-02T06:03:27.904926+00:00,Official War Thunder Wiki RB BR
+it_40m_turan_1,Turan I,,2.3,,https://wiki.warthunder.com/unit/it_40m_turan_1,2026-07-02T06:03:29.752898+00:00,Official War Thunder Wiki RB BR
+it_41m_turan_2,Turan II,,2.3,,https://wiki.warthunder.com/unit/it_41m_turan_2,2026-07-02T06:03:31.782968+00:00,Official War Thunder Wiki RB BR
+it_43m_turan_3,Turan III,,4.0,,https://wiki.warthunder.com/unit/it_43m_turan_3,2026-07-02T06:03:34.284734+00:00,Official War Thunder Wiki RB BR
+it_44m_zrinyi_1,Zrinyi I,,4.0,,https://wiki.warthunder.com/unit/it_44m_zrinyi_1,2026-07-02T06:03:35.681202+00:00,Official War Thunder Wiki RB BR
+it_9a33bm3,Osa-AKM,,10.3,,https://wiki.warthunder.com/unit/it_9a33bm3,2026-07-02T06:03:38.090293+00:00,Official War Thunder Wiki RB BR
+it_9a35_m,Стрела-10М,,10.3,,https://wiki.warthunder.com/unit/it_9a35_m,2026-07-02T06:03:39.932910+00:00,Official War Thunder Wiki RB BR
+it_ab_41,AB 41,,1.0,,https://wiki.warthunder.com/unit/it_ab_41,2026-07-02T06:03:41.822379+00:00,Official War Thunder Wiki RB BR
+it_ab_43,AB 43,,2.7,,https://wiki.warthunder.com/unit/it_ab_43,2026-07-02T06:03:43.313521+00:00,Official War Thunder Wiki RB BR
+it_ariete_amv_pt1,Ariete AMV,,12.3,,https://wiki.warthunder.com/unit/it_ariete_amv_pt1,2026-07-02T06:03:45.233441+00:00,Official War Thunder Wiki RB BR
+it_as_42_47,AS 42/47,,2.0,,https://wiki.warthunder.com/unit/it_as_42_47,2026-07-02T06:03:46.742301+00:00,Official War Thunder Wiki RB BR
+it_as_42_metropolitana,AS 42,,1.3,,https://wiki.warthunder.com/unit/it_as_42_metropolitana,2026-07-02T06:03:49.098226+00:00,Official War Thunder Wiki RB BR
+it_aubl_74_60_70m,AUBL/74 HVG,,8.0,,https://wiki.warthunder.com/unit/it_aubl_74_60_70m,2026-07-02T06:03:51.051982+00:00,Official War Thunder Wiki RB BR
+it_b1_centauro,Centauro I 105,,9.3,,https://wiki.warthunder.com/unit/it_b1_centauro,2026-07-02T06:03:53.551135+00:00,Official War Thunder Wiki RB BR
+it_b1_centauro_romor,Centauro I 105 R,,9.7,,https://wiki.warthunder.com/unit/it_b1_centauro_romor,2026-07-02T06:03:56.263726+00:00,Official War Thunder Wiki RB BR
+it_breda_52_autocannone,Breda 90/53,,4.0,,https://wiki.warthunder.com/unit/it_breda_52_autocannone,2026-07-02T06:03:58.016314+00:00,Official War Thunder Wiki RB BR
+it_btr_80a_hungary,◔BTR-80A,,7.3,,https://wiki.warthunder.com/unit/it_btr_80a_hungary,2026-07-02T06:04:00.864241+00:00,Official War Thunder Wiki RB BR
+it_c13_t90,C13 T90,,7.3,,https://wiki.warthunder.com/unit/it_c13_t90,2026-07-02T06:04:02.866439+00:00,Official War Thunder Wiki RB BR
+it_c13_tua,C13/TUA,,8.3,,https://wiki.warthunder.com/unit/it_c13_tua,2026-07-02T06:04:04.769859+00:00,Official War Thunder Wiki RB BR
+it_c1_ariete,Ariete,,11.7,,https://wiki.warthunder.com/unit/it_c1_ariete,2026-07-02T06:04:06.487938+00:00,Official War Thunder Wiki RB BR
+it_c1_ariete_certezza,Ariete Сertezza,,11.7,,https://wiki.warthunder.com/unit/it_c1_ariete_certezza,2026-07-02T06:04:08.700405+00:00,Official War Thunder Wiki RB BR
+it_c1_ariete_preserie,Ariete (P),,10.7,,https://wiki.warthunder.com/unit/it_c1_ariete_preserie,2026-07-02T06:04:10.621584+00:00,Official War Thunder Wiki RB BR
+it_c1_ariete_pso,Ariete PSO,,11.7,,https://wiki.warthunder.com/unit/it_c1_ariete_pso,2026-07-02T06:04:12.627476+00:00,Official War Thunder Wiki RB BR
+it_centauro_2,Centauro II (P),,12.3,,https://wiki.warthunder.com/unit/it_centauro_2,2026-07-02T06:04:15.111847+00:00,Official War Thunder Wiki RB BR
+it_centauro_mgs_120,Centauro I 120,,11.7,,https://wiki.warthunder.com/unit/it_centauro_mgs_120,2026-07-02T06:04:17.032206+00:00,Official War Thunder Wiki RB BR
+it_centauro_rgo_120,Centauro RGO,,11.7,,https://wiki.warthunder.com/unit/it_centauro_rgo_120,2026-07-02T06:04:19.308108+00:00,Official War Thunder Wiki RB BR
+it_dardo_vcc,Dardo,,10.0,,https://wiki.warthunder.com/unit/it_dardo_vcc,2026-07-02T06:04:21.339433+00:00,Official War Thunder Wiki RB BR
+it_fiat_6614_106sr,FIAT 6614,,6.7,,https://wiki.warthunder.com/unit/it_fiat_6614_106sr,2026-07-02T06:04:24.002231+00:00,Official War Thunder Wiki RB BR
+it_fiat_6614_firos,FIROS 6,,7.7,,https://wiki.warthunder.com/unit/it_fiat_6614_firos,2026-07-02T06:04:25.689108+00:00,Official War Thunder Wiki RB BR
+it_fiat_6616_cockerill,AUBL/74,,6.7,,https://wiki.warthunder.com/unit/it_fiat_6616_cockerill,2026-07-02T06:04:27.702804+00:00,Official War Thunder Wiki RB BR
+it_fiat_cm52,CM52,,2.3,,https://wiki.warthunder.com/unit/it_fiat_cm52,2026-07-02T06:04:29.338892+00:00,Official War Thunder Wiki RB BR
+it_freccia,Freccia,,11.0,,https://wiki.warthunder.com/unit/it_freccia,2026-07-02T06:04:30.945866+00:00,Official War Thunder Wiki RB BR
+it_freccia_hitfist_ows,Freccia OWS 30,,10.7,,https://wiki.warthunder.com/unit/it_freccia_hitfist_ows,2026-07-02T06:04:32.488340+00:00,Official War Thunder Wiki RB BR
+it_kf_41,KF41,,11.0,,https://wiki.warthunder.com/unit/it_kf_41,2026-07-02T06:04:34.967809+00:00,Official War Thunder Wiki RB BR
+it_l3_cc,L3/33 CC,,1.0,,https://wiki.warthunder.com/unit/it_l3_cc,2026-07-02T06:04:36.747504+00:00,Official War Thunder Wiki RB BR
+it_l6,L6/40,,1.0,,https://wiki.warthunder.com/unit/it_l6,2026-07-02T06:04:39.274870+00:00,Official War Thunder Wiki RB BR
+it_l6_leone,L6/40 (31 Rgt.),,1.0,,https://wiki.warthunder.com/unit/it_l6_leone,2026-07-02T06:04:41.865669+00:00,Official War Thunder Wiki RB BR
+it_lancia3ro_100,Lancia 3Ro (100/17),,1.7,,https://wiki.warthunder.com/unit/it_lancia3ro_100,2026-07-02T06:04:44.032596+00:00,Official War Thunder Wiki RB BR
+it_leopard_1a2,Leopard 1A2,,8.0,,https://wiki.warthunder.com/unit/it_leopard_1a2,2026-07-02T06:04:46.050353+00:00,Official War Thunder Wiki RB BR
+it_leopard_1a5,Leopard 1A5,,9.3,,https://wiki.warthunder.com/unit/it_leopard_1a5,2026-07-02T06:04:48.350504+00:00,Official War Thunder Wiki RB BR
+it_leopard_2a4,◔Leopard 2A4,,10.7,,https://wiki.warthunder.com/unit/it_leopard_2a4,2026-07-02T06:04:50.454238+00:00,Official War Thunder Wiki RB BR
+it_leopard_2a7_hungary,Leopard 2A7HU,,12.7,,https://wiki.warthunder.com/unit/it_leopard_2a7_hungary,2026-07-02T06:04:52.682341+00:00,Official War Thunder Wiki RB BR
+it_leopard_bofors,Leopard 40/70,,6.0,,https://wiki.warthunder.com/unit/it_leopard_bofors,2026-07-02T06:04:54.646477+00:00,Official War Thunder Wiki RB BR
+it_m109g,M109G,,6.0,,https://wiki.warthunder.com/unit/it_m109g,2026-07-02T06:04:56.566497+00:00,Official War Thunder Wiki RB BR
+it_m113a1_tow,M113A1 (TOW),,8.3,,https://wiki.warthunder.com/unit/it_m113a1_tow,2026-07-02T06:04:58.719873+00:00,Official War Thunder Wiki RB BR
+it_m11_39,M11/39,,1.0,,https://wiki.warthunder.com/unit/it_m11_39,2026-07-02T06:05:01.289970+00:00,Official War Thunder Wiki RB BR
+it_m13_40_serie_1,M13/40 (I),,1.7,,https://wiki.warthunder.com/unit/it_m13_40_serie_1,2026-07-02T06:05:03.674515+00:00,Official War Thunder Wiki RB BR
+it_m13_40_serie_2,M13/40 (II),,2.0,,https://wiki.warthunder.com/unit/it_m13_40_serie_2,2026-07-02T06:05:05.798408+00:00,Official War Thunder Wiki RB BR
+it_m13_40_serie_3,M13/40 (III),,2.0,,https://wiki.warthunder.com/unit/it_m13_40_serie_3,2026-07-02T06:05:07.791254+00:00,Official War Thunder Wiki RB BR
+it_m14_41,M14/41,,2.0,,https://wiki.warthunder.com/unit/it_m14_41,2026-07-02T06:05:09.754710+00:00,Official War Thunder Wiki RB BR
+it_m14_41_47_40,M14/41 (47/40),,2.3,,https://wiki.warthunder.com/unit/it_m14_41_47_40,2026-07-02T06:05:12.269010+00:00,Official War Thunder Wiki RB BR
+it_m15_42,M15/42,,2.7,,https://wiki.warthunder.com/unit/it_m15_42,2026-07-02T06:05:14.471464+00:00,Official War Thunder Wiki RB BR
+it_m15_42_contraereo,M42 Contraereo,,3.7,,https://wiki.warthunder.com/unit/it_m15_42_contraereo,2026-07-02T06:05:16.333564+00:00,Official War Thunder Wiki RB BR
+it_m18_hellcat,M18,,6.0,,https://wiki.warthunder.com/unit/it_m18_hellcat,2026-07-02T06:05:18.037775+00:00,Official War Thunder Wiki RB BR
+it_m24_chaffee,M24,,4.0,,https://wiki.warthunder.com/unit/it_m24_chaffee,2026-07-02T06:05:20.286682+00:00,Official War Thunder Wiki RB BR
+it_m26_ariete,"M26 ""D.C.Ariete""",,6.7,,https://wiki.warthunder.com/unit/it_m26_ariete,2026-07-02T06:05:22.540699+00:00,Official War Thunder Wiki RB BR
+it_m26a1_pershing,M26A1,,6.7,,https://wiki.warthunder.com/unit/it_m26a1_pershing,2026-07-02T06:05:24.491557+00:00,Official War Thunder Wiki RB BR
+it_m36b1,M36B1,,5.7,,https://wiki.warthunder.com/unit/it_m36b1,2026-07-02T06:05:26.944163+00:00,Official War Thunder Wiki RB BR
+it_m3a3_stuart,M3A3,,2.7,,https://wiki.warthunder.com/unit/it_m3a3_stuart,2026-07-02T06:05:29.114939+00:00,Official War Thunder Wiki RB BR
+it_m44,M44,,4.0,,https://wiki.warthunder.com/unit/it_m44,2026-07-02T06:05:31.280244+00:00,Official War Thunder Wiki RB BR
+it_m47_105,M47 (105/55),,7.7,,https://wiki.warthunder.com/unit/it_m47_105,2026-07-02T06:05:33.748894+00:00,Official War Thunder Wiki RB BR
+it_m4a4_sherman,Sherman V,,3.7,,https://wiki.warthunder.com/unit/it_m4a4_sherman,2026-07-02T06:05:35.926221+00:00,Official War Thunder Wiki RB BR
+it_m55,M55,,4.0,,https://wiki.warthunder.com/unit/it_m55,2026-07-02T06:05:38.620261+00:00,Official War Thunder Wiki RB BR
+it_m60a1_ariete,"M60A1 ""D.C.Ariete""",,8.0,,https://wiki.warthunder.com/unit/it_m60a1_ariete,2026-07-02T06:05:40.856584+00:00,Official War Thunder Wiki RB BR
+it_of_40_mk_1,OF-40,,8.0,,https://wiki.warthunder.com/unit/it_of_40_mk_1,2026-07-02T06:05:43.163089+00:00,Official War Thunder Wiki RB BR
+it_of_40_mk_2a,OF-40 Mk.2A,,9.0,,https://wiki.warthunder.com/unit/it_of_40_mk_2a,2026-07-02T06:05:45.823661+00:00,Official War Thunder Wiki RB BR
+it_of_40_mtca,OF-40 (MTCA),,9.3,,https://wiki.warthunder.com/unit/it_of_40_mtca,2026-07-02T06:05:47.776418+00:00,Official War Thunder Wiki RB BR
+it_oto_r3_106sr,R3 T106 FA,,8.0,,https://wiki.warthunder.com/unit/it_oto_r3_106sr,2026-07-02T06:05:49.990888+00:00,Official War Thunder Wiki RB BR
+it_oto_r3_t20_fa,R3 T20 FA-HS,,6.0,,https://wiki.warthunder.com/unit/it_oto_r3_t20_fa,2026-07-02T06:05:51.789836+00:00,Official War Thunder Wiki RB BR
+it_otobreda_sidam_25,SIDAM 25,,8.0,,https://wiki.warthunder.com/unit/it_otobreda_sidam_25,2026-07-02T06:05:53.859468+00:00,Official War Thunder Wiki RB BR
+it_otobreda_sidam_25_mistral,SIDAM 25 (Mistral),,9.7,,https://wiki.warthunder.com/unit/it_otobreda_sidam_25_mistral,2026-07-02T06:05:55.835874+00:00,Official War Thunder Wiki RB BR
+it_otomatic,OTOMATIC,,11.3,,https://wiki.warthunder.com/unit/it_otomatic,2026-07-02T06:05:57.401632+00:00,Official War Thunder Wiki RB BR
+it_p_26_40,"P40 ""G.C. Leoncello""",,3.3,,https://wiki.warthunder.com/unit/it_p_26_40,2026-07-02T06:05:59.184128+00:00,Official War Thunder Wiki RB BR
+it_p_40,P40,,3.3,,https://wiki.warthunder.com/unit/it_p_40,2026-07-02T06:06:01.403877+00:00,Official War Thunder Wiki RB BR
+it_pzh_2000_hu,PzH 2000HU,,7.7,,https://wiki.warthunder.com/unit/it_pzh_2000_hu,2026-07-02T06:06:03.397000+00:00,Official War Thunder Wiki RB BR
+it_pzkpfw_III_ausf_N,Pz.III N,,3.3,,https://wiki.warthunder.com/unit/it_pzkpfw_III_ausf_N,2026-07-02T06:06:05.296106+00:00,Official War Thunder Wiki RB BR
+it_pzkpfw_IV_ausf_G,Pz.IV G,,4.0,,https://wiki.warthunder.com/unit/it_pzkpfw_IV_ausf_G,2026-07-02T06:06:07.314391+00:00,Official War Thunder Wiki RB BR
+it_pzkpfw_VI_ausf_e_tiger,Tigris,,6.0,,https://wiki.warthunder.com/unit/it_pzkpfw_VI_ausf_e_tiger,2026-07-02T06:06:09.244933+00:00,Official War Thunder Wiki RB BR
+it_sahariano,Celere Sahariano,,2.7,,https://wiki.warthunder.com/unit/it_sahariano,2026-07-02T06:06:11.636422+00:00,Official War Thunder Wiki RB BR
+it_samp_t_fcs,FSAF SAMP/T (СОЦ),,12.7,,https://wiki.warthunder.com/unit/it_samp_t_fcs,2026-07-02T06:06:14.051236+00:00,Official War Thunder Wiki RB BR
+it_semovente_breda_501,Breda 501,,5.0,,https://wiki.warthunder.com/unit/it_semovente_breda_501,2026-07-02T06:06:16.217074+00:00,Official War Thunder Wiki RB BR
+it_semovente_l40,47/32 L40,,1.3,,https://wiki.warthunder.com/unit/it_semovente_l40,2026-07-02T06:06:18.025311+00:00,Official War Thunder Wiki RB BR
+it_semovente_m41_75_18,75/18 M41,,2.0,,https://wiki.warthunder.com/unit/it_semovente_m41_75_18,2026-07-02T06:06:20.227274+00:00,Official War Thunder Wiki RB BR
+it_semovente_m41_75_32,75/32 M41,,2.3,,https://wiki.warthunder.com/unit/it_semovente_m41_75_32,2026-07-02T06:06:21.711236+00:00,Official War Thunder Wiki RB BR
+it_semovente_m41m_90,90/53 M41M,,3.7,,https://wiki.warthunder.com/unit/it_semovente_m41m_90,2026-07-02T06:06:23.897567+00:00,Official War Thunder Wiki RB BR
+it_semovente_m42_75_34,75/34 M42,,2.3,,https://wiki.warthunder.com/unit/it_semovente_m42_75_34,2026-07-02T06:06:26.154103+00:00,Official War Thunder Wiki RB BR
+it_semovente_m43_105,105/25 M43,,3.0,,https://wiki.warthunder.com/unit/it_semovente_m43_105,2026-07-02T06:06:28.564630+00:00,Official War Thunder Wiki RB BR
+it_semovente_m43_105_leoncello,"M43 ""G.C.Leoncello""",,3.0,,https://wiki.warthunder.com/unit/it_semovente_m43_105_leoncello,2026-07-02T06:06:30.240963+00:00,Official War Thunder Wiki RB BR
+it_semovente_m43_75_34,75/34 M43,,3.3,,https://wiki.warthunder.com/unit/it_semovente_m43_75_34,2026-07-02T06:06:32.750892+00:00,Official War Thunder Wiki RB BR
+it_semovente_m43_75_46,75/46 M43,,4.7,,https://wiki.warthunder.com/unit/it_semovente_m43_75_46,2026-07-02T06:06:34.971680+00:00,Official War Thunder Wiki RB BR
+it_sherman_75_37,Sherman I Composito,,3.7,,https://wiki.warthunder.com/unit/it_sherman_75_37,2026-07-02T06:06:37.502004+00:00,Official War Thunder Wiki RB BR
+it_sherman_VII,M4 Tipo IC,,4.7,,https://wiki.warthunder.com/unit/it_sherman_VII,2026-07-02T06:06:40.077900+00:00,Official War Thunder Wiki RB BR
+it_sherman_vc_firefly,Sherman Vc,,5.0,,https://wiki.warthunder.com/unit/it_sherman_vc_firefly,2026-07-02T06:06:41.881143+00:00,Official War Thunder Wiki RB BR
+it_stug_III_ausf_G,StuG III G,,4.0,,https://wiki.warthunder.com/unit/it_stug_III_ausf_G,2026-07-02T06:06:43.924410+00:00,Official War Thunder Wiki RB BR
+it_t_72m1,◔T-72M1,,9.3,,https://wiki.warthunder.com/unit/it_t_72m1,2026-07-02T06:06:46.289394+00:00,Official War Thunder Wiki RB BR
+it_toldi_II_a,Toldi IIA,,1.3,,https://wiki.warthunder.com/unit/it_toldi_II_a,2026-07-02T06:06:48.845855+00:00,Official War Thunder Wiki RB BR
+it_vbc_pt2,VBC (PT2),,9.7,,https://wiki.warthunder.com/unit/it_vbc_pt2,2026-07-02T06:06:51.171808+00:00,Official War Thunder Wiki RB BR
+it_vcc_80_hitfist_30,VCC-80/30,,10.0,,https://wiki.warthunder.com/unit/it_vcc_80_hitfist_30,2026-07-02T06:06:52.928304+00:00,Official War Thunder Wiki RB BR
+it_vcc_80_hitfist_60,VCC-80/60,,9.3,,https://wiki.warthunder.com/unit/it_vcc_80_hitfist_60,2026-07-02T06:06:55.257558+00:00,Official War Thunder Wiki RB BR
+it_vrcc_centauro,VRCC,,9.7,,https://wiki.warthunder.com/unit/it_vrcc_centauro,2026-07-02T06:06:57.238570+00:00,Official War Thunder Wiki RB BR
+it_zsu_23_4,◔ZSU-23-4,,8.0,,https://wiki.warthunder.com/unit/it_zsu_23_4,2026-07-02T06:06:59.391723+00:00,Official War Thunder Wiki RB BR
+it_zsu_57_2,◔ZSU-57-2,,7.0,,https://wiki.warthunder.com/unit/it_zsu_57_2,2026-07-02T06:07:01.779199+00:00,Official War Thunder Wiki RB BR
+jp_btr_3e1,BTR-3E1,,9.0,,https://wiki.warthunder.com/unit/jp_btr_3e1,2026-07-02T06:07:03.661386+00:00,Official War Thunder Wiki RB BR
+jp_halftrack_m16,M16 MGMC,,2.7,,https://wiki.warthunder.com/unit/jp_halftrack_m16,2026-07-02T06:07:06.032900+00:00,Official War Thunder Wiki RB BR
+jp_hiro_sha,Ro-Go Exp.,,1.7,,https://wiki.warthunder.com/unit/jp_hiro_sha,2026-07-02T06:07:08.110803+00:00,Official War Thunder Wiki RB BR
+jp_icv_ifv_prototype,ICV (P),,9.7,,https://wiki.warthunder.com/unit/jp_icv_ifv_prototype,2026-07-02T06:07:10.696149+00:00,Official War Thunder Wiki RB BR
+jp_icv_prototype,CTWV RCV,,9.7,,https://wiki.warthunder.com/unit/jp_icv_prototype,2026-07-02T06:07:12.671526+00:00,Official War Thunder Wiki RB BR
+jp_m163_vulcan,M163,,7.3,,https://wiki.warthunder.com/unit/jp_m163_vulcan,2026-07-02T06:07:14.681727+00:00,Official War Thunder Wiki RB BR
+jp_m19,M19A1,,4.0,,https://wiki.warthunder.com/unit/jp_m19,2026-07-02T06:07:17.352933+00:00,Official War Thunder Wiki RB BR
+jp_m24_chaffee,M24,,4.0,,https://wiki.warthunder.com/unit/jp_m24_chaffee,2026-07-02T06:07:20.013863+00:00,Official War Thunder Wiki RB BR
+jp_m36b2_jgsdf,M36,,5.7,,https://wiki.warthunder.com/unit/jp_m36b2_jgsdf,2026-07-02T06:07:21.742870+00:00,Official War Thunder Wiki RB BR
+jp_m41_walker_bulldog,M41A1,,6.3,,https://wiki.warthunder.com/unit/jp_m41_walker_bulldog,2026-07-02T06:07:24.285169+00:00,Official War Thunder Wiki RB BR
+jp_m42_duster,M42,,4.0,,https://wiki.warthunder.com/unit/jp_m42_duster,2026-07-02T06:07:26.857856+00:00,Official War Thunder Wiki RB BR
+jp_m44,M44,,4.0,,https://wiki.warthunder.com/unit/jp_m44,2026-07-02T06:07:28.633207+00:00,Official War Thunder Wiki RB BR
+jp_m47_patton_II,M47,,7.3,,https://wiki.warthunder.com/unit/jp_m47_patton_II,2026-07-02T06:07:30.761685+00:00,Official War Thunder Wiki RB BR
+jp_m4a3e8_76w_sherman,M4A3 (76) W,,5.7,,https://wiki.warthunder.com/unit/jp_m4a3e8_76w_sherman,2026-07-02T06:07:32.412472+00:00,Official War Thunder Wiki RB BR
+jp_m60a3_tts,M60A3 TTS,,9.0,,https://wiki.warthunder.com/unit/jp_m60a3_tts,2026-07-02T06:07:34.252685+00:00,Official War Thunder Wiki RB BR
+jp_navy_120mm_spg,Chi-Ha LG,,3.0,,https://wiki.warthunder.com/unit/jp_navy_120mm_spg,2026-07-02T06:07:36.345251+00:00,Official War Thunder Wiki RB BR
+jp_oplot_t,BM Oplot-T,,12.3,,https://wiki.warthunder.com/unit/jp_oplot_t,2026-07-02T06:07:38.553108+00:00,Official War Thunder Wiki RB BR
+jp_pzkpfw_VI_ausf_e_tiger,Heavy Tank No.6,,6.0,,https://wiki.warthunder.com/unit/jp_pzkpfw_VI_ausf_e_tiger,2026-07-02T06:07:40.539514+00:00,Official War Thunder Wiki RB BR
+jp_st_a1,ST-A1,,6.3,,https://wiki.warthunder.com/unit/jp_st_a1,2026-07-02T06:07:42.380459+00:00,Official War Thunder Wiki RB BR
+jp_st_a2,ST-A2,,6.3,,https://wiki.warthunder.com/unit/jp_st_a2,2026-07-02T06:07:44.721346+00:00,Official War Thunder Wiki RB BR
+jp_st_a3,ST-A3,,6.7,,https://wiki.warthunder.com/unit/jp_st_a3,2026-07-02T06:07:46.240225+00:00,Official War Thunder Wiki RB BR
+jp_st_b1,STB-2,,8.3,,https://wiki.warthunder.com/unit/jp_st_b1,2026-07-02T06:07:48.504236+00:00,Official War Thunder Wiki RB BR
+jp_stingray,Stingray,,9.3,,https://wiki.warthunder.com/unit/jp_stingray,2026-07-02T06:07:50.419684+00:00,Official War Thunder Wiki RB BR
+jp_sub_i_ii_20mm,SUB-I-II,,5.3,,https://wiki.warthunder.com/unit/jp_sub_i_ii_20mm,2026-07-02T06:07:52.921847+00:00,Official War Thunder Wiki RB BR
+jp_tkx_prot,TKX,,12.7,,https://wiki.warthunder.com/unit/jp_tkx_prot,2026-07-02T06:07:55.379697+00:00,Official War Thunder Wiki RB BR
+jp_type_03_chusam_fcs,Type 03 (СОЦ),,12.7,,https://wiki.warthunder.com/unit/jp_type_03_chusam_fcs,2026-07-02T06:07:57.034532+00:00,Official War Thunder Wiki RB BR
+jp_type_10,Type 10,,12.7,,https://wiki.warthunder.com/unit/jp_type_10,2026-07-02T06:07:59.543874+00:00,Official War Thunder Wiki RB BR
+jp_type_10_prototype,TKX (P),,12.0,,https://wiki.warthunder.com/unit/jp_type_10_prototype,2026-07-02T06:08:01.535924+00:00,Official War Thunder Wiki RB BR
+jp_type_16,Type 16,,9.7,,https://wiki.warthunder.com/unit/jp_type_16,2026-07-02T06:08:03.168104+00:00,Official War Thunder Wiki RB BR
+jp_type_16_mcv_prot,Type 16 (P),,9.3,,https://wiki.warthunder.com/unit/jp_type_16_mcv_prot,2026-07-02T06:08:04.836503+00:00,Official War Thunder Wiki RB BR
+jp_type_16_mod,Type 16 (FPS),,9.3,,https://wiki.warthunder.com/unit/jp_type_16_mod,2026-07-02T06:08:07.123920+00:00,Official War Thunder Wiki RB BR
+jp_type_1_chi_he,Chi-He,,2.7,,https://wiki.warthunder.com/unit/jp_type_1_chi_he,2026-07-02T06:08:08.860385+00:00,Official War Thunder Wiki RB BR
+jp_type_1_chi_he_5th_regiment,Chi-He (5th Regiment),,2.7,,https://wiki.warthunder.com/unit/jp_type_1_chi_he_5th_regiment,2026-07-02T06:08:11.453087+00:00,Official War Thunder Wiki RB BR
+jp_type_2_ho_i,Ho-I,,2.0,,https://wiki.warthunder.com/unit/jp_type_2_ho_i,2026-07-02T06:08:13.447708+00:00,Official War Thunder Wiki RB BR
+jp_type_2_ho_ni_2,Ho-Ni II,,2.0,,https://wiki.warthunder.com/unit/jp_type_2_ho_ni_2,2026-07-02T06:08:15.159951+00:00,Official War Thunder Wiki RB BR
+jp_type_2_ka_mi,Ka-Mi,,1.0,,https://wiki.warthunder.com/unit/jp_type_2_ka_mi,2026-07-02T06:08:16.796732+00:00,Official War Thunder Wiki RB BR
+jp_type_3_chi_nu,Chi-Nu,,3.3,,https://wiki.warthunder.com/unit/jp_type_3_chi_nu,2026-07-02T06:08:19.289460+00:00,Official War Thunder Wiki RB BR
+jp_type_3_chi_nu_75cm_type_5,Chi-Nu II,,4.3,,https://wiki.warthunder.com/unit/jp_type_3_chi_nu_75cm_type_5,2026-07-02T06:08:21.514556+00:00,Official War Thunder Wiki RB BR
+jp_type_3_ho_ni_I,Ho-Ni I,,2.0,,https://wiki.warthunder.com/unit/jp_type_3_ho_ni_I,2026-07-02T06:08:23.780673+00:00,Official War Thunder Wiki RB BR
+jp_type_3_ho_ni_III,Ho-Ni III,,2.3,,https://wiki.warthunder.com/unit/jp_type_3_ho_ni_III,2026-07-02T06:08:26.119831+00:00,Official War Thunder Wiki RB BR
+jp_type_3_ka_chi,Ka-Chi,,2.0,,https://wiki.warthunder.com/unit/jp_type_3_ka_chi,2026-07-02T06:08:28.158643+00:00,Official War Thunder Wiki RB BR
+jp_type_4_chi_to,Chi-To,,4.7,,https://wiki.warthunder.com/unit/jp_type_4_chi_to,2026-07-02T06:08:29.831133+00:00,Official War Thunder Wiki RB BR
+jp_type_4_chi_to_late,Chi-To Late,,4.7,,https://wiki.warthunder.com/unit/jp_type_4_chi_to_late,2026-07-02T06:08:31.456315+00:00,Official War Thunder Wiki RB BR
+jp_type_4_ho_ro,Ho-Ro,,1.3,,https://wiki.warthunder.com/unit/jp_type_4_ho_ro,2026-07-02T06:08:33.222125+00:00,Official War Thunder Wiki RB BR
+jp_type_5_chi_ri,Chi-Ri II,,5.7,,https://wiki.warthunder.com/unit/jp_type_5_chi_ri,2026-07-02T06:08:35.003602+00:00,Official War Thunder Wiki RB BR
+jp_type_5_ho_ri_production,Ho-Ri Production,,7.3,,https://wiki.warthunder.com/unit/jp_type_5_ho_ri_production,2026-07-02T06:08:37.133290+00:00,Official War Thunder Wiki RB BR
+jp_type_5_ho_ri_prototype,Ho-Ri Prototype,,6.7,,https://wiki.warthunder.com/unit/jp_type_5_ho_ri_prototype,2026-07-02T06:08:38.738132+00:00,Official War Thunder Wiki RB BR
+jp_type_5_na_to,Na-To,,3.3,,https://wiki.warthunder.com/unit/jp_type_5_na_to,2026-07-02T06:08:41.173860+00:00,Official War Thunder Wiki RB BR
+jp_type_60_atm,Type 60 ATM,,6.7,,https://wiki.warthunder.com/unit/jp_type_60_atm,2026-07-02T06:08:43.154067+00:00,Official War Thunder Wiki RB BR
+jp_type_60_sprg,Type 60 SPRG (C),,6.7,,https://wiki.warthunder.com/unit/jp_type_60_sprg,2026-07-02T06:08:45.546479+00:00,Official War Thunder Wiki RB BR
+jp_type_61,Type 61,,6.7,,https://wiki.warthunder.com/unit/jp_type_61,2026-07-02T06:08:47.156640+00:00,Official War Thunder Wiki RB BR
+jp_type_61_mod,Type 61 (B),,6.7,,https://wiki.warthunder.com/unit/jp_type_61_mod,2026-07-02T06:08:48.986944+00:00,Official War Thunder Wiki RB BR
+jp_type_74,Type 74 (E),,9.0,,https://wiki.warthunder.com/unit/jp_type_74,2026-07-02T06:08:51.395673+00:00,Official War Thunder Wiki RB BR
+jp_type_74_c,Type 74 (C),,8.3,,https://wiki.warthunder.com/unit/jp_type_74_c,2026-07-02T06:08:53.169027+00:00,Official War Thunder Wiki RB BR
+jp_type_74_f,Type 74 (F),,9.0,,https://wiki.warthunder.com/unit/jp_type_74_f,2026-07-02T06:08:55.151548+00:00,Official War Thunder Wiki RB BR
+jp_type_74_mod_g_kai,Type 74 (G),,9.3,,https://wiki.warthunder.com/unit/jp_type_74_mod_g_kai,2026-07-02T06:08:57.203565+00:00,Official War Thunder Wiki RB BR
+jp_type_74_red_star,Type 74 Red Star,,8.3,,https://wiki.warthunder.com/unit/jp_type_74_red_star,2026-07-02T06:08:59.062709+00:00,Official War Thunder Wiki RB BR
+jp_type_75,Type 75 SPH,,6.3,,https://wiki.warthunder.com/unit/jp_type_75,2026-07-02T06:09:01.707847+00:00,Official War Thunder Wiki RB BR
+jp_type_75_mlrs,Type 75 MLRS,,7.0,,https://wiki.warthunder.com/unit/jp_type_75_mlrs,2026-07-02T06:09:03.552869+00:00,Official War Thunder Wiki RB BR
+jp_type_81_tansam,Type 81 (C),,11.7,,https://wiki.warthunder.com/unit/jp_type_81_tansam,2026-07-02T06:09:05.432846+00:00,Official War Thunder Wiki RB BR
+jp_type_81_tansam_fcs,Tan-SAM Kai (СОЦ),,12.0,,https://wiki.warthunder.com/unit/jp_type_81_tansam_fcs,2026-07-02T06:09:07.164604+00:00,Official War Thunder Wiki RB BR
+jp_type_87,Type 87,,8.3,,https://wiki.warthunder.com/unit/jp_type_87,2026-07-02T06:09:11.584060+00:00,Official War Thunder Wiki RB BR
+jp_type_87_rcv,Type 87 RCV,,9.0,,https://wiki.warthunder.com/unit/jp_type_87_rcv,2026-07-02T06:09:13.284986+00:00,Official War Thunder Wiki RB BR
+jp_type_87_rcv_prot,Type 87 RCV (P),,7.7,,https://wiki.warthunder.com/unit/jp_type_87_rcv_prot,2026-07-02T06:09:15.098770+00:00,Official War Thunder Wiki RB BR
+jp_type_89,Type 89,,9.0,,https://wiki.warthunder.com/unit/jp_type_89,2026-07-02T06:09:17.051983+00:00,Official War Thunder Wiki RB BR
+jp_type_89b_i_go_otsu,I-Go Ko,,1.0,,https://wiki.warthunder.com/unit/jp_type_89b_i_go_otsu,2026-07-02T06:09:18.710728+00:00,Official War Thunder Wiki RB BR
+jp_type_90,Type 90,,11.7,,https://wiki.warthunder.com/unit/jp_type_90,2026-07-02T06:09:21.020568+00:00,Official War Thunder Wiki RB BR
+jp_type_90b,Type 90 (B),,11.7,,https://wiki.warthunder.com/unit/jp_type_90b,2026-07-02T06:09:23.695298+00:00,Official War Thunder Wiki RB BR
+jp_type_90b_camo,"Type 90 (B) ""Fuji""",,11.7,,https://wiki.warthunder.com/unit/jp_type_90b_camo,2026-07-02T06:09:26.130816+00:00,Official War Thunder Wiki RB BR
+jp_type_90b_sm,◍Type 90 (B),,11.7,,https://wiki.warthunder.com/unit/jp_type_90b_sm,2026-07-02T06:09:28.453259+00:00,Official War Thunder Wiki RB BR
+jp_type_93,Type 93,,9.3,,https://wiki.warthunder.com/unit/jp_type_93,2026-07-02T06:09:30.204125+00:00,Official War Thunder Wiki RB BR
+jp_type_94,Type 94,,1.3,,https://wiki.warthunder.com/unit/jp_type_94,2026-07-02T06:09:32.627066+00:00,Official War Thunder Wiki RB BR
+jp_type_95_ha_go,Ha-Go,,1.0,,https://wiki.warthunder.com/unit/jp_type_95_ha_go,2026-07-02T06:09:34.418455+00:00,Official War Thunder Wiki RB BR
+jp_type_95_ha_go_commander,Ha-Go Commander,,1.0,,https://wiki.warthunder.com/unit/jp_type_95_ha_go_commander,2026-07-02T06:09:36.888607+00:00,Official War Thunder Wiki RB BR
+jp_type_95_heavy,Ro-Go,,1.3,,https://wiki.warthunder.com/unit/jp_type_95_heavy,2026-07-02T06:09:39.246630+00:00,Official War Thunder Wiki RB BR
+jp_type_95_so_ki,So-Ki,,3.0,,https://wiki.warthunder.com/unit/jp_type_95_so_ki,2026-07-02T06:09:41.726671+00:00,Official War Thunder Wiki RB BR
+jp_type_97_chi_ha,Chi-Ha,,1.3,,https://wiki.warthunder.com/unit/jp_type_97_chi_ha,2026-07-02T06:09:43.643672+00:00,Official War Thunder Wiki RB BR
+jp_type_97_chi_ha_12cm,Chi-Ha Short Gun,,1.7,,https://wiki.warthunder.com/unit/jp_type_97_chi_ha_12cm,2026-07-02T06:09:45.963712+00:00,Official War Thunder Wiki RB BR
+jp_type_97_kai,Chi-Ha Kai,,2.3,,https://wiki.warthunder.com/unit/jp_type_97_kai,2026-07-02T06:09:48.446104+00:00,Official War Thunder Wiki RB BR
+jp_type_97_kai_td,Chi-Ha Kai TD,,2.3,,https://wiki.warthunder.com/unit/jp_type_97_kai_td,2026-07-02T06:09:50.040776+00:00,Official War Thunder Wiki RB BR
+jp_type_98_ke_ni,Ke-Ni,,1.0,,https://wiki.warthunder.com/unit/jp_type_98_ke_ni,2026-07-02T06:09:52.428510+00:00,Official War Thunder Wiki RB BR
+jp_type_98_ta_se,Ta-Se,,1.7,,https://wiki.warthunder.com/unit/jp_type_98_ta_se,2026-07-02T06:09:55.003294+00:00,Official War Thunder Wiki RB BR
+jp_type_99,Type 99,,7.3,,https://wiki.warthunder.com/unit/jp_type_99,2026-07-02T06:09:56.756437+00:00,Official War Thunder Wiki RB BR
+sw_a_34_comet,Comet I,,5.3,,https://wiki.warthunder.com/unit/sw_a_34_comet,2026-07-02T06:09:58.849743+00:00,Official War Thunder Wiki RB BR
+sw_asrad_r,ASRAD-R,,10.3,,https://wiki.warthunder.com/unit/sw_asrad_r,2026-07-02T06:10:00.793215+00:00,Official War Thunder Wiki RB BR
+sw_bkan_1c,Bkan 1C,,6.7,,https://wiki.warthunder.com/unit/sw_bkan_1c,2026-07-02T06:10:03.380032+00:00,Official War Thunder Wiki RB BR
+sw_bmp_2md,BMP-2MD,,8.7,,https://wiki.warthunder.com/unit/sw_bmp_2md,2026-07-02T06:10:05.534561+00:00,Official War Thunder Wiki RB BR
+sw_bt_42,BT-42,,1.7,,https://wiki.warthunder.com/unit/sw_bt_42,2026-07-02T06:10:07.299866+00:00,Official War Thunder Wiki RB BR
+sw_charioteer_mk_7,Charioteer Mk VII,,6.3,,https://wiki.warthunder.com/unit/sw_charioteer_mk_7,2026-07-02T06:10:09.631164+00:00,Official War Thunder Wiki RB BR
+sw_crotale_ng,ItO 90M,,12.0,,https://wiki.warthunder.com/unit/sw_crotale_ng,2026-07-02T06:10:11.593172+00:00,Official War Thunder Wiki RB BR
+sw_cv_90105,CV 90105 TML,,8.7,,https://wiki.warthunder.com/unit/sw_cv_90105,2026-07-02T06:10:14.240976+00:00,Official War Thunder Wiki RB BR
+sw_cv_90105_tml,CV 90105,,10.3,,https://wiki.warthunder.com/unit/sw_cv_90105_tml,2026-07-02T06:10:16.254962+00:00,Official War Thunder Wiki RB BR
+sw_cv_90120,CV 90120,,12.0,,https://wiki.warthunder.com/unit/sw_cv_90120,2026-07-02T06:10:18.420333+00:00,Official War Thunder Wiki RB BR
+sw_cv_9030_fin,CV9030FIN,,9.3,,https://wiki.warthunder.com/unit/sw_cv_9030_fin,2026-07-02T06:10:21.089531+00:00,Official War Thunder Wiki RB BR
+sw_cv_9035_dk,CV9035DK,,9.7,,https://wiki.warthunder.com/unit/sw_cv_9035_dk,2026-07-02T06:10:23.612179+00:00,Official War Thunder Wiki RB BR
+sw_cv_90_mk4,CV 90 Mk.IV,,10.7,,https://wiki.warthunder.com/unit/sw_cv_90_mk4,2026-07-02T06:10:26.161217+00:00,Official War Thunder Wiki RB BR
+sw_eldenhet_98,EldE 98,,12.0,,https://wiki.warthunder.com/unit/sw_eldenhet_98,2026-07-02T06:10:27.903532+00:00,Official War Thunder Wiki RB BR
+sw_ikv_103,Ikv 103,,4.0,,https://wiki.warthunder.com/unit/sw_ikv_103,2026-07-02T06:10:30.075599+00:00,Official War Thunder Wiki RB BR
+sw_ikv_72,Ikv 72,,1.7,,https://wiki.warthunder.com/unit/sw_ikv_72,2026-07-02T06:10:32.390231+00:00,Official War Thunder Wiki RB BR
+sw_ikv_73,Ikv 73,,2.7,,https://wiki.warthunder.com/unit/sw_ikv_73,2026-07-02T06:10:34.853612+00:00,Official War Thunder Wiki RB BR
+sw_ikv_91,Ikv 91,,8.0,,https://wiki.warthunder.com/unit/sw_ikv_91,2026-07-02T06:10:36.893269+00:00,Official War Thunder Wiki RB BR
+sw_ikv_91_105,Ikv 91-105,,9.0,,https://wiki.warthunder.com/unit/sw_ikv_91_105,2026-07-02T06:10:39.563146+00:00,Official War Thunder Wiki RB BR
+sw_itpsv_90,ItPsV Leopard,,8.7,,https://wiki.warthunder.com/unit/sw_itpsv_90,2026-07-02T06:10:41.495620+00:00,Official War Thunder Wiki RB BR
+sw_k9_vidar,VIDAR,,8.0,,https://wiki.warthunder.com/unit/sw_k9_vidar,2026-07-02T06:10:43.776335+00:00,Official War Thunder Wiki RB BR
+sw_kungstiger,Kungstiger,,6.7,,https://wiki.warthunder.com/unit/sw_kungstiger,2026-07-02T06:10:45.595414+00:00,Official War Thunder Wiki RB BR
+sw_kv_1_1942_fin,KV-1 m1942,,4.7,,https://wiki.warthunder.com/unit/sw_kv_1_1942_fin,2026-07-02T06:10:48.125681+00:00,Official War Thunder Wiki RB BR
+sw_l_62_anti_II,L-62 ANTI II,,3.3,,https://wiki.warthunder.com/unit/sw_l_62_anti_II,2026-07-02T06:10:50.137199+00:00,Official War Thunder Wiki RB BR
+sw_lago_1,Lago I,,2.3,,https://wiki.warthunder.com/unit/sw_lago_1,2026-07-02T06:10:52.355447+00:00,Official War Thunder Wiki RB BR
+sw_landsverk_ush_204_gk,U-SH 204 GK,,5.3,,https://wiki.warthunder.com/unit/sw_landsverk_ush_204_gk,2026-07-02T06:10:55.021567+00:00,Official War Thunder Wiki RB BR
+sw_landsverk_ush_405,U-SH 405,,8.0,,https://wiki.warthunder.com/unit/sw_landsverk_ush_405,2026-07-02T06:10:57.511673+00:00,Official War Thunder Wiki RB BR
+sw_leopard_1a5no,Leopard 1A5NO2,,9.3,,https://wiki.warthunder.com/unit/sw_leopard_1a5no,2026-07-02T06:10:59.321913+00:00,Official War Thunder Wiki RB BR
+sw_leopard_2a4_fin,Leopard 2A4,,10.7,,https://wiki.warthunder.com/unit/sw_leopard_2a4_fin,2026-07-02T06:11:01.587168+00:00,Official War Thunder Wiki RB BR
+sw_leopard_2a6nl,Leopard 2A6,,12.7,,https://wiki.warthunder.com/unit/sw_leopard_2a6nl,2026-07-02T06:11:04.294158+00:00,Official War Thunder Wiki RB BR
+sw_lvkv_42,Lvkv 42,,4.7,,https://wiki.warthunder.com/unit/sw_lvkv_42,2026-07-02T06:11:06.593777+00:00,Official War Thunder Wiki RB BR
+sw_lvkv_90c,Lvkv 9040C,,10.3,,https://wiki.warthunder.com/unit/sw_lvkv_90c,2026-07-02T06:11:08.899048+00:00,Official War Thunder Wiki RB BR
+sw_lvrbv_701,Lvrbv 701,,9.7,,https://wiki.warthunder.com/unit/sw_lvrbv_701,2026-07-02T06:11:10.953421+00:00,Official War Thunder Wiki RB BR
+sw_m24_chaffee_dk,M24DK,,4.0,,https://wiki.warthunder.com/unit/sw_m24_chaffee_dk,2026-07-02T06:11:13.306064+00:00,Official War Thunder Wiki RB BR
+sw_nasams_fcs,NASAMS 3 (СОЦ),,12.7,,https://wiki.warthunder.com/unit/sw_nasams_fcs,2026-07-02T06:11:15.073816+00:00,Official War Thunder Wiki RB BR
+sw_patria_amv_ctcv_105,CT-CV 105HP,,10.0,,https://wiki.warthunder.com/unit/sw_patria_amv_ctcv_105,2026-07-02T06:11:17.161457+00:00,Official War Thunder Wiki RB BR
+sw_pbil_m40,Pbil m/40,,2.0,,https://wiki.warthunder.com/unit/sw_pbil_m40,2026-07-02T06:11:19.251883+00:00,Official War Thunder Wiki RB BR
+sw_pbv_301,Pbv 301,,2.3,,https://wiki.warthunder.com/unit/sw_pbv_301,2026-07-02T06:11:21.332129+00:00,Official War Thunder Wiki RB BR
+sw_pbv_302_bill,Pbv 302 (BILL),,8.7,,https://wiki.warthunder.com/unit/sw_pbv_302_bill,2026-07-02T06:11:23.658139+00:00,Official War Thunder Wiki RB BR
+sw_pbv_501,Pbv 501,,6.7,,https://wiki.warthunder.com/unit/sw_pbv_501,2026-07-02T06:11:25.708722+00:00,Official War Thunder Wiki RB BR
+sw_pt_76b,PT-76,,5.3,,https://wiki.warthunder.com/unit/sw_pt_76b,2026-07-02T06:11:27.748215+00:00,Official War Thunder Wiki RB BR
+sw_pvkv_II,Pvkv II,,4.3,,https://wiki.warthunder.com/unit/sw_pvkv_II,2026-07-02T06:11:29.942332+00:00,Official War Thunder Wiki RB BR
+sw_pvkv_III,Pvkv III,,3.3,,https://wiki.warthunder.com/unit/sw_pvkv_III,2026-07-02T06:11:31.932741+00:00,Official War Thunder Wiki RB BR
+sw_pvkv_iv,Pvkv IV,,3.0,,https://wiki.warthunder.com/unit/sw_pvkv_iv,2026-07-02T06:11:34.172159+00:00,Official War Thunder Wiki RB BR
+sw_pvkv_m43_1946,Pvkv m/43 (1946),,4.0,,https://wiki.warthunder.com/unit/sw_pvkv_m43_1946,2026-07-02T06:11:35.769922+00:00,Official War Thunder Wiki RB BR
+sw_pvkv_m43_1963,Pvkv m/43 (1963),,5.0,,https://wiki.warthunder.com/unit/sw_pvkv_m43_1963,2026-07-02T06:11:37.998314+00:00,Official War Thunder Wiki RB BR
+sw_pvlvv_fm42,Pvlvv fm/42,,1.7,,https://wiki.warthunder.com/unit/sw_pvlvv_fm42,2026-07-02T06:11:40.216468+00:00,Official War Thunder Wiki RB BR
+sw_pvrbv_551,Pvrbv 551,,8.0,,https://wiki.warthunder.com/unit/sw_pvrbv_551,2026-07-02T06:11:42.023529+00:00,Official War Thunder Wiki RB BR
+sw_pzkpfw_IV_ausf_J,Pz.IV,,4.0,,https://wiki.warthunder.com/unit/sw_pzkpfw_IV_ausf_J,2026-07-02T06:11:43.452705+00:00,Official War Thunder Wiki RB BR
+sw_sav_fm48,SAV 20.12.48,,4.0,,https://wiki.warthunder.com/unit/sw_sav_fm48,2026-07-02T06:11:45.693382+00:00,Official War Thunder Wiki RB BR
+sw_sav_m43_1944,Sav m/43 (1944),,1.7,,https://wiki.warthunder.com/unit/sw_sav_m43_1944,2026-07-02T06:11:47.525351+00:00,Official War Thunder Wiki RB BR
+sw_sav_m43_1946,Sav m/43 (1946),,3.0,,https://wiki.warthunder.com/unit/sw_sav_m43_1946,2026-07-02T06:11:49.308863+00:00,Official War Thunder Wiki RB BR
+sw_sherman_3_4,Sherman III/IV,,3.7,,https://wiki.warthunder.com/unit/sw_sherman_3_4,2026-07-02T06:11:51.376146+00:00,Official War Thunder Wiki RB BR
+sw_stormpjas_fm43_44,Spj fm/43-44,,1.7,,https://wiki.warthunder.com/unit/sw_stormpjas_fm43_44,2026-07-02T06:11:53.222816+00:00,Official War Thunder Wiki RB BR
+sw_strf_9056,Strf 9040 BILL,,10.3,,https://wiki.warthunder.com/unit/sw_strf_9056,2026-07-02T06:11:55.007151+00:00,Official War Thunder Wiki RB BR
+sw_strf_90b,Strf 9040B,,9.7,,https://wiki.warthunder.com/unit/sw_strf_90b,2026-07-02T06:11:57.571193+00:00,Official War Thunder Wiki RB BR
+sw_strf_90c,Strf 9040C,,10.3,,https://wiki.warthunder.com/unit/sw_strf_90c,2026-07-02T06:11:59.819140+00:00,Official War Thunder Wiki RB BR
+sw_strv121b_christian2,Christian II,,10.7,,https://wiki.warthunder.com/unit/sw_strv121b_christian2,2026-07-02T06:12:01.915472+00:00,Official War Thunder Wiki RB BR
+sw_strv_101,Strv 101,,8.0,,https://wiki.warthunder.com/unit/sw_strv_101,2026-07-02T06:12:03.770091+00:00,Official War Thunder Wiki RB BR
+sw_strv_103_0,Strv 103-0,,8.0,,https://wiki.warthunder.com/unit/sw_strv_103_0,2026-07-02T06:12:06.416165+00:00,Official War Thunder Wiki RB BR
+sw_strv_103a,Strv 103A,,8.0,,https://wiki.warthunder.com/unit/sw_strv_103a,2026-07-02T06:12:08.554806+00:00,Official War Thunder Wiki RB BR
+sw_strv_103c,Strv 103С,,9.0,,https://wiki.warthunder.com/unit/sw_strv_103c,2026-07-02T06:12:10.570807+00:00,Official War Thunder Wiki RB BR
+sw_strv_104,Strv 104,,8.7,,https://wiki.warthunder.com/unit/sw_strv_104,2026-07-02T06:12:13.039251+00:00,Official War Thunder Wiki RB BR
+sw_strv_105,Strv 105,,9.3,,https://wiki.warthunder.com/unit/sw_strv_105,2026-07-02T06:12:15.342206+00:00,Official War Thunder Wiki RB BR
+sw_strv_121,Strv 121,,10.7,,https://wiki.warthunder.com/unit/sw_strv_121,2026-07-02T06:12:17.373635+00:00,Official War Thunder Wiki RB BR
+sw_strv_122,Strv 122A,,12.7,,https://wiki.warthunder.com/unit/sw_strv_122,2026-07-02T06:12:19.482463+00:00,Official War Thunder Wiki RB BR
+sw_strv_122b_plss,Strv 122B PLSS,,12.7,,https://wiki.warthunder.com/unit/sw_strv_122b_plss,2026-07-02T06:12:21.696391+00:00,Official War Thunder Wiki RB BR
+sw_strv_122b_plus,Strv 122B+,,12.7,,https://wiki.warthunder.com/unit/sw_strv_122b_plus,2026-07-02T06:12:23.893365+00:00,Official War Thunder Wiki RB BR
+sw_strv_74,Strv 74,,5.7,,https://wiki.warthunder.com/unit/sw_strv_74,2026-07-02T06:12:26.027116+00:00,Official War Thunder Wiki RB BR
+sw_strv_81,Strv 81,,7.7,,https://wiki.warthunder.com/unit/sw_strv_81,2026-07-02T06:12:28.116957+00:00,Official War Thunder Wiki RB BR
+sw_strv_81_rb52,Strv 81 (RB 52),,7.7,,https://wiki.warthunder.com/unit/sw_strv_81_rb52,2026-07-02T06:12:30.383012+00:00,Official War Thunder Wiki RB BR
+sw_strv_m31,Strv m/31,,1.0,,https://wiki.warthunder.com/unit/sw_strv_m31,2026-07-02T06:12:32.181731+00:00,Official War Thunder Wiki RB BR
+sw_strv_m38,Strv m/38,,1.0,,https://wiki.warthunder.com/unit/sw_strv_m38,2026-07-02T06:12:34.761570+00:00,Official War Thunder Wiki RB BR
+sw_strv_m39,Strv m/39,,1.0,,https://wiki.warthunder.com/unit/sw_strv_m39,2026-07-02T06:12:37.165805+00:00,Official War Thunder Wiki RB BR
+sw_strv_m39_td,Strv m/39 TD,,1.0,,https://wiki.warthunder.com/unit/sw_strv_m39_td,2026-07-02T06:12:39.142882+00:00,Official War Thunder Wiki RB BR
+sw_strv_m40l,Strv m/40L,,2.0,,https://wiki.warthunder.com/unit/sw_strv_m40l,2026-07-02T06:12:41.405183+00:00,Official War Thunder Wiki RB BR
+sw_strv_m41_s1,Strv m/41 S-I,,2.7,,https://wiki.warthunder.com/unit/sw_strv_m41_s1,2026-07-02T06:12:43.241924+00:00,Official War Thunder Wiki RB BR
+sw_strv_m41_s2,Strv m/41 S-II,,2.7,,https://wiki.warthunder.com/unit/sw_strv_m41_s2,2026-07-02T06:12:45.811954+00:00,Official War Thunder Wiki RB BR
+sw_strv_m42_delat_torn,Strv m/42 DT,,5.0,,https://wiki.warthunder.com/unit/sw_strv_m42_delat_torn,2026-07-02T06:12:48.394479+00:00,Official War Thunder Wiki RB BR
+sw_strv_m42_eh,Strv m/42 EH,,2.7,,https://wiki.warthunder.com/unit/sw_strv_m42_eh,2026-07-02T06:12:51.013825+00:00,Official War Thunder Wiki RB BR
+sw_t_28,T-28,,1.7,,https://wiki.warthunder.com/unit/sw_t_28,2026-07-02T06:12:53.408121+00:00,Official War Thunder Wiki RB BR
+sw_t_34_1941,T-34,,4.0,,https://wiki.warthunder.com/unit/sw_t_34_1941,2026-07-02T06:12:55.331047+00:00,Official War Thunder Wiki RB BR
+sw_t_34_85_zis_53,T-34-85,,5.7,,https://wiki.warthunder.com/unit/sw_t_34_85_zis_53,2026-07-02T06:12:57.157867+00:00,Official War Thunder Wiki RB BR
+sw_t_50_fin,T-50,,3.0,,https://wiki.warthunder.com/unit/sw_t_50_fin,2026-07-02T06:12:58.905376+00:00,Official War Thunder Wiki RB BR
+sw_t_54_1951,T-54,,8.0,,https://wiki.warthunder.com/unit/sw_t_54_1951,2026-07-02T06:13:01.233071+00:00,Official War Thunder Wiki RB BR
+sw_t_55m,T-55M,,9.0,,https://wiki.warthunder.com/unit/sw_t_55m,2026-07-02T06:13:03.363720+00:00,Official War Thunder Wiki RB BR
+sw_t_72m1,T-72M1,,9.3,,https://wiki.warthunder.com/unit/sw_t_72m1,2026-07-02T06:13:05.189363+00:00,Official War Thunder Wiki RB BR
+sw_t_80u,T 80 U,,11.3,,https://wiki.warthunder.com/unit/sw_t_80u,2026-07-02T06:13:07.314553+00:00,Official War Thunder Wiki RB BR
+sw_tgdgb_m40_lv,Lvtdgb m/40,,2.7,,https://wiki.warthunder.com/unit/sw_tgdgb_m40_lv,2026-07-02T06:13:09.673517+00:00,Official War Thunder Wiki RB BR
+sw_udes_33,UDES 33,,8.3,,https://wiki.warthunder.com/unit/sw_udes_33,2026-07-02T06:13:11.963431+00:00,Official War Thunder Wiki RB BR
+sw_veak_40,VEAK 40,,7.7,,https://wiki.warthunder.com/unit/sw_veak_40,2026-07-02T06:13:14.044255+00:00,Official War Thunder Wiki RB BR
+sw_vickers_mk_e_37,Vickers Mk.E,,1.0,,https://wiki.warthunder.com/unit/sw_vickers_mk_e_37,2026-07-02T06:13:16.664747+00:00,Official War Thunder Wiki RB BR
+sw_vickers_mk_e_45,T-26E,,1.0,,https://wiki.warthunder.com/unit/sw_vickers_mk_e_45,2026-07-02T06:13:17.880324+00:00,Official War Thunder Wiki RB BR
+sw_zsu_57_2,ZSU-57-2,,7.0,,https://wiki.warthunder.com/unit/sw_zsu_57_2,2026-07-02T06:13:19.668566+00:00,Official War Thunder Wiki RB BR
+uk_17_pdr_m10_achilles,Achilles,,3.3,,https://wiki.warthunder.com/unit/uk_17_pdr_m10_achilles,2026-07-02T06:13:22.166375+00:00,Official War Thunder Wiki RB BR
+uk_17_pdr_m10_achilles_norfolk_yeomanry,Achilles (65 Rg.),,3.3,,https://wiki.warthunder.com/unit/uk_17_pdr_m10_achilles_norfolk_yeomanry,2026-07-02T06:13:24.669062+00:00,Official War Thunder Wiki RB BR
+uk_3_inch_gun_carrier,Gun Carrier (3-in),,3.0,,https://wiki.warthunder.com/unit/uk_3_inch_gun_carrier,2026-07-02T06:13:27.273529+00:00,Official War Thunder Wiki RB BR
+uk_9a33bm2,Osa-AK,,10.3,,https://wiki.warthunder.com/unit/uk_9a33bm2,2026-07-02T06:13:29.143383+00:00,Official War Thunder Wiki RB BR
+uk_9a35_m,Стрела-10М,,10.3,,https://wiki.warthunder.com/unit/uk_9a35_m,2026-07-02T06:13:31.550709+00:00,Official War Thunder Wiki RB BR
+uk_a17_mk_1_tetrarch,Tetrarch I,,1.0,,https://wiki.warthunder.com/unit/uk_a17_mk_1_tetrarch,2026-07-02T06:13:34.110134+00:00,Official War Thunder Wiki RB BR
+uk_a1e1_independent,Independent,,1.3,,https://wiki.warthunder.com/unit/uk_a1e1_independent,2026-07-02T06:13:36.003998+00:00,Official War Thunder Wiki RB BR
+uk_a25_mk_8,Harry Hopkins I,,2.3,,https://wiki.warthunder.com/unit/uk_a25_mk_8,2026-07-02T06:13:38.333333+00:00,Official War Thunder Wiki RB BR
+uk_a27m_cromwell_1,Cromwell I,,3.7,,https://wiki.warthunder.com/unit/uk_a27m_cromwell_1,2026-07-02T06:13:41.011721+00:00,Official War Thunder Wiki RB BR
+uk_a27m_cromwell_5,Cromwell V,,3.7,,https://wiki.warthunder.com/unit/uk_a27m_cromwell_5,2026-07-02T06:13:42.899210+00:00,Official War Thunder Wiki RB BR
+uk_a27m_cromwell_5_rp3,Cromwell V (RP-3),,3.7,,https://wiki.warthunder.com/unit/uk_a27m_cromwell_5_rp3,2026-07-02T06:13:45.349808+00:00,Official War Thunder Wiki RB BR
+uk_a30_challenger,Challenger,,5.3,,https://wiki.warthunder.com/unit/uk_a30_challenger,2026-07-02T06:13:47.776238+00:00,Official War Thunder Wiki RB BR
+uk_a30_sp_avenger,Avenger,,4.7,,https://wiki.warthunder.com/unit/uk_a30_sp_avenger,2026-07-02T06:13:49.800058+00:00,Official War Thunder Wiki RB BR
+uk_a30_sp_avenger_kit_3rank,Avenger (Overlord),,4.7,,https://wiki.warthunder.com/unit/uk_a30_sp_avenger_kit_3rank,2026-07-02T06:13:52.343773+00:00,Official War Thunder Wiki RB BR
+uk_a39_tortoise,Tortoise,,6.7,,https://wiki.warthunder.com/unit/uk_a39_tortoise,2026-07-02T06:13:54.096809+00:00,Official War Thunder Wiki RB BR
+uk_a_12_mk_2_matilda_2,Matilda III,,2.7,,https://wiki.warthunder.com/unit/uk_a_12_mk_2_matilda_2,2026-07-02T06:13:56.305823+00:00,Official War Thunder Wiki RB BR
+uk_a_13_mk1,A13 Mk I,,1.0,,https://wiki.warthunder.com/unit/uk_a_13_mk1,2026-07-02T06:13:58.476477+00:00,Official War Thunder Wiki RB BR
+uk_a_13_mk1_3rd_rtr,A13 Mk I (3rd R.T.R.),,1.0,,https://wiki.warthunder.com/unit/uk_a_13_mk1_3rd_rtr,2026-07-02T06:14:00.818508+00:00,Official War Thunder Wiki RB BR
+uk_a_13_mk2,A13 Mk II,,1.3,,https://wiki.warthunder.com/unit/uk_a_13_mk2,2026-07-02T06:14:02.684713+00:00,Official War Thunder Wiki RB BR
+uk_a_13_mk2_1939,A13 Mk II 1939,,1.3,,https://wiki.warthunder.com/unit/uk_a_13_mk2_1939,2026-07-02T06:14:04.842300+00:00,Official War Thunder Wiki RB BR
+uk_a_22_mk_1_churchill_1941,Churchill I,,3.3,,https://wiki.warthunder.com/unit/uk_a_22_mk_1_churchill_1941,2026-07-02T06:14:06.836396+00:00,Official War Thunder Wiki RB BR
+uk_a_22b_mk_3_churchill_1942,Churchill III,,4.0,,https://wiki.warthunder.com/unit/uk_a_22b_mk_3_churchill_1942,2026-07-02T06:14:08.925051+00:00,Official War Thunder Wiki RB BR
+uk_a_22f_mk_7_churchill_1944,Churchill VII,,4.7,,https://wiki.warthunder.com/unit/uk_a_22f_mk_7_churchill_1944,2026-07-02T06:14:10.928217+00:00,Official War Thunder Wiki RB BR
+uk_a_22f_mk_7_churchill_crocodile,Churchill Crocodile,,4.7,,https://wiki.warthunder.com/unit/uk_a_22f_mk_7_churchill_crocodile,2026-07-02T06:14:13.474992+00:00,Official War Thunder Wiki RB BR
+uk_a_33_excelsior,Excelsior,,4.0,,https://wiki.warthunder.com/unit/uk_a_33_excelsior,2026-07-02T06:14:15.630209+00:00,Official War Thunder Wiki RB BR
+uk_a_34_comet,Comet I,,5.3,,https://wiki.warthunder.com/unit/uk_a_34_comet,2026-07-02T06:14:17.782595+00:00,Official War Thunder Wiki RB BR
+uk_a_34_comet_iron_duke,"Comet I ""Iron Duke IV""",,5.3,,https://wiki.warthunder.com/unit/uk_a_34_comet_iron_duke,2026-07-02T06:14:20.046571+00:00,Official War Thunder Wiki RB BR
+uk_a_43_black_prince,Black Prince,,6.0,,https://wiki.warthunder.com/unit/uk_a_43_black_prince,2026-07-02T06:14:22.163399+00:00,Official War Thunder Wiki RB BR
+uk_ac1_sentinel,A.C.I,,3.0,,https://wiki.warthunder.com/unit/uk_ac1_sentinel,2026-07-02T06:14:23.472275+00:00,Official War Thunder Wiki RB BR
+uk_ac4_thunderbolt,A.C.IV,,5.3,,https://wiki.warthunder.com/unit/uk_ac4_thunderbolt,2026-07-02T06:14:25.762616+00:00,Official War Thunder Wiki RB BR
+uk_adats_m113a3,ADATS (M113),,11.7,,https://wiki.warthunder.com/unit/uk_adats_m113a3,2026-07-02T06:14:28.230111+00:00,Official War Thunder Wiki RB BR
+uk_ajax,Ajax,,10.3,,https://wiki.warthunder.com/unit/uk_ajax,2026-07-02T06:14:30.764153+00:00,Official War Thunder Wiki RB BR
+uk_alecto_mk_1,Alecto I,,1.7,,https://wiki.warthunder.com/unit/uk_alecto_mk_1,2026-07-02T06:14:33.480862+00:00,Official War Thunder Wiki RB BR
+uk_armored_car_aec_mk_2,AEC Mk II,,3.3,,https://wiki.warthunder.com/unit/uk_armored_car_aec_mk_2,2026-07-02T06:14:35.657879+00:00,Official War Thunder Wiki RB BR
+uk_armored_car_mk_2_aa,AEC AA,,3.7,,https://wiki.warthunder.com/unit/uk_armored_car_mk_2_aa,2026-07-02T06:14:37.560579+00:00,Official War Thunder Wiki RB BR
+uk_as_90_mk_2,AS90,,7.0,,https://wiki.warthunder.com/unit/uk_as_90_mk_2,2026-07-02T06:14:39.559097+00:00,Official War Thunder Wiki RB BR
+uk_badger,Badger,,9.0,,https://wiki.warthunder.com/unit/uk_badger,2026-07-02T06:14:41.435878+00:00,Official War Thunder Wiki RB BR
+uk_bosvark,Bosvark,,5.3,,https://wiki.warthunder.com/unit/uk_bosvark,2026-07-02T06:14:43.804960+00:00,Official War Thunder Wiki RB BR
+uk_boxer_crv_block2,CRV Block 2,,10.7,,https://wiki.warthunder.com/unit/uk_boxer_crv_block2,2026-07-02T06:14:46.176375+00:00,Official War Thunder Wiki RB BR
+uk_centurion_action_x,Centurion Action X,,7.7,,https://wiki.warthunder.com/unit/uk_centurion_action_x,2026-07-02T06:14:48.447553+00:00,Official War Thunder Wiki RB BR
+uk_centurion_mk_1,Centurion Mk 1,,6.0,,https://wiki.warthunder.com/unit/uk_centurion_mk_1,2026-07-02T06:14:51.002224+00:00,Official War Thunder Wiki RB BR
+uk_centurion_mk_10,Centurion Mk 10,,8.0,,https://wiki.warthunder.com/unit/uk_centurion_mk_10,2026-07-02T06:14:53.262371+00:00,Official War Thunder Wiki RB BR
+uk_centurion_mk_2,Centurion Mk.2,,6.7,,https://wiki.warthunder.com/unit/uk_centurion_mk_2,2026-07-02T06:14:55.613468+00:00,Official War Thunder Wiki RB BR
+uk_centurion_mk_3,Centurion Mk 3,,7.7,,https://wiki.warthunder.com/unit/uk_centurion_mk_3,2026-07-02T06:14:58.069841+00:00,Official War Thunder Wiki RB BR
+uk_centurion_mk_3_ss11,Strv 81 (RB 52),,7.7,,https://wiki.warthunder.com/unit/uk_centurion_mk_3_ss11,2026-07-02T06:15:00.173037+00:00,Official War Thunder Wiki RB BR
+uk_centurion_mk_5_avre_era,Centurion Mk.5 AVRE,,7.0,,https://wiki.warthunder.com/unit/uk_centurion_mk_5_avre_era,2026-07-02T06:15:02.784533+00:00,Official War Thunder Wiki RB BR
+uk_centurion_mk_5_raac,Centurion Mk.5/1,,7.7,,https://wiki.warthunder.com/unit/uk_centurion_mk_5_raac,2026-07-02T06:15:04.595438+00:00,Official War Thunder Wiki RB BR
+uk_centurion_shot_kal_d,Sho't Kal Dalet,,9.0,,https://wiki.warthunder.com/unit/uk_centurion_shot_kal_d,2026-07-02T06:15:07.078221+00:00,Official War Thunder Wiki RB BR
+uk_challenger_1,Challenger Mk.2,,10.3,,https://wiki.warthunder.com/unit/uk_challenger_1,2026-07-02T06:15:09.335457+00:00,Official War Thunder Wiki RB BR
+uk_challenger_1_mk_3_gulf,Challenger DS,,10.7,,https://wiki.warthunder.com/unit/uk_challenger_1_mk_3_gulf,2026-07-02T06:15:11.440081+00:00,Official War Thunder Wiki RB BR
+uk_challenger_2_bn,Black Night,,12.7,,https://wiki.warthunder.com/unit/uk_challenger_2_bn,2026-07-02T06:15:13.399275+00:00,Official War Thunder Wiki RB BR
+uk_challenger_2_dorchester,Challenger 2 (2F),,11.7,,https://wiki.warthunder.com/unit/uk_challenger_2_dorchester,2026-07-02T06:15:15.886325+00:00,Official War Thunder Wiki RB BR
+uk_challenger_2_lep,Challenger 3 TD,,12.0,,https://wiki.warthunder.com/unit/uk_challenger_2_lep,2026-07-02T06:15:18.395483+00:00,Official War Thunder Wiki RB BR
+uk_challenger_2_megatron,Challenger 2 OES,,11.7,,https://wiki.warthunder.com/unit/uk_challenger_2_megatron,2026-07-02T06:15:21.187001+00:00,Official War Thunder Wiki RB BR
+uk_challenger_2_megatron_sm,◍Challenger 2 OES,,11.7,,https://wiki.warthunder.com/unit/uk_challenger_2_megatron_sm,2026-07-02T06:15:23.776386+00:00,Official War Thunder Wiki RB BR
+uk_challenger_2_tes,Challenger 2 TES,,11.7,,https://wiki.warthunder.com/unit/uk_challenger_2_tes,2026-07-02T06:15:26.129496+00:00,Official War Thunder Wiki RB BR
+uk_challenger_2e,Challenger 2E,,12.7,,https://wiki.warthunder.com/unit/uk_challenger_2e,2026-07-02T06:15:28.868002+00:00,Official War Thunder Wiki RB BR
+uk_challenger_II,uk_challenger_ii_shop,,11.7,,https://wiki.warthunder.com/unit/uk_challenger_II,2026-07-02T06:15:31.385067+00:00,Official War Thunder Wiki RB BR
+uk_challenger_II_yt_cup_2019,␙Challenger 2,,11.7,,https://wiki.warthunder.com/unit/uk_challenger_II_yt_cup_2019,2026-07-02T06:15:33.400224+00:00,Official War Thunder Wiki RB BR
+uk_challenger_mk_3,Challenger Mk.3,,10.7,,https://wiki.warthunder.com/unit/uk_challenger_mk_3,2026-07-02T06:15:36.068313+00:00,Official War Thunder Wiki RB BR
+uk_charioteer_mk_7,Charioteer Mk VII,,6.3,,https://wiki.warthunder.com/unit/uk_charioteer_mk_7,2026-07-02T06:15:37.791646+00:00,Official War Thunder Wiki RB BR
+uk_chieftain_900,Chieftain 900,,9.3,,https://wiki.warthunder.com/unit/uk_chieftain_900,2026-07-02T06:15:39.712812+00:00,Official War Thunder Wiki RB BR
+uk_chieftain_marksman,Chieftain Marksman,,8.3,,https://wiki.warthunder.com/unit/uk_chieftain_marksman,2026-07-02T06:15:41.796658+00:00,Official War Thunder Wiki RB BR
+uk_chieftain_mk_10,Chieftain Mk 10,,9.3,,https://wiki.warthunder.com/unit/uk_chieftain_mk_10,2026-07-02T06:15:43.821047+00:00,Official War Thunder Wiki RB BR
+uk_chieftain_mk_3,Chieftain Mk 3,,8.7,,https://wiki.warthunder.com/unit/uk_chieftain_mk_3,2026-07-02T06:15:45.958516+00:00,Official War Thunder Wiki RB BR
+uk_chieftain_mk_5,Chieftain Mk 5,,8.7,,https://wiki.warthunder.com/unit/uk_chieftain_mk_5,2026-07-02T06:15:48.737468+00:00,Official War Thunder Wiki RB BR
+uk_churchill_avre,Churchill AVRE Petard,,2.7,,https://wiki.warthunder.com/unit/uk_churchill_avre,2026-07-02T06:15:50.247140+00:00,Official War Thunder Wiki RB BR
+uk_churchill_na75,Churchill NA75,,4.3,,https://wiki.warthunder.com/unit/uk_churchill_na75,2026-07-02T06:15:52.078195+00:00,Official War Thunder Wiki RB BR
+uk_concept3_ngac,Concept 3,,4.7,,https://wiki.warthunder.com/unit/uk_concept3_ngac,2026-07-02T06:15:54.104803+00:00,Official War Thunder Wiki RB BR
+uk_conqueror_mk_2,Conqueror,,7.7,,https://wiki.warthunder.com/unit/uk_conqueror_mk_2,2026-07-02T06:15:56.654618+00:00,Official War Thunder Wiki RB BR
+uk_cruiser_ram_1,Ram I,,3.0,,https://wiki.warthunder.com/unit/uk_cruiser_ram_1,2026-07-02T06:15:58.548145+00:00,Official War Thunder Wiki RB BR
+uk_crusader_aa_mk_1,Crusader AA Mk I,,3.0,,https://wiki.warthunder.com/unit/uk_crusader_aa_mk_1,2026-07-02T06:16:00.341694+00:00,Official War Thunder Wiki RB BR
+uk_crusader_aa_mk_2,Crusader AA Mk II,,4.0,,https://wiki.warthunder.com/unit/uk_crusader_aa_mk_2,2026-07-02T06:16:02.051500+00:00,Official War Thunder Wiki RB BR
+uk_crusader_aa_mk_2_kit_3rank,Crusader AA (Overlord),,4.0,,https://wiki.warthunder.com/unit/uk_crusader_aa_mk_2_kit_3rank,2026-07-02T06:16:04.366745+00:00,Official War Thunder Wiki RB BR
+uk_crusader_mk_2,Crusader II,,2.7,,https://wiki.warthunder.com/unit/uk_crusader_mk_2,2026-07-02T06:16:06.190110+00:00,Official War Thunder Wiki RB BR
+uk_crusader_mk_2_the_saint,"Crusader ""The Saint""",,2.7,,https://wiki.warthunder.com/unit/uk_crusader_mk_2_the_saint,2026-07-02T06:16:07.871771+00:00,Official War Thunder Wiki RB BR
+uk_crusader_mk_3,Crusader III,,3.0,,https://wiki.warthunder.com/unit/uk_crusader_mk_3,2026-07-02T06:16:10.573972+00:00,Official War Thunder Wiki RB BR
+uk_daimler_mk_2,Daimler Mk II,,1.3,,https://wiki.warthunder.com/unit/uk_daimler_mk_2,2026-07-02T06:16:12.813450+00:00,Official War Thunder Wiki RB BR
+uk_desert_warrior,Desert Warrior,,9.7,,https://wiki.warthunder.com/unit/uk_desert_warrior,2026-07-02T06:16:14.704152+00:00,Official War Thunder Wiki RB BR
+uk_eland_90_mk_7,Eland 90 Mk.7,,7.7,,https://wiki.warthunder.com/unit/uk_eland_90_mk_7,2026-07-02T06:16:16.784301+00:00,Official War Thunder Wiki RB BR
+uk_falcon,Falcon,,8.3,,https://wiki.warthunder.com/unit/uk_falcon,2026-07-02T06:16:18.766412+00:00,Official War Thunder Wiki RB BR
+uk_fv102_striker,Striker,,8.3,,https://wiki.warthunder.com/unit/uk_fv102_striker,2026-07-02T06:16:20.499819+00:00,Official War Thunder Wiki RB BR
+uk_fv107_scimitar,Scimitar,,7.7,,https://wiki.warthunder.com/unit/uk_fv107_scimitar,2026-07-02T06:16:22.778420+00:00,Official War Thunder Wiki RB BR
+uk_fv221_caernarvon,Caernarvon,,7.7,,https://wiki.warthunder.com/unit/uk_fv221_caernarvon,2026-07-02T06:16:24.886567+00:00,Official War Thunder Wiki RB BR
+uk_fv4004_conway,Conway,,7.0,,https://wiki.warthunder.com/unit/uk_fv4004_conway,2026-07-02T06:16:26.677985+00:00,Official War Thunder Wiki RB BR
+uk_fv4005,FV4005,,6.3,,https://wiki.warthunder.com/unit/uk_fv4005,2026-07-02T06:16:28.734665+00:00,Official War Thunder Wiki RB BR
+uk_fv4202,FV4202,,7.3,,https://wiki.warthunder.com/unit/uk_fv4202,2026-07-02T06:16:30.743193+00:00,Official War Thunder Wiki RB BR
+uk_fv438_swingfire,Swingfire,,8.0,,https://wiki.warthunder.com/unit/uk_fv438_swingfire,2026-07-02T06:16:33.314936+00:00,Official War Thunder Wiki RB BR
+uk_fv510_isv,Warrior,,8.3,,https://wiki.warthunder.com/unit/uk_fv510_isv,2026-07-02T06:16:35.244347+00:00,Official War Thunder Wiki RB BR
+uk_fv721_fox,Fox,,8.0,,https://wiki.warthunder.com/unit/uk_fv721_fox,2026-07-02T06:16:37.454695+00:00,Official War Thunder Wiki RB BR
+uk_g6_spg,G6,,6.7,,https://wiki.warthunder.com/unit/uk_g6_spg,2026-07-02T06:16:39.322489+00:00,Official War Thunder Wiki RB BR
+uk_khalid,Khalid,,9.3,,https://wiki.warthunder.com/unit/uk_khalid,2026-07-02T06:16:41.117705+00:00,Official War Thunder Wiki RB BR
+uk_m109a1,M109A1,,6.3,,https://wiki.warthunder.com/unit/uk_m109a1,2026-07-02T06:16:42.838589+00:00,Official War Thunder Wiki RB BR
+uk_m3_stuart,Stuart I,,2.0,,https://wiki.warthunder.com/unit/uk_m3_stuart,2026-07-02T06:16:44.961329+00:00,Official War Thunder Wiki RB BR
+uk_m3a1_stuart,Stuart III,,2.3,,https://wiki.warthunder.com/unit/uk_m3a1_stuart,2026-07-02T06:16:47.399976+00:00,Official War Thunder Wiki RB BR
+uk_m44,M44,,4.0,,https://wiki.warthunder.com/unit/uk_m44,2026-07-02T06:16:49.120565+00:00,Official War Thunder Wiki RB BR
+uk_m4a5_ram_2,Ram II,,3.7,,https://wiki.warthunder.com/unit/uk_m4a5_ram_2,2026-07-02T06:16:50.922100+00:00,Official War Thunder Wiki RB BR
+uk_mark_v,Mark V,,1.0,,https://wiki.warthunder.com/unit/uk_mark_v,2026-07-02T06:16:53.055946+00:00,Official War Thunder Wiki RB BR
+uk_marmon_herrington_mk_6_2pdr,SARC MkVI (2pdr),,2.3,,https://wiki.warthunder.com/unit/uk_marmon_herrington_mk_6_2pdr,2026-07-02T06:16:55.450314+00:00,Official War Thunder Wiki RB BR
+uk_marmon_herrington_mk_6_6pdr,SARC MkVI (6pdr),,3.7,,https://wiki.warthunder.com/unit/uk_marmon_herrington_mk_6_6pdr,2026-07-02T06:16:57.639258+00:00,Official War Thunder Wiki RB BR
+uk_matilda_hedgehog,Matilda Hedgehog,,2.7,,https://wiki.warthunder.com/unit/uk_matilda_hedgehog,2026-07-02T06:16:59.486445+00:00,Official War Thunder Wiki RB BR
+uk_mk1_grant,Grant I,,2.7,,https://wiki.warthunder.com/unit/uk_mk1_grant,2026-07-02T06:17:01.492977+00:00,Official War Thunder Wiki RB BR
+uk_olifant_mk_1a,Olifant Mk.1A,,8.3,,https://wiki.warthunder.com/unit/uk_olifant_mk_1a,2026-07-02T06:17:03.892603+00:00,Official War Thunder Wiki RB BR
+uk_olifant_mk_2,Olifant Mk.2,,9.3,,https://wiki.warthunder.com/unit/uk_olifant_mk_2,2026-07-02T06:17:06.157692+00:00,Official War Thunder Wiki RB BR
+uk_ram_90mm_aa,QF 3.7 Ram,,5.3,,https://wiki.warthunder.com/unit/uk_ram_90mm_aa,2026-07-02T06:17:08.382371+00:00,Official War Thunder Wiki RB BR
+uk_ratel_20,Ratel 20,,6.7,,https://wiki.warthunder.com/unit/uk_ratel_20,2026-07-02T06:17:10.039640+00:00,Official War Thunder Wiki RB BR
+uk_ratel_90,Ratel 90,,6.7,,https://wiki.warthunder.com/unit/uk_ratel_90,2026-07-02T06:17:11.756520+00:00,Official War Thunder Wiki RB BR
+uk_ratel_zt3,ZT3A2,,8.3,,https://wiki.warthunder.com/unit/uk_ratel_zt3,2026-07-02T06:17:13.384659+00:00,Official War Thunder Wiki RB BR
+uk_rooikat_105_td,Rooikat 105,,9.7,,https://wiki.warthunder.com/unit/uk_rooikat_105_td,2026-07-02T06:17:15.942160+00:00,Official War Thunder Wiki RB BR
+uk_rooikat_76,Rooikat Mk.1D,,8.7,,https://wiki.warthunder.com/unit/uk_rooikat_76,2026-07-02T06:17:17.904149+00:00,Official War Thunder Wiki RB BR
+uk_rooikat_mttd,Rooikat MTTD,,9.3,,https://wiki.warthunder.com/unit/uk_rooikat_mttd,2026-07-02T06:17:20.021961+00:00,Official War Thunder Wiki RB BR
+uk_rooikat_za_35,ZA-35,,8.7,,https://wiki.warthunder.com/unit/uk_rooikat_za_35,2026-07-02T06:17:22.521321+00:00,Official War Thunder Wiki RB BR
+uk_sarc_mk4_a,SARC MkIVa,,1.3,,https://wiki.warthunder.com/unit/uk_sarc_mk4_a,2026-07-02T06:17:24.752073+00:00,Official War Thunder Wiki RB BR
+uk_sherman_II,Sherman II,,3.7,,https://wiki.warthunder.com/unit/uk_sherman_II,2026-07-02T06:17:26.401173+00:00,Official War Thunder Wiki RB BR
+uk_sherman_ic_firefly,"Sherman IC ""Trzyniec""",,4.7,,https://wiki.warthunder.com/unit/uk_sherman_ic_firefly,2026-07-02T06:17:28.666811+00:00,Official War Thunder Wiki RB BR
+uk_sherman_vc_firefly,Sherman Firefly,,4.7,,https://wiki.warthunder.com/unit/uk_sherman_vc_firefly,2026-07-02T06:17:30.793371+00:00,Official War Thunder Wiki RB BR
+uk_sherman_vc_firefly_kit_3rank,Firefly (Overlord),,4.7,,https://wiki.warthunder.com/unit/uk_sherman_vc_firefly_kit_3rank,2026-07-02T06:17:32.804778+00:00,Official War Thunder Wiki RB BR
+uk_shir_2,FV4030/3,,10.0,,https://wiki.warthunder.com/unit/uk_shir_2,2026-07-02T06:17:34.807622+00:00,Official War Thunder Wiki RB BR
+uk_skink_aa,Skink,,5.3,,https://wiki.warthunder.com/unit/uk_skink_aa,2026-07-02T06:17:37.024193+00:00,Official War Thunder Wiki RB BR
+uk_sky_sabre_fcs,Sky Sabre (СОЦ),,12.7,,https://wiki.warthunder.com/unit/uk_sky_sabre_fcs,2026-07-02T06:17:39.072574+00:00,Official War Thunder Wiki RB BR
+uk_sp_17_pdr_valentine,Archer,,2.7,,https://wiki.warthunder.com/unit/uk_sp_17_pdr_valentine,2026-07-02T06:17:40.943428+00:00,Official War Thunder Wiki RB BR
+uk_stormer_air_defence,Stormer AD,,10.0,,https://wiki.warthunder.com/unit/uk_stormer_air_defence,2026-07-02T06:17:42.448613+00:00,Official War Thunder Wiki RB BR
+uk_stormer_hvm,Stormer HVM,,10.3,,https://wiki.warthunder.com/unit/uk_stormer_hvm,2026-07-02T06:17:44.279523+00:00,Official War Thunder Wiki RB BR
+uk_t17e2,Staghound AA,,2.0,,https://wiki.warthunder.com/unit/uk_t17e2,2026-07-02T06:17:45.880501+00:00,Official War Thunder Wiki RB BR
+uk_t_90s_bheeshma,Bhishma TWMP,,10.7,,https://wiki.warthunder.com/unit/uk_t_90s_bheeshma,2026-07-02T06:17:48.006776+00:00,Official War Thunder Wiki RB BR
+uk_tog_2,TOG II,,5.3,,https://wiki.warthunder.com/unit/uk_tog_2,2026-07-02T06:17:49.858313+00:00,Official War Thunder Wiki RB BR
+uk_tracked_rapier,Rapier,,9.7,,https://wiki.warthunder.com/unit/uk_tracked_rapier,2026-07-02T06:17:51.748655+00:00,Official War Thunder Wiki RB BR
+uk_ttd,TTD,,10.0,,https://wiki.warthunder.com/unit/uk_ttd,2026-07-02T06:17:53.753240+00:00,Official War Thunder Wiki RB BR
+uk_valentine_mk_1,Valentine I,,2.7,,https://wiki.warthunder.com/unit/uk_valentine_mk_1,2026-07-02T06:17:55.375014+00:00,Official War Thunder Wiki RB BR
+uk_valentine_mk_11,Valentine XI,,2.7,,https://wiki.warthunder.com/unit/uk_valentine_mk_11,2026-07-02T06:17:57.028902+00:00,Official War Thunder Wiki RB BR
+uk_valentine_mk_9,Valentine IX,,3.0,,https://wiki.warthunder.com/unit/uk_valentine_mk_9,2026-07-02T06:17:59.157879+00:00,Official War Thunder Wiki RB BR
+uk_vfm_5,VFM5,,9.3,,https://wiki.warthunder.com/unit/uk_vfm_5,2026-07-02T06:18:01.647802+00:00,Official War Thunder Wiki RB BR
+uk_vickers_gbt_155,GBT 155,,7.0,,https://wiki.warthunder.com/unit/uk_vickers_gbt_155,2026-07-02T06:18:04.065897+00:00,Official War Thunder Wiki RB BR
+uk_vickers_mbt_mk_1,Vickers Mk.1,,8.0,,https://wiki.warthunder.com/unit/uk_vickers_mbt_mk_1,2026-07-02T06:18:05.786167+00:00,Official War Thunder Wiki RB BR
+uk_vickers_mbt_mk_3,Vickers Mk.3,,8.3,,https://wiki.warthunder.com/unit/uk_vickers_mbt_mk_3,2026-07-02T06:18:07.601435+00:00,Official War Thunder Wiki RB BR
+uk_vickers_mk7,Vickers Mk.7,,10.7,,https://wiki.warthunder.com/unit/uk_vickers_mk7,2026-07-02T06:18:09.686953+00:00,Official War Thunder Wiki RB BR
+uk_vickers_mk_11,Vickers Mk.11,,8.7,,https://wiki.warthunder.com/unit/uk_vickers_mk_11,2026-07-02T06:18:11.528892+00:00,Official War Thunder Wiki RB BR
+uk_vickers_mk_6_aa_mk_1,Light AA Mk I,,1.0,,https://wiki.warthunder.com/unit/uk_vickers_mk_6_aa_mk_1,2026-07-02T06:18:13.240204+00:00,Official War Thunder Wiki RB BR
+uk_vijayanta,Vijayanta,,8.3,,https://wiki.warthunder.com/unit/uk_vijayanta,2026-07-02T06:18:14.848136+00:00,Official War Thunder Wiki RB BR
+uk_ystervark_spaa,Ystervark,,4.0,,https://wiki.warthunder.com/unit/uk_ystervark_spaa,2026-07-02T06:18:16.715175+00:00,Official War Thunder Wiki RB BR
+us_adats_bradley,ADATS,,11.7,,https://wiki.warthunder.com/unit/us_adats_bradley,2026-07-02T06:18:18.512338+00:00,Official War Thunder Wiki RB BR
+us_ags_teledyne,AGS,,12.0,,https://wiki.warthunder.com/unit/us_ags_teledyne,2026-07-02T06:18:20.396278+00:00,Official War Thunder Wiki RB BR
+us_ccvl,CCVL,,10.0,,https://wiki.warthunder.com/unit/us_ccvl,2026-07-02T06:18:22.379354+00:00,Official War Thunder Wiki RB BR
+us_efv_p1,EFV,,9.0,,https://wiki.warthunder.com/unit/us_efv_p1,2026-07-02T06:18:24.937289+00:00,Official War Thunder Wiki RB BR
+us_halftrack_m13,M13 MGMC,,1.7,,https://wiki.warthunder.com/unit/us_halftrack_m13,2026-07-02T06:18:26.599605+00:00,Official War Thunder Wiki RB BR
+us_halftrack_m15,M15 CGMC,,1.7,,https://wiki.warthunder.com/unit/us_halftrack_m15,2026-07-02T06:18:29.224485+00:00,Official War Thunder Wiki RB BR
+us_halftrack_m16,M16 MGMC,,2.7,,https://wiki.warthunder.com/unit/us_halftrack_m16,2026-07-02T06:18:31.016169+00:00,Official War Thunder Wiki RB BR
+us_halftrack_m3_75mm_gmc,M3 GMC,,1.7,,https://wiki.warthunder.com/unit/us_halftrack_m3_75mm_gmc,2026-07-02T06:18:33.363186+00:00,Official War Thunder Wiki RB BR
+us_hstv_l,HSTV-L,,12.0,,https://wiki.warthunder.com/unit/us_hstv_l,2026-07-02T06:18:35.197878+00:00,Official War Thunder Wiki RB BR
+us_lav_ad,LAV-AD,,10.0,,https://wiki.warthunder.com/unit/us_lav_ad,2026-07-02T06:18:37.383888+00:00,Official War Thunder Wiki RB BR
+us_losat_ccv,LOSAT,,10.0,,https://wiki.warthunder.com/unit/us_losat_ccv,2026-07-02T06:18:39.670504+00:00,Official War Thunder Wiki RB BR
+us_lvt_4_zis_2,LVT(A)(4) (ZIS-2),,2.3,,https://wiki.warthunder.com/unit/us_lvt_4_zis_2,2026-07-02T06:18:41.584437+00:00,Official War Thunder Wiki RB BR
+us_lvt_a1_m24,LVT(A)(1) (M24),,2.7,,https://wiki.warthunder.com/unit/us_lvt_a1_m24,2026-07-02T06:18:43.474684+00:00,Official War Thunder Wiki RB BR
+us_lvt_a_1,LVT(A)(1),,1.0,,https://wiki.warthunder.com/unit/us_lvt_a_1,2026-07-02T06:18:45.589419+00:00,Official War Thunder Wiki RB BR
+us_lvt_a_1_trb,○LVT(A)(1),,1.0,,https://wiki.warthunder.com/unit/us_lvt_a_1_trb,2026-07-02T06:18:47.815146+00:00,Official War Thunder Wiki RB BR
+us_lvt_a_4,LVT(A)(4),,1.3,,https://wiki.warthunder.com/unit/us_lvt_a_4,2026-07-02T06:18:49.608255+00:00,Official War Thunder Wiki RB BR
+us_m10,M10 GMC,,3.3,,https://wiki.warthunder.com/unit/us_m10,2026-07-02T06:18:51.204194+00:00,Official War Thunder Wiki RB BR
+us_m103,M103,,7.7,,https://wiki.warthunder.com/unit/us_m103,2026-07-02T06:18:53.340163+00:00,Official War Thunder Wiki RB BR
+us_m109a1,M109A1,,6.3,,https://wiki.warthunder.com/unit/us_m109a1,2026-07-02T06:18:55.398909+00:00,Official War Thunder Wiki RB BR
+us_m10_booker_late,M10 Booker,,10.7,,https://wiki.warthunder.com/unit/us_m10_booker_late,2026-07-02T06:18:58.073097+00:00,Official War Thunder Wiki RB BR
+us_m1128_mgs,M1128,,10.3,,https://wiki.warthunder.com/unit/us_m1128_mgs,2026-07-02T06:18:59.949802+00:00,Official War Thunder Wiki RB BR
+us_m1128_wolfpack,M1128 Wolfpack,,10.3,,https://wiki.warthunder.com/unit/us_m1128_wolfpack,2026-07-02T06:19:02.089345+00:00,Official War Thunder Wiki RB BR
+us_m1296_dragoon,M1296,,9.7,,https://wiki.warthunder.com/unit/us_m1296_dragoon,2026-07-02T06:19:04.473076+00:00,Official War Thunder Wiki RB BR
+us_m163_vulcan,M163,,7.3,,https://wiki.warthunder.com/unit/us_m163_vulcan,2026-07-02T06:19:06.767156+00:00,Official War Thunder Wiki RB BR
+us_m18_hellcat,M18 GMC,,6.0,,https://wiki.warthunder.com/unit/us_m18_hellcat,2026-07-02T06:19:08.607843+00:00,Official War Thunder Wiki RB BR
+us_m18_hellcat_black_cat,"M18 ""Black Cat""",,6.0,,https://wiki.warthunder.com/unit/us_m18_hellcat_black_cat,2026-07-02T06:19:10.646097+00:00,Official War Thunder Wiki RB BR
+us_m18_hellcat_kit_3rank,Hellcat (Hell),,6.0,,https://wiki.warthunder.com/unit/us_m18_hellcat_kit_3rank,2026-07-02T06:19:12.393347+00:00,Official War Thunder Wiki RB BR
+us_m18_super_hellcat,Super Hellcat,,6.3,,https://wiki.warthunder.com/unit/us_m18_super_hellcat,2026-07-02T06:19:14.524167+00:00,Official War Thunder Wiki RB BR
+us_m19,M19A1,,4.0,,https://wiki.warthunder.com/unit/us_m19,2026-07-02T06:19:16.868141+00:00,Official War Thunder Wiki RB BR
+us_m1_abrams,M1 Abrams,,10.7,,https://wiki.warthunder.com/unit/us_m1_abrams,2026-07-02T06:19:19.215400+00:00,Official War Thunder Wiki RB BR
+us_m1_abrams_kvt,M1 KVT,,10.7,,https://wiki.warthunder.com/unit/us_m1_abrams_kvt,2026-07-02T06:19:21.359040+00:00,Official War Thunder Wiki RB BR
+us_m1_ip_abrams,IPM1,,11.3,,https://wiki.warthunder.com/unit/us_m1_ip_abrams,2026-07-02T06:19:23.957533+00:00,Official War Thunder Wiki RB BR
+us_m1a1_abrams,M1A1,,11.7,,https://wiki.warthunder.com/unit/us_m1a1_abrams,2026-07-02T06:19:25.627810+00:00,Official War Thunder Wiki RB BR
+us_m1a1_abrams_yt_cup_2019,␙M1A1,,11.7,,https://wiki.warthunder.com/unit/us_m1a1_abrams_yt_cup_2019,2026-07-02T06:19:27.669755+00:00,Official War Thunder Wiki RB BR
+us_m1a1_aim_abrams,M1A1 AIM,,12.0,,https://wiki.warthunder.com/unit/us_m1a1_aim_abrams,2026-07-02T06:19:29.342636+00:00,Official War Thunder Wiki RB BR
+us_m1a1_hc_abrams,M1A1 HC,,12.0,,https://wiki.warthunder.com/unit/us_m1a1_hc_abrams,2026-07-02T06:19:31.860281+00:00,Official War Thunder Wiki RB BR
+us_m1a1_hc_usmc,M1A1 Click-Bait,,12.0,,https://wiki.warthunder.com/unit/us_m1a1_hc_usmc,2026-07-02T06:19:34.612453+00:00,Official War Thunder Wiki RB BR
+us_m1a1_hc_usmc_sm,◍M1A1 HC,,12.0,,https://wiki.warthunder.com/unit/us_m1a1_hc_usmc_sm,2026-07-02T06:19:36.939751+00:00,Official War Thunder Wiki RB BR
+us_m1a2_abrams,M1A2 Abrams,,12.0,,https://wiki.warthunder.com/unit/us_m1a2_abrams,2026-07-02T06:19:38.836898+00:00,Official War Thunder Wiki RB BR
+us_m1a2_sep2_abrams,M1A2 SEP V2,,12.7,,https://wiki.warthunder.com/unit/us_m1a2_sep2_abrams,2026-07-02T06:19:41.530592+00:00,Official War Thunder Wiki RB BR
+us_m1a2_sep_abrams,M1A2 SEP,,12.7,,https://wiki.warthunder.com/unit/us_m1a2_sep_abrams,2026-07-02T06:19:44.038846+00:00,Official War Thunder Wiki RB BR
+us_m22_locust,M22,,2.0,,https://wiki.warthunder.com/unit/us_m22_locust,2026-07-02T06:19:46.287373+00:00,Official War Thunder Wiki RB BR
+us_m247,M247,,9.0,,https://wiki.warthunder.com/unit/us_m247,2026-07-02T06:19:48.391013+00:00,Official War Thunder Wiki RB BR
+us_m24_chaffee,M24,,4.0,,https://wiki.warthunder.com/unit/us_m24_chaffee,2026-07-02T06:19:51.022564+00:00,Official War Thunder Wiki RB BR
+us_m24_chaffee_tl,M24 (TL),,4.0,,https://wiki.warthunder.com/unit/us_m24_chaffee_tl,2026-07-02T06:19:53.617110+00:00,Official War Thunder Wiki RB BR
+us_m26_pershing,M26,,6.7,,https://wiki.warthunder.com/unit/us_m26_pershing,2026-07-02T06:19:55.866783+00:00,Official War Thunder Wiki RB BR
+us_m26_t99,M26 T99,,6.7,,https://wiki.warthunder.com/unit/us_m26_t99,2026-07-02T06:19:58.489982+00:00,Official War Thunder Wiki RB BR
+us_m26e1_pershing,M26E1,,6.7,,https://wiki.warthunder.com/unit/us_m26e1_pershing,2026-07-02T06:20:00.262394+00:00,Official War Thunder Wiki RB BR
+us_m2_medium,M2,,1.3,,https://wiki.warthunder.com/unit/us_m2_medium,2026-07-02T06:20:01.967237+00:00,Official War Thunder Wiki RB BR
+us_m2a2,M2A2,,1.0,,https://wiki.warthunder.com/unit/us_m2a2,2026-07-02T06:20:04.251907+00:00,Official War Thunder Wiki RB BR
+us_m2a4,M2A4,,1.0,,https://wiki.warthunder.com/unit/us_m2a4,2026-07-02T06:20:06.724431+00:00,Official War Thunder Wiki RB BR
+us_m2a4_1st_armor_div,M2A4 (1st Arm.Div.),,1.0,,https://wiki.warthunder.com/unit/us_m2a4_1st_armor_div,2026-07-02T06:20:09.304195+00:00,Official War Thunder Wiki RB BR
+us_m36,M36 GMC,,5.3,,https://wiki.warthunder.com/unit/us_m36,2026-07-02T06:20:11.199574+00:00,Official War Thunder Wiki RB BR
+us_m36b2,M36B2,,5.7,,https://wiki.warthunder.com/unit/us_m36b2,2026-07-02T06:20:13.025408+00:00,Official War Thunder Wiki RB BR
+us_m3_bradley,M3 Bradley,,8.3,,https://wiki.warthunder.com/unit/us_m3_bradley,2026-07-02T06:20:15.480364+00:00,Official War Thunder Wiki RB BR
+us_m3_lee,M3 Lee,,2.7,,https://wiki.warthunder.com/unit/us_m3_lee,2026-07-02T06:20:17.490714+00:00,Official War Thunder Wiki RB BR
+us_m3_stuart,M3 Stuart,,2.0,,https://wiki.warthunder.com/unit/us_m3_stuart,2026-07-02T06:20:19.819351+00:00,Official War Thunder Wiki RB BR
+us_m3a1_stuart,M3A1 Stuart,,2.3,,https://wiki.warthunder.com/unit/us_m3a1_stuart,2026-07-02T06:20:22.207068+00:00,Official War Thunder Wiki RB BR
+us_m3a1_stuart_usmc,M3A1 (USMC),,2.3,,https://wiki.warthunder.com/unit/us_m3a1_stuart_usmc,2026-07-02T06:20:24.454901+00:00,Official War Thunder Wiki RB BR
+us_m3a3_bradley,M3A3 Bradley,,9.7,,https://wiki.warthunder.com/unit/us_m3a3_bradley,2026-07-02T06:20:26.614190+00:00,Official War Thunder Wiki RB BR
+us_m41_walker_bulldog,M41A1,,6.3,,https://wiki.warthunder.com/unit/us_m41_walker_bulldog,2026-07-02T06:20:29.192449+00:00,Official War Thunder Wiki RB BR
+us_m42_duster,M42,,4.0,,https://wiki.warthunder.com/unit/us_m42_duster,2026-07-02T06:20:31.321035+00:00,Official War Thunder Wiki RB BR
+us_m44,M44,,4.0,,https://wiki.warthunder.com/unit/us_m44,2026-07-02T06:20:33.509111+00:00,Official War Thunder Wiki RB BR
+us_m46_patton,M46,,7.0,,https://wiki.warthunder.com/unit/us_m46_patton,2026-07-02T06:20:35.732002+00:00,Official War Thunder Wiki RB BR
+us_m46_patton_73_armor_bat,"M46 ""Tiger""",,7.0,,https://wiki.warthunder.com/unit/us_m46_patton_73_armor_bat,2026-07-02T06:20:37.952357+00:00,Official War Thunder Wiki RB BR
+us_m47_patton_II,M47,,7.3,,https://wiki.warthunder.com/unit/us_m47_patton_II,2026-07-02T06:20:39.589252+00:00,Official War Thunder Wiki RB BR
+us_m48a1_patton_III,M48A1,,7.7,,https://wiki.warthunder.com/unit/us_m48a1_patton_III,2026-07-02T06:20:42.102558+00:00,Official War Thunder Wiki RB BR
+us_m4_sherman,M4,,3.7,,https://wiki.warthunder.com/unit/us_m4_sherman,2026-07-02T06:20:44.008868+00:00,Official War Thunder Wiki RB BR
+us_m4_sherman_calliope,Calliope,,4.0,,https://wiki.warthunder.com/unit/us_m4_sherman_calliope,2026-07-02T06:20:46.425021+00:00,Official War Thunder Wiki RB BR
+us_m4_sherman_promo,M4,,3.7,,https://wiki.warthunder.com/unit/us_m4_sherman_promo,2026-07-02T06:20:49.004686+00:00,Official War Thunder Wiki RB BR
+us_m4_t26,M4/T26,,6.0,,https://wiki.warthunder.com/unit/us_m4_t26,2026-07-02T06:20:51.178243+00:00,Official War Thunder Wiki RB BR
+us_m4a1_1942_sherman,M4A1,,3.7,,https://wiki.warthunder.com/unit/us_m4a1_1942_sherman,2026-07-02T06:20:53.784006+00:00,Official War Thunder Wiki RB BR
+us_m4a1_76w_sherman,M4A1 (76) W,,5.0,,https://wiki.warthunder.com/unit/us_m4a1_76w_sherman,2026-07-02T06:20:56.341553+00:00,Official War Thunder Wiki RB BR
+us_m4a2_1944_germ,M4 748 (a),,4.0,,https://wiki.warthunder.com/unit/us_m4a2_1944_germ,2026-07-02T06:21:00.870161+00:00,Official War Thunder Wiki RB BR
+us_m4a2_76w_sherman,M4A2 (76) W,,5.3,,https://wiki.warthunder.com/unit/us_m4a2_76w_sherman,2026-07-02T06:21:02.718713+00:00,Official War Thunder Wiki RB BR
+us_m4a2_sherman,M4A2,,4.0,,https://wiki.warthunder.com/unit/us_m4a2_sherman,2026-07-02T06:21:05.235528+00:00,Official War Thunder Wiki RB BR
+us_m4a3_105_sherman,M4A3 (105),,3.0,,https://wiki.warthunder.com/unit/us_m4a3_105_sherman,2026-07-02T06:21:07.313386+00:00,Official War Thunder Wiki RB BR
+us_m4a3e2_76w_sherman_jumbo,M4A3E2 (76) W,,6.3,,https://wiki.warthunder.com/unit/us_m4a3e2_76w_sherman_jumbo,2026-07-02T06:21:09.343231+00:00,Official War Thunder Wiki RB BR
+us_m4a3e2_sherman_jumbo,M4A3E2,,5.7,,https://wiki.warthunder.com/unit/us_m4a3e2_sherman_jumbo,2026-07-02T06:21:11.810299+00:00,Official War Thunder Wiki RB BR
+us_m4a3e2_sherman_jumbo_cobra_king,Cobra King,,5.7,,https://wiki.warthunder.com/unit/us_m4a3e2_sherman_jumbo_cobra_king,2026-07-02T06:21:13.977853+00:00,Official War Thunder Wiki RB BR
+us_m4a3e8_76w_sherman,M4A3 (76) W,,5.7,,https://wiki.warthunder.com/unit/us_m4a3e8_76w_sherman,2026-07-02T06:21:16.654495+00:00,Official War Thunder Wiki RB BR
+us_m4a3e8_76w_sherman_kit_3rank,Sherman (Hell),,5.7,,https://wiki.warthunder.com/unit/us_m4a3e8_76w_sherman_kit_3rank,2026-07-02T06:21:19.204052+00:00,Official War Thunder Wiki RB BR
+us_m4a5_ram_2,M4A5,,3.7,,https://wiki.warthunder.com/unit/us_m4a5_ram_2,2026-07-02T06:21:21.778250+00:00,Official War Thunder Wiki RB BR
+us_m50_ontos,M50,,6.7,,https://wiki.warthunder.com/unit/us_m50_ontos,2026-07-02T06:21:23.581116+00:00,Official War Thunder Wiki RB BR
+us_m55,M55,,4.0,,https://wiki.warthunder.com/unit/us_m55,2026-07-02T06:21:25.894675+00:00,Official War Thunder Wiki RB BR
+us_m551,M551,,8.0,,https://wiki.warthunder.com/unit/us_m551,2026-07-02T06:21:27.805205+00:00,Official War Thunder Wiki RB BR
+us_m551_76,M551(76),,7.0,,https://wiki.warthunder.com/unit/us_m551_76,2026-07-02T06:21:30.571190+00:00,Official War Thunder Wiki RB BR
+us_m56_scorpion,M56,,6.7,,https://wiki.warthunder.com/unit/us_m56_scorpion,2026-07-02T06:21:32.494257+00:00,Official War Thunder Wiki RB BR
+us_m5a1_stuart,M5A1,,2.7,,https://wiki.warthunder.com/unit/us_m5a1_stuart,2026-07-02T06:21:34.915453+00:00,Official War Thunder Wiki RB BR
+us_m5a1_stuart_canadian_5st_arm,Stuart VI (5th CAD),,2.7,,https://wiki.warthunder.com/unit/us_m5a1_stuart_canadian_5st_arm,2026-07-02T06:21:36.606597+00:00,Official War Thunder Wiki RB BR
+us_m5a1_stuart_td,M5A1 TD,,2.7,,https://wiki.warthunder.com/unit/us_m5a1_stuart_td,2026-07-02T06:21:38.562719+00:00,Official War Thunder Wiki RB BR
+us_m60,M60,,8.0,,https://wiki.warthunder.com/unit/us_m60,2026-07-02T06:21:40.818239+00:00,Official War Thunder Wiki RB BR
+us_m60_120s,120S,,10.3,,https://wiki.warthunder.com/unit/us_m60_120s,2026-07-02T06:21:42.360501+00:00,Official War Thunder Wiki RB BR
+us_m60a1,M60A1 (AOS),,8.3,,https://wiki.warthunder.com/unit/us_m60a1,2026-07-02T06:21:44.296387+00:00,Official War Thunder Wiki RB BR
+us_m60a1_rise_passive_era,M60A1 RISE (P),,8.7,,https://wiki.warthunder.com/unit/us_m60a1_rise_passive_era,2026-07-02T06:21:46.408108+00:00,Official War Thunder Wiki RB BR
+us_m60a2,M60A2,,8.3,,https://wiki.warthunder.com/unit/us_m60a2,2026-07-02T06:21:48.708809+00:00,Official War Thunder Wiki RB BR
+us_m60a3_slep,M60 AMBT,,10.0,,https://wiki.warthunder.com/unit/us_m60a3_slep,2026-07-02T06:21:50.836500+00:00,Official War Thunder Wiki RB BR
+us_m60a3_tts,M60A3 TTS,,9.0,,https://wiki.warthunder.com/unit/us_m60a3_tts,2026-07-02T06:21:52.971841+00:00,Official War Thunder Wiki RB BR
+us_m6a1,M6A1,,5.0,,https://wiki.warthunder.com/unit/us_m6a1,2026-07-02T06:21:54.774341+00:00,Official War Thunder Wiki RB BR
+us_m6a2e1,M6A2E1,,6.7,,https://wiki.warthunder.com/unit/us_m6a2e1,2026-07-02T06:21:56.800409+00:00,Official War Thunder Wiki RB BR
+us_m728,M728 CEV,,7.0,,https://wiki.warthunder.com/unit/us_m728,2026-07-02T06:21:59.104751+00:00,Official War Thunder Wiki RB BR
+us_m8_greyhound,M8 LAC,,1.0,,https://wiki.warthunder.com/unit/us_m8_greyhound,2026-07-02T06:22:01.513734+00:00,Official War Thunder Wiki RB BR
+us_m8_scott,M8 HMC,,1.3,,https://wiki.warthunder.com/unit/us_m8_scott,2026-07-02T06:22:03.790350+00:00,Official War Thunder Wiki RB BR
+us_m8a1,M8A1 GMC,,2.7,,https://wiki.warthunder.com/unit/us_m8a1,2026-07-02T06:22:05.469564+00:00,Official War Thunder Wiki RB BR
+us_m901_itv,M901,,8.3,,https://wiki.warthunder.com/unit/us_m901_itv,2026-07-02T06:22:07.627172+00:00,Official War Thunder Wiki RB BR
+us_magach_3,Magach 3 (ERA),,8.0,,https://wiki.warthunder.com/unit/us_magach_3,2026-07-02T06:22:09.571008+00:00,Official War Thunder Wiki RB BR
+us_mbt_70,MBT-70,,9.3,,https://wiki.warthunder.com/unit/us_mbt_70,2026-07-02T06:22:11.078063+00:00,Official War Thunder Wiki RB BR
+us_merkava_mk_1,Merkava Mk.1,,9.3,,https://wiki.warthunder.com/unit/us_merkava_mk_1,2026-07-02T06:22:13.353456+00:00,Official War Thunder Wiki RB BR
+us_merkava_mk_2b_late,Merkava Mk.2B,,9.7,,https://wiki.warthunder.com/unit/us_merkava_mk_2b_late,2026-07-02T06:22:15.185433+00:00,Official War Thunder Wiki RB BR
+us_merkava_mk_3d,Merkava Mk.3D,,11.3,,https://wiki.warthunder.com/unit/us_merkava_mk_3d,2026-07-02T06:22:17.693843+00:00,Official War Thunder Wiki RB BR
+us_mim_72_chaparral,Imp.Chaparral,,9.0,,https://wiki.warthunder.com/unit/us_mim_72_chaparral,2026-07-02T06:22:20.031305+00:00,Official War Thunder Wiki RB BR
+us_mk1_grant,Grant I,,2.7,,https://wiki.warthunder.com/unit/us_mk1_grant,2026-07-02T06:22:22.231186+00:00,Official War Thunder Wiki RB BR
+us_nasams_fcs,NASAMS 3 (СОЦ),,12.7,,https://wiki.warthunder.com/unit/us_nasams_fcs,2026-07-02T06:22:24.832717+00:00,Official War Thunder Wiki RB BR
+us_rdf_lt,RDF/LT,,12.0,,https://wiki.warthunder.com/unit/us_rdf_lt,2026-07-02T06:22:26.571749+00:00,Official War Thunder Wiki RB BR
+us_skink_aa,Skink,,5.3,,https://wiki.warthunder.com/unit/us_skink_aa,2026-07-02T06:22:28.791059+00:00,Official War Thunder Wiki RB BR
+us_skink_aa_kit_3rank,Skink (Hell),,5.3,,https://wiki.warthunder.com/unit/us_skink_aa_kit_3rank,2026-07-02T06:22:30.886820+00:00,Official War Thunder Wiki RB BR
+us_sl_amraam_fcs,CLAWS (СОЦ),,12.3,,https://wiki.warthunder.com/unit/us_sl_amraam_fcs,2026-07-02T06:22:32.513195+00:00,Official War Thunder Wiki RB BR
+us_stingray,Stingray,,9.3,,https://wiki.warthunder.com/unit/us_stingray,2026-07-02T06:22:34.960073+00:00,Official War Thunder Wiki RB BR
+us_t114,T114,,7.7,,https://wiki.warthunder.com/unit/us_t114,2026-07-02T06:22:37.212995+00:00,Official War Thunder Wiki RB BR
+us_t14,T14,,4.7,,https://wiki.warthunder.com/unit/us_t14,2026-07-02T06:22:39.388530+00:00,Official War Thunder Wiki RB BR
+us_t18_e2,T18E2,,3.3,,https://wiki.warthunder.com/unit/us_t18_e2,2026-07-02T06:22:41.909435+00:00,Official War Thunder Wiki RB BR
+us_t1e1,T1E1,,5.3,,https://wiki.warthunder.com/unit/us_t1e1,2026-07-02T06:22:43.991364+00:00,Official War Thunder Wiki RB BR
+us_t1e1_90,T1E1 (90),,5.7,,https://wiki.warthunder.com/unit/us_t1e1_90,2026-07-02T06:22:45.761073+00:00,Official War Thunder Wiki RB BR
+us_t20,T20,,6.3,,https://wiki.warthunder.com/unit/us_t20,2026-07-02T06:22:47.713913+00:00,Official War Thunder Wiki RB BR
+us_t25,T25,,6.3,,https://wiki.warthunder.com/unit/us_t25,2026-07-02T06:22:49.337853+00:00,Official War Thunder Wiki RB BR
+us_t26e4_superpershing,T26E1-1,,6.7,,https://wiki.warthunder.com/unit/us_t26e4_superpershing,2026-07-02T06:22:50.922275+00:00,Official War Thunder Wiki RB BR
+us_t26e5,T26E5,,6.7,,https://wiki.warthunder.com/unit/us_t26e5,2026-07-02T06:22:53.488962+00:00,Official War Thunder Wiki RB BR
+us_t28,T28,,6.3,,https://wiki.warthunder.com/unit/us_t28,2026-07-02T06:22:55.330499+00:00,Official War Thunder Wiki RB BR
+us_t29,T29,,7.0,,https://wiki.warthunder.com/unit/us_t29,2026-07-02T06:22:57.733584+00:00,Official War Thunder Wiki RB BR
+us_t30,T30,,6.7,,https://wiki.warthunder.com/unit/us_t30,2026-07-02T06:23:00.242792+00:00,Official War Thunder Wiki RB BR
+us_t32,T32,,7.3,,https://wiki.warthunder.com/unit/us_t32,2026-07-02T06:23:02.231274+00:00,Official War Thunder Wiki RB BR
+us_t32e1,T32E1,,7.7,,https://wiki.warthunder.com/unit/us_t32e1,2026-07-02T06:23:04.063355+00:00,Official War Thunder Wiki RB BR
+us_t34,T34,,6.7,,https://wiki.warthunder.com/unit/us_t34,2026-07-02T06:23:06.004491+00:00,Official War Thunder Wiki RB BR
+us_t54e1,T54E1,,8.0,,https://wiki.warthunder.com/unit/us_t54e1,2026-07-02T06:23:08.062553+00:00,Official War Thunder Wiki RB BR
+us_t54e2,T54E2,,7.7,,https://wiki.warthunder.com/unit/us_t54e2,2026-07-02T06:23:10.421732+00:00,Official War Thunder Wiki RB BR
+us_t55e1,T55E1,,4.3,,https://wiki.warthunder.com/unit/us_t55e1,2026-07-02T06:23:12.821853+00:00,Official War Thunder Wiki RB BR
+us_t58,T58,,8.7,,https://wiki.warthunder.com/unit/us_t58,2026-07-02T06:23:14.580275+00:00,Official War Thunder Wiki RB BR
+us_t77e1,T77E1,,4.0,,https://wiki.warthunder.com/unit/us_t77e1,2026-07-02T06:23:16.346062+00:00,Official War Thunder Wiki RB BR
+us_t86,T86,,6.0,,https://wiki.warthunder.com/unit/us_t86,2026-07-02T06:23:17.938599+00:00,Official War Thunder Wiki RB BR
+us_t92,T92,,7.0,,https://wiki.warthunder.com/unit/us_t92,2026-07-02T06:23:20.089107+00:00,Official War Thunder Wiki RB BR
+us_t95,T95,,7.0,,https://wiki.warthunder.com/unit/us_t95,2026-07-02T06:23:22.042839+00:00,Official War Thunder Wiki RB BR
+us_t95e1,T95E1,,8.3,,https://wiki.warthunder.com/unit/us_t95e1,2026-07-02T06:23:24.055683+00:00,Official War Thunder Wiki RB BR
+us_xm1_chrysler,XM1 (Chrysler),,9.0,,https://wiki.warthunder.com/unit/us_xm1_chrysler,2026-07-02T06:23:26.043956+00:00,Official War Thunder Wiki RB BR
+us_xm1_gm,XM1 (GM),,9.3,,https://wiki.warthunder.com/unit/us_xm1_gm,2026-07-02T06:23:27.841737+00:00,Official War Thunder Wiki RB BR
+us_xm246,XM246,,8.7,,https://wiki.warthunder.com/unit/us_xm246,2026-07-02T06:23:30.280320+00:00,Official War Thunder Wiki RB BR
+us_xm_8,XM8,,9.7,,https://wiki.warthunder.com/unit/us_xm_8,2026-07-02T06:23:32.648359+00:00,Official War Thunder Wiki RB BR
+us_xm_800t,XM800T,,8.7,,https://wiki.warthunder.com/unit/us_xm_800t,2026-07-02T06:23:35.109351+00:00,Official War Thunder Wiki RB BR
+us_xm_803,XM803,,9.0,,https://wiki.warthunder.com/unit/us_xm_803,2026-07-02T06:23:37.093206+00:00,Official War Thunder Wiki RB BR
+us_xm_975_roland,XM975,,10.0,,https://wiki.warthunder.com/unit/us_xm_975_roland,2026-07-02T06:23:39.714669+00:00,Official War Thunder Wiki RB BR
+ussr_2s1,2S1,,6.0,,https://wiki.warthunder.com/unit/ussr_2s1,2026-07-02T06:23:41.329346+00:00,Official War Thunder Wiki RB BR
+ussr_2s19_m1,2С19М1,,7.0,,https://wiki.warthunder.com/unit/ussr_2s19_m1,2026-07-02T06:23:43.689214+00:00,Official War Thunder Wiki RB BR
+ussr_2s19_m2,2С19М2,,7.3,,https://wiki.warthunder.com/unit/ussr_2s19_m2,2026-07-02T06:23:45.648769+00:00,Official War Thunder Wiki RB BR
+ussr_2s25,2S25,,9.3,,https://wiki.warthunder.com/unit/ussr_2s25,2026-07-02T06:23:47.297214+00:00,Official War Thunder Wiki RB BR
+ussr_2s25m,2S25M,,10.0,,https://wiki.warthunder.com/unit/ussr_2s25m,2026-07-02T06:23:49.213196+00:00,Official War Thunder Wiki RB BR
+ussr_2s38,2S38,,10.7,,https://wiki.warthunder.com/unit/ussr_2s38,2026-07-02T06:23:51.762808+00:00,Official War Thunder Wiki RB BR
+ussr_2s3m,2S3M,,6.3,,https://wiki.warthunder.com/unit/ussr_2s3m,2026-07-02T06:23:53.411997+00:00,Official War Thunder Wiki RB BR
+ussr_9a33bm3,Оса-АКМ,,10.3,,https://wiki.warthunder.com/unit/ussr_9a33bm3,2026-07-02T06:23:55.621291+00:00,Official War Thunder Wiki RB BR
+ussr_9a35_m2,Strela-10M2,,10.3,,https://wiki.warthunder.com/unit/ussr_9a35_m2,2026-07-02T06:23:57.638022+00:00,Official War Thunder Wiki RB BR
+ussr_9p149,Shturm-S,,8.7,,https://wiki.warthunder.com/unit/ussr_9p149,2026-07-02T06:23:59.776713+00:00,Official War Thunder Wiki RB BR
+ussr_9p157,Khrizantema-S,,9.7,,https://wiki.warthunder.com/unit/ussr_9p157,2026-07-02T06:24:02.039696+00:00,Official War Thunder Wiki RB BR
+ussr_a_12_mk_2_matilda_2A_F96,MK-II «Matilda»,,3.3,,https://wiki.warthunder.com/unit/ussr_a_12_mk_2_matilda_2A_F96,2026-07-02T06:24:03.904850+00:00,Official War Thunder Wiki RB BR
+ussr_asu_57,ASU-57,,4.3,,https://wiki.warthunder.com/unit/ussr_asu_57,2026-07-02T06:24:05.995790+00:00,Official War Thunder Wiki RB BR
+ussr_asu_85,ASU-85,,6.3,,https://wiki.warthunder.com/unit/ussr_asu_85,2026-07-02T06:24:08.336426+00:00,Official War Thunder Wiki RB BR
+ussr_ba_11,BA-11,,1.3,,https://wiki.warthunder.com/unit/ussr_ba_11,2026-07-02T06:24:10.311333+00:00,Official War Thunder Wiki RB BR
+ussr_bm_13n,BM-13N,,2.7,,https://wiki.warthunder.com/unit/ussr_bm_13n,2026-07-02T06:24:13.042765+00:00,Official War Thunder Wiki RB BR
+ussr_bm_31_12,BM-31-12,,4.0,,https://wiki.warthunder.com/unit/ussr_bm_31_12,2026-07-02T06:24:15.162054+00:00,Official War Thunder Wiki RB BR
+ussr_bm_8_24,BM-8-24,,1.3,,https://wiki.warthunder.com/unit/ussr_bm_8_24,2026-07-02T06:24:17.067814+00:00,Official War Thunder Wiki RB BR
+ussr_bmd_4,BMD-4,,9.7,,https://wiki.warthunder.com/unit/ussr_bmd_4,2026-07-02T06:24:19.460596+00:00,Official War Thunder Wiki RB BR
+ussr_bmd_4m,БМД-4M,,9.7,,https://wiki.warthunder.com/unit/ussr_bmd_4m,2026-07-02T06:24:21.579124+00:00,Official War Thunder Wiki RB BR
+ussr_bmd_4m2,БМД-4M2,,9.7,,https://wiki.warthunder.com/unit/ussr_bmd_4m2,2026-07-02T06:24:24.014442+00:00,Official War Thunder Wiki RB BR
+ussr_bmp_1,BMP-1,,8.0,,https://wiki.warthunder.com/unit/ussr_bmp_1,2026-07-02T06:24:26.831728+00:00,Official War Thunder Wiki RB BR
+ussr_bmp_2,BMP-2,,8.7,,https://wiki.warthunder.com/unit/ussr_bmp_2,2026-07-02T06:24:29.545197+00:00,Official War Thunder Wiki RB BR
+ussr_bmp_2m,BMP-2M,,10.3,,https://wiki.warthunder.com/unit/ussr_bmp_2m,2026-07-02T06:24:31.313162+00:00,Official War Thunder Wiki RB BR
+ussr_bmp_3,BMP-3,,9.3,,https://wiki.warthunder.com/unit/ussr_bmp_3,2026-07-02T06:24:33.285242+00:00,Official War Thunder Wiki RB BR
+ussr_bmpt,БМПТ,,11.7,,https://wiki.warthunder.com/unit/ussr_bmpt,2026-07-02T06:24:35.384063+00:00,Official War Thunder Wiki RB BR
+ussr_bmpt_72,БМПТ-72,,11.7,,https://wiki.warthunder.com/unit/ussr_bmpt_72,2026-07-02T06:24:37.453016+00:00,Official War Thunder Wiki RB BR
+ussr_bt_5,BT-5,,1.0,,https://wiki.warthunder.com/unit/ussr_bt_5,2026-07-02T06:24:39.716287+00:00,Official War Thunder Wiki RB BR
+ussr_bt_7_1937,BT-7,,1.3,,https://wiki.warthunder.com/unit/ussr_bt_7_1937,2026-07-02T06:24:42.108795+00:00,Official War Thunder Wiki RB BR
+ussr_bt_7_1937_td,BT-7 TD,,1.3,,https://wiki.warthunder.com/unit/ussr_bt_7_1937_td,2026-07-02T06:24:44.029719+00:00,Official War Thunder Wiki RB BR
+ussr_bt_7_m,BT-7M,,2.0,,https://wiki.warthunder.com/unit/ussr_bt_7_m,2026-07-02T06:24:46.534764+00:00,Official War Thunder Wiki RB BR
+ussr_bt_7a_f32,BT-7A (F-32),,4.0,,https://wiki.warthunder.com/unit/ussr_bt_7a_f32,2026-07-02T06:24:48.662476+00:00,Official War Thunder Wiki RB BR
+ussr_btr_152a,BTR-152A,,2.7,,https://wiki.warthunder.com/unit/ussr_btr_152a,2026-07-02T06:24:50.553703+00:00,Official War Thunder Wiki RB BR
+ussr_btr_152d,BTR-152D,,4.0,,https://wiki.warthunder.com/unit/ussr_btr_152d,2026-07-02T06:24:52.748563+00:00,Official War Thunder Wiki RB BR
+ussr_btr_80a,BTR-80A,,7.3,,https://wiki.warthunder.com/unit/ussr_btr_80a,2026-07-02T06:24:55.199153+00:00,Official War Thunder Wiki RB BR
+ussr_btr_82at,БТР-82АТ,,9.0,,https://wiki.warthunder.com/unit/ussr_btr_82at,2026-07-02T06:24:57.811618+00:00,Official War Thunder Wiki RB BR
+ussr_btr_zd,BTR-ZD,,6.0,,https://wiki.warthunder.com/unit/ussr_btr_zd,2026-07-02T06:24:59.983108+00:00,Official War Thunder Wiki RB BR
+ussr_buk_m3_fcs,"9К317М ""БУК-М3"" (СОЦ)",,12.7,,https://wiki.warthunder.com/unit/ussr_buk_m3_fcs,2026-07-02T06:25:02.190764+00:00,Official War Thunder Wiki RB BR
+ussr_garford_putilov,Гарфордъ,,1.0,,https://wiki.warthunder.com/unit/ussr_garford_putilov,2026-07-02T06:25:04.621531+00:00,Official War Thunder Wiki RB BR
+ussr_gaz_4m,GAZ-AAA (4M),,1.0,,https://wiki.warthunder.com/unit/ussr_gaz_4m,2026-07-02T06:25:06.726852+00:00,Official War Thunder Wiki RB BR
+ussr_gaz_dshk,GAZ-AAA (DShK),,1.0,,https://wiki.warthunder.com/unit/ussr_gaz_dshk,2026-07-02T06:25:08.839764+00:00,Official War Thunder Wiki RB BR
+ussr_gaz_mm_72k,GAZ-MM (72-K),,2.3,,https://wiki.warthunder.com/unit/ussr_gaz_mm_72k,2026-07-02T06:25:11.329722+00:00,Official War Thunder Wiki RB BR
+ussr_is_1,IS-1,,5.7,,https://wiki.warthunder.com/unit/ussr_is_1,2026-07-02T06:25:13.151033+00:00,Official War Thunder Wiki RB BR
+ussr_is_1_kit_3rank,ИС-1 ('45),,5.7,,https://wiki.warthunder.com/unit/ussr_is_1_kit_3rank,2026-07-02T06:25:15.105613+00:00,Official War Thunder Wiki RB BR
+ussr_is_2_1943,IS-2,,6.3,,https://wiki.warthunder.com/unit/ussr_is_2_1943,2026-07-02T06:25:17.072694+00:00,Official War Thunder Wiki RB BR
+ussr_is_2_1944,IS-2 (1944),,6.7,,https://wiki.warthunder.com/unit/ussr_is_2_1944,2026-07-02T06:25:19.485558+00:00,Official War Thunder Wiki RB BR
+ussr_is_2_1944_321,IS-2 No.321,,6.7,,https://wiki.warthunder.com/unit/ussr_is_2_1944_321,2026-07-02T06:25:21.180805+00:00,Official War Thunder Wiki RB BR
+ussr_is_2_1944_revenge,"IS-2 ""Revenge""",,6.7,,https://wiki.warthunder.com/unit/ussr_is_2_1944_revenge,2026-07-02T06:25:23.354928+00:00,Official War Thunder Wiki RB BR
+ussr_is_3,IS-3,,7.3,,https://wiki.warthunder.com/unit/ussr_is_3,2026-07-02T06:25:25.633350+00:00,Official War Thunder Wiki RB BR
+ussr_is_4m,IS-4M,,7.7,,https://wiki.warthunder.com/unit/ussr_is_4m,2026-07-02T06:25:27.859017+00:00,Official War Thunder Wiki RB BR
+ussr_is_6,IS-6,,7.7,,https://wiki.warthunder.com/unit/ussr_is_6,2026-07-02T06:25:29.795577+00:00,Official War Thunder Wiki RB BR
+ussr_is_7,IS-7,,8.3,,https://wiki.warthunder.com/unit/ussr_is_7,2026-07-02T06:25:31.693288+00:00,Official War Thunder Wiki RB BR
+ussr_isu_122,ISU-122,,5.3,,https://wiki.warthunder.com/unit/ussr_isu_122,2026-07-02T06:25:34.013940+00:00,Official War Thunder Wiki RB BR
+ussr_isu_122s,ISU-122S,,5.7,,https://wiki.warthunder.com/unit/ussr_isu_122s,2026-07-02T06:25:36.052632+00:00,Official War Thunder Wiki RB BR
+ussr_isu_152,ISU-152,,4.7,,https://wiki.warthunder.com/unit/ussr_isu_152,2026-07-02T06:25:38.462208+00:00,Official War Thunder Wiki RB BR
+ussr_it_1,IT-1,,8.7,,https://wiki.warthunder.com/unit/ussr_it_1,2026-07-02T06:25:40.884746+00:00,Official War Thunder Wiki RB BR
+ussr_kv_122,KV-122,,5.3,,https://wiki.warthunder.com/unit/ussr_kv_122,2026-07-02T06:25:42.720265+00:00,Official War Thunder Wiki RB BR
+ussr_kv_1_L_11,KV-1 (L-11),,3.7,,https://wiki.warthunder.com/unit/ussr_kv_1_L_11,2026-07-02T06:25:44.339210+00:00,Official War Thunder Wiki RB BR
+ussr_kv_1_zis_5,KV-1 (ZiS-5),,4.7,,https://wiki.warthunder.com/unit/ussr_kv_1_zis_5,2026-07-02T06:25:46.531813+00:00,Official War Thunder Wiki RB BR
+ussr_kv_1e,KV-1E,,4.3,,https://wiki.warthunder.com/unit/ussr_kv_1e,2026-07-02T06:25:48.501669+00:00,Official War Thunder Wiki RB BR
+ussr_kv_1s,KV-1S,,4.3,,https://wiki.warthunder.com/unit/ussr_kv_1s,2026-07-02T06:25:50.351159+00:00,Official War Thunder Wiki RB BR
+ussr_kv_220,KV-220,,6.0,,https://wiki.warthunder.com/unit/ussr_kv_220,2026-07-02T06:25:51.981765+00:00,Official War Thunder Wiki RB BR
+ussr_kv_2_1939,KV-2 (1939),,3.7,,https://wiki.warthunder.com/unit/ussr_kv_2_1939,2026-07-02T06:25:53.777060+00:00,Official War Thunder Wiki RB BR
+ussr_kv_2_1940,KV-2 (1940),,3.7,,https://wiki.warthunder.com/unit/ussr_kv_2_1940,2026-07-02T06:25:56.179937+00:00,Official War Thunder Wiki RB BR
+ussr_kv_2_zis_6,KV-2 (ZiS-6),,5.0,,https://wiki.warthunder.com/unit/ussr_kv_2_zis_6,2026-07-02T06:25:58.647283+00:00,Official War Thunder Wiki RB BR
+ussr_kv_7_u13,KV-7 (U-13),,4.3,,https://wiki.warthunder.com/unit/ussr_kv_7_u13,2026-07-02T06:26:00.367273+00:00,Official War Thunder Wiki RB BR
+ussr_kv_8,КВ-8,,3.7,,https://wiki.warthunder.com/unit/ussr_kv_8,2026-07-02T06:26:02.823294+00:00,Official War Thunder Wiki RB BR
+ussr_kv_85,KV-85,,5.0,,https://wiki.warthunder.com/unit/ussr_kv_85,2026-07-02T06:26:05.086697+00:00,Official War Thunder Wiki RB BR
+ussr_m3c,M3 Medium,,2.7,,https://wiki.warthunder.com/unit/ussr_m3c,2026-07-02T06:26:07.151393+00:00,Official War Thunder Wiki RB BR
+ussr_m4a2_76w_sherman,M4A2,,5.3,,https://wiki.warthunder.com/unit/ussr_m4a2_76w_sherman,2026-07-02T06:26:09.482065+00:00,Official War Thunder Wiki RB BR
+ussr_m53_59,M53/59,,6.3,,https://wiki.warthunder.com/unit/ussr_m53_59,2026-07-02T06:26:11.547488+00:00,Official War Thunder Wiki RB BR
+ussr_object_120,Object 120,,8.0,,https://wiki.warthunder.com/unit/ussr_object_120,2026-07-02T06:26:13.931563+00:00,Official War Thunder Wiki RB BR
+ussr_object_140,Object 140,,8.7,,https://wiki.warthunder.com/unit/ussr_object_140,2026-07-02T06:26:16.003966+00:00,Official War Thunder Wiki RB BR
+ussr_object_248,Object 248,,6.7,,https://wiki.warthunder.com/unit/ussr_object_248,2026-07-02T06:26:17.792919+00:00,Official War Thunder Wiki RB BR
+ussr_object_268,Object 268,,7.0,,https://wiki.warthunder.com/unit/ussr_object_268,2026-07-02T06:26:20.322890+00:00,Official War Thunder Wiki RB BR
+ussr_object_279,Object 279,,9.0,,https://wiki.warthunder.com/unit/ussr_object_279,2026-07-02T06:26:22.091902+00:00,Official War Thunder Wiki RB BR
+ussr_object_292,Object 292,,10.7,,https://wiki.warthunder.com/unit/ussr_object_292,2026-07-02T06:26:23.954057+00:00,Official War Thunder Wiki RB BR
+ussr_object_435,Object 435,,9.0,,https://wiki.warthunder.com/unit/ussr_object_435,2026-07-02T06:26:25.960164+00:00,Official War Thunder Wiki RB BR
+ussr_object_685,Object 685,,8.7,,https://wiki.warthunder.com/unit/ussr_object_685,2026-07-02T06:26:28.515664+00:00,Official War Thunder Wiki RB BR
+ussr_object_775,Object 775,,9.3,,https://wiki.warthunder.com/unit/ussr_object_775,2026-07-02T06:26:30.379419+00:00,Official War Thunder Wiki RB BR
+ussr_object_906,Object 906,,8.0,,https://wiki.warthunder.com/unit/ussr_object_906,2026-07-02T06:26:32.989319+00:00,Official War Thunder Wiki RB BR
+ussr_pantsyr_s1,Pantsir-S1,,12.0,,https://wiki.warthunder.com/unit/ussr_pantsyr_s1,2026-07-02T06:26:34.793638+00:00,Official War Thunder Wiki RB BR
+ussr_pantsyr_sm_sv,Панцирь СМ-СВ,,12.7,,https://wiki.warthunder.com/unit/ussr_pantsyr_sm_sv,2026-07-02T06:26:37.538730+00:00,Official War Thunder Wiki RB BR
+ussr_pt_76_57,PT-76-57,,8.3,,https://wiki.warthunder.com/unit/ussr_pt_76_57,2026-07-02T06:26:39.080121+00:00,Official War Thunder Wiki RB BR
+ussr_pt_76b,PT-76B,,5.3,,https://wiki.warthunder.com/unit/ussr_pt_76b,2026-07-02T06:26:41.113923+00:00,Official War Thunder Wiki RB BR
+ussr_pzkpfw_III_ausf_J_L42,T-III,,2.3,,https://wiki.warthunder.com/unit/ussr_pzkpfw_III_ausf_J_L42,2026-07-02T06:26:42.855364+00:00,Official War Thunder Wiki RB BR
+ussr_pzkpfw_V,T-V,,6.0,,https://wiki.warthunder.com/unit/ussr_pzkpfw_V,2026-07-02T06:26:45.318904+00:00,Official War Thunder Wiki RB BR
+ussr_rbt_5,RBT-5,,1.3,,https://wiki.warthunder.com/unit/ussr_rbt_5,2026-07-02T06:26:47.311410+00:00,Official War Thunder Wiki RB BR
+ussr_sdkfz_251_21_kit_3rank,Ганомаг ('45),,4.0,,https://wiki.warthunder.com/unit/ussr_sdkfz_251_21_kit_3rank,2026-07-02T06:26:49.548798+00:00,Official War Thunder Wiki RB BR
+ussr_smk,SMK,,3.7,,https://wiki.warthunder.com/unit/ussr_smk,2026-07-02T06:26:51.264125+00:00,Official War Thunder Wiki RB BR
+ussr_su_100Y,SU-100Y,,4.7,,https://wiki.warthunder.com/unit/ussr_su_100Y,2026-07-02T06:26:52.948439+00:00,Official War Thunder Wiki RB BR
+ussr_su_100_1945,SU-100,,6.0,,https://wiki.warthunder.com/unit/ussr_su_100_1945,2026-07-02T06:26:55.049201+00:00,Official War Thunder Wiki RB BR
+ussr_su_100p,SU-100P,,6.3,,https://wiki.warthunder.com/unit/ussr_su_100p,2026-07-02T06:26:57.489028+00:00,Official War Thunder Wiki RB BR
+ussr_su_122,SU-122,,3.0,,https://wiki.warthunder.com/unit/ussr_su_122,2026-07-02T06:26:59.642426+00:00,Official War Thunder Wiki RB BR
+ussr_su_122P,SU-122P,,5.7,,https://wiki.warthunder.com/unit/ussr_su_122P,2026-07-02T06:27:01.233025+00:00,Official War Thunder Wiki RB BR
+ussr_su_122_54,SU-122-54,,6.7,,https://wiki.warthunder.com/unit/ussr_su_122_54,2026-07-02T06:27:03.337327+00:00,Official War Thunder Wiki RB BR
+ussr_su_152,SU-152,,4.0,,https://wiki.warthunder.com/unit/ussr_su_152,2026-07-02T06:27:05.463405+00:00,Official War Thunder Wiki RB BR
+ussr_su_57,SU-57,,2.3,,https://wiki.warthunder.com/unit/ussr_su_57,2026-07-02T06:27:07.104776+00:00,Official War Thunder Wiki RB BR
+ussr_su_57b,SU-57B,,2.7,,https://wiki.warthunder.com/unit/ussr_su_57b,2026-07-02T06:27:09.658108+00:00,Official War Thunder Wiki RB BR
+ussr_su_5_1,SU-5-1,,1.0,,https://wiki.warthunder.com/unit/ussr_su_5_1,2026-07-02T06:27:11.613208+00:00,Official War Thunder Wiki RB BR
+ussr_su_76d,SU-76D,,2.3,,https://wiki.warthunder.com/unit/ussr_su_76d,2026-07-02T06:27:13.473190+00:00,Official War Thunder Wiki RB BR
+ussr_su_76m_1943,SU-76M,,2.0,,https://wiki.warthunder.com/unit/ussr_su_76m_1943,2026-07-02T06:27:15.853056+00:00,Official War Thunder Wiki RB BR
+ussr_su_76m_5st_kav_corps,SU-76M (5th Gv.Kav.Corps),,2.0,,https://wiki.warthunder.com/unit/ussr_su_76m_5st_kav_corps,2026-07-02T06:27:17.703302+00:00,Official War Thunder Wiki RB BR
+ussr_su_85_1943,SU-85,,4.3,,https://wiki.warthunder.com/unit/ussr_su_85_1943,2026-07-02T06:27:20.278598+00:00,Official War Thunder Wiki RB BR
+ussr_su_85a,SU-85A,,4.0,,https://wiki.warthunder.com/unit/ussr_su_85a,2026-07-02T06:27:21.995441+00:00,Official War Thunder Wiki RB BR
+ussr_su_85m,SU-85M,,5.0,,https://wiki.warthunder.com/unit/ussr_su_85m,2026-07-02T06:27:24.499500+00:00,Official War Thunder Wiki RB BR
+ussr_t_10a,T-10A,,7.7,,https://wiki.warthunder.com/unit/ussr_t_10a,2026-07-02T06:27:26.167797+00:00,Official War Thunder Wiki RB BR
+ussr_t_10m,T-10M,,8.3,,https://wiki.warthunder.com/unit/ussr_t_10m,2026-07-02T06:27:28.718450+00:00,Official War Thunder Wiki RB BR
+ussr_t_126sp,T-126,,3.0,,https://wiki.warthunder.com/unit/ussr_t_126sp,2026-07-02T06:27:30.367486+00:00,Official War Thunder Wiki RB BR
+ussr_t_26E,T-26E,,1.3,,https://wiki.warthunder.com/unit/ussr_t_26E,2026-07-02T06:27:32.526134+00:00,Official War Thunder Wiki RB BR
+ussr_t_26_1940,T-26,,1.0,,https://wiki.warthunder.com/unit/ussr_t_26_1940,2026-07-02T06:27:34.582880+00:00,Official War Thunder Wiki RB BR
+ussr_t_26_1940_1st_GvTBr,T-26 (1st Gv.T.Br.),,1.0,,https://wiki.warthunder.com/unit/ussr_t_26_1940_1st_GvTBr,2026-07-02T06:27:36.343503+00:00,Official War Thunder Wiki RB BR
+ussr_t_26_4,T-26-4,,1.0,,https://wiki.warthunder.com/unit/ussr_t_26_4,2026-07-02T06:27:38.644507+00:00,Official War Thunder Wiki RB BR
+ussr_t_28,T-28,,1.7,,https://wiki.warthunder.com/unit/ussr_t_28,2026-07-02T06:27:40.380114+00:00,Official War Thunder Wiki RB BR
+ussr_t_28E,T-28E,,2.3,,https://wiki.warthunder.com/unit/ussr_t_28E,2026-07-02T06:27:42.890440+00:00,Official War Thunder Wiki RB BR
+ussr_t_28_1938,T-28 (1938),,1.3,,https://wiki.warthunder.com/unit/ussr_t_28_1938,2026-07-02T06:27:45.492906+00:00,Official War Thunder Wiki RB BR
+ussr_t_34E,T-34E,,4.3,,https://wiki.warthunder.com/unit/ussr_t_34E,2026-07-02T06:27:47.880013+00:00,Official War Thunder Wiki RB BR
+ussr_t_34E_STZ,T-34E STZ,,4.3,,https://wiki.warthunder.com/unit/ussr_t_34E_STZ,2026-07-02T06:27:50.377098+00:00,Official War Thunder Wiki RB BR
+ussr_t_34_100,T-34-100,,6.3,,https://wiki.warthunder.com/unit/ussr_t_34_100,2026-07-02T06:27:51.964439+00:00,Official War Thunder Wiki RB BR
+ussr_t_34_1940_l_11,T-34 (Prototype),,3.7,,https://wiki.warthunder.com/unit/ussr_t_34_1940_l_11,2026-07-02T06:27:53.855813+00:00,Official War Thunder Wiki RB BR
+ussr_t_34_1941,T-34 (1941),,4.0,,https://wiki.warthunder.com/unit/ussr_t_34_1941,2026-07-02T06:27:55.578991+00:00,Official War Thunder Wiki RB BR
+ussr_t_34_1941_57,T-34-57,,4.7,,https://wiki.warthunder.com/unit/ussr_t_34_1941_57,2026-07-02T06:27:57.843379+00:00,Official War Thunder Wiki RB BR
+ussr_t_34_1941_cast_turret,T-34 (1st Gv.T.Br.),,4.0,,https://wiki.warthunder.com/unit/ussr_t_34_1941_cast_turret,2026-07-02T06:28:00.211682+00:00,Official War Thunder Wiki RB BR
+ussr_t_34_1941_l_11,T-34 (1940),,3.7,,https://wiki.warthunder.com/unit/ussr_t_34_1941_l_11,2026-07-02T06:28:02.423264+00:00,Official War Thunder Wiki RB BR
+ussr_t_34_1942,T-34 (1942),,4.0,,https://wiki.warthunder.com/unit/ussr_t_34_1942,2026-07-02T06:28:04.631107+00:00,Official War Thunder Wiki RB BR
+ussr_t_34_57_1943,T-34-57 (1943),,4.7,,https://wiki.warthunder.com/unit/ussr_t_34_57_1943,2026-07-02T06:28:06.689595+00:00,Official War Thunder Wiki RB BR
+ussr_t_34_85E,T-34-85E,,5.7,,https://wiki.warthunder.com/unit/ussr_t_34_85E,2026-07-02T06:28:08.572302+00:00,Official War Thunder Wiki RB BR
+ussr_t_34_85_d_5t,T-34-85 (D-5T),,5.3,,https://wiki.warthunder.com/unit/ussr_t_34_85_d_5t,2026-07-02T06:28:10.539470+00:00,Official War Thunder Wiki RB BR
+ussr_t_34_85_stp_s53,Т-34-85 (СТП),,6.3,,https://wiki.warthunder.com/unit/ussr_t_34_85_stp_s53,2026-07-02T06:28:12.498519+00:00,Official War Thunder Wiki RB BR
+ussr_t_34_85_zis_53,T-34-85,,5.7,,https://wiki.warthunder.com/unit/ussr_t_34_85_zis_53,2026-07-02T06:28:14.893083+00:00,Official War Thunder Wiki RB BR
+ussr_t_34_85_zis_53_kit_3rank,Т-34-85 ('45),,5.7,,https://wiki.warthunder.com/unit/ussr_t_34_85_zis_53_kit_3rank,2026-07-02T06:28:16.948836+00:00,Official War Thunder Wiki RB BR
+ussr_t_34_85_zis_53_v80,"Т-34-85 ""Партизан""",,5.7,,https://wiki.warthunder.com/unit/ussr_t_34_85_zis_53_v80,2026-07-02T06:28:18.714379+00:00,Official War Thunder Wiki RB BR
+ussr_t_35,T-35,,1.3,,https://wiki.warthunder.com/unit/ussr_t_35,2026-07-02T06:28:20.366504+00:00,Official War Thunder Wiki RB BR
+ussr_t_44,T-44,,6.7,,https://wiki.warthunder.com/unit/ussr_t_44,2026-07-02T06:28:22.304249+00:00,Official War Thunder Wiki RB BR
+ussr_t_44_100,T-44-100,,7.0,,https://wiki.warthunder.com/unit/ussr_t_44_100,2026-07-02T06:28:24.537283+00:00,Official War Thunder Wiki RB BR
+ussr_t_44_122,T-44-122,,6.3,,https://wiki.warthunder.com/unit/ussr_t_44_122,2026-07-02T06:28:26.600521+00:00,Official War Thunder Wiki RB BR
+ussr_t_44_po,Т-44(ПМ),,6.3,,https://wiki.warthunder.com/unit/ussr_t_44_po,2026-07-02T06:28:28.612131+00:00,Official War Thunder Wiki RB BR
+ussr_t_50,T-50,,2.7,,https://wiki.warthunder.com/unit/ussr_t_50,2026-07-02T06:28:30.244881+00:00,Official War Thunder Wiki RB BR
+ussr_t_54_1947,T-54 (1947),,7.7,,https://wiki.warthunder.com/unit/ussr_t_54_1947,2026-07-02T06:28:32.464107+00:00,Official War Thunder Wiki RB BR
+ussr_t_54_1949,T-54 (1949),,8.0,,https://wiki.warthunder.com/unit/ussr_t_54_1949,2026-07-02T06:28:35.072088+00:00,Official War Thunder Wiki RB BR
+ussr_t_54_1951,T-54 (1951),,8.0,,https://wiki.warthunder.com/unit/ussr_t_54_1951,2026-07-02T06:28:37.813629+00:00,Official War Thunder Wiki RB BR
+ussr_t_55_am,T-55AM-1,,9.0,,https://wiki.warthunder.com/unit/ussr_t_55_am,2026-07-02T06:28:39.887203+00:00,Official War Thunder Wiki RB BR
+ussr_t_55_amd_1,T-55AMD-1,,9.0,,https://wiki.warthunder.com/unit/ussr_t_55_amd_1,2026-07-02T06:28:41.665533+00:00,Official War Thunder Wiki RB BR
+ussr_t_55a,T-55A,,8.3,,https://wiki.warthunder.com/unit/ussr_t_55a,2026-07-02T06:28:43.915805+00:00,Official War Thunder Wiki RB BR
+ussr_t_60_1941,T-60,,1.0,,https://wiki.warthunder.com/unit/ussr_t_60_1941,2026-07-02T06:28:45.716286+00:00,Official War Thunder Wiki RB BR
+ussr_t_62,T-62,,8.7,,https://wiki.warthunder.com/unit/ussr_t_62,2026-07-02T06:28:47.785405+00:00,Official War Thunder Wiki RB BR
+ussr_t_62m1,T-62M-1,,9.0,,https://wiki.warthunder.com/unit/ussr_t_62m1,2026-07-02T06:28:50.557906+00:00,Official War Thunder Wiki RB BR
+ussr_t_64_b_1984,T-64B,,10.3,,https://wiki.warthunder.com/unit/ussr_t_64_b_1984,2026-07-02T06:28:53.434450+00:00,Official War Thunder Wiki RB BR
+ussr_t_64a_1971,T-64A (1971),,9.3,,https://wiki.warthunder.com/unit/ussr_t_64a_1971,2026-07-02T06:28:55.185989+00:00,Official War Thunder Wiki RB BR
+ussr_t_70_1942,T-70,,2.0,,https://wiki.warthunder.com/unit/ussr_t_70_1942,2026-07-02T06:28:57.538307+00:00,Official War Thunder Wiki RB BR
+ussr_t_72a,T-72A,,9.3,,https://wiki.warthunder.com/unit/ussr_t_72a,2026-07-02T06:29:00.293205+00:00,Official War Thunder Wiki RB BR
+ussr_t_72av_turms,T-72AV (TURMS-T),,10.3,,https://wiki.warthunder.com/unit/ussr_t_72av_turms,2026-07-02T06:29:02.174142+00:00,Official War Thunder Wiki RB BR
+ussr_t_72b,T-72B,,10.3,,https://wiki.warthunder.com/unit/ussr_t_72b,2026-07-02T06:29:04.267862+00:00,Official War Thunder Wiki RB BR
+ussr_t_72b3_2011,T-72B3,,11.3,,https://wiki.warthunder.com/unit/ussr_t_72b3_2011,2026-07-02T06:29:05.942559+00:00,Official War Thunder Wiki RB BR
+ussr_t_72b3_arena,"Т-72Б3 ""Арена""",,11.0,,https://wiki.warthunder.com/unit/ussr_t_72b3_arena,2026-07-02T06:29:08.408670+00:00,Official War Thunder Wiki RB BR
+ussr_t_72b3_arena_m,Т-72Б3А,,12.3,,https://wiki.warthunder.com/unit/ussr_t_72b3_arena_m,2026-07-02T06:29:10.182433+00:00,Official War Thunder Wiki RB BR
+ussr_t_72b_1989,T-72B (1989),,10.3,,https://wiki.warthunder.com/unit/ussr_t_72b_1989,2026-07-02T06:29:12.631590+00:00,Official War Thunder Wiki RB BR
+ussr_t_72m2_moderna,T-72M2 Moderna,,10.7,,https://wiki.warthunder.com/unit/ussr_t_72m2_moderna,2026-07-02T06:29:15.479214+00:00,Official War Thunder Wiki RB BR
+ussr_t_80,T-80,,2.3,,https://wiki.warthunder.com/unit/ussr_t_80,2026-07-02T06:29:17.688921+00:00,Official War Thunder Wiki RB BR
+ussr_t_80b,T-80B,,10.7,,https://wiki.warthunder.com/unit/ussr_t_80b,2026-07-02T06:29:20.179373+00:00,Official War Thunder Wiki RB BR
+ussr_t_80bvm,T-80BVM,,12.7,,https://wiki.warthunder.com/unit/ussr_t_80bvm,2026-07-02T06:29:22.058002+00:00,Official War Thunder Wiki RB BR
+ussr_t_80u,T-80U,,11.7,,https://wiki.warthunder.com/unit/ussr_t_80u,2026-07-02T06:29:24.048747+00:00,Official War Thunder Wiki RB BR
+ussr_t_80u_yt_cup_2019,␙T-80U,,11.7,,https://wiki.warthunder.com/unit/ussr_t_80u_yt_cup_2019,2026-07-02T06:29:26.070936+00:00,Official War Thunder Wiki RB BR
+ussr_t_80ud,T-80UD,,10.7,,https://wiki.warthunder.com/unit/ussr_t_80ud,2026-07-02T06:29:27.832012+00:00,Official War Thunder Wiki RB BR
+ussr_t_80ue1,Т-80U-Е1,,12.0,,https://wiki.warthunder.com/unit/ussr_t_80ue1,2026-07-02T06:29:30.411635+00:00,Official War Thunder Wiki RB BR
+ussr_t_80ue1_sm,◍Т-80У-Е1,,12.0,,https://wiki.warthunder.com/unit/ussr_t_80ue1_sm,2026-07-02T06:29:32.761871+00:00,Official War Thunder Wiki RB BR
+ussr_t_80uk,T-80UK,,11.7,,https://wiki.warthunder.com/unit/ussr_t_80uk,2026-07-02T06:29:34.833864+00:00,Official War Thunder Wiki RB BR
+ussr_t_80um2,T-80UM2,,11.7,,https://wiki.warthunder.com/unit/ussr_t_80um2,2026-07-02T06:29:37.016834+00:00,Official War Thunder Wiki RB BR
+ussr_t_90a,Т-90А,,11.0,,https://wiki.warthunder.com/unit/ussr_t_90a,2026-07-02T06:29:38.744486+00:00,Official War Thunder Wiki RB BR
+ussr_t_90m_2020,T-90M,,12.7,,https://wiki.warthunder.com/unit/ussr_t_90m_2020,2026-07-02T06:29:41.319884+00:00,Official War Thunder Wiki RB BR
+ussr_to_55,TO-55,,8.0,,https://wiki.warthunder.com/unit/ussr_to_55,2026-07-02T06:29:43.797184+00:00,Official War Thunder Wiki RB BR
+ussr_tor_m1,Toр-M1,,11.3,,https://wiki.warthunder.com/unit/ussr_tor_m1,2026-07-02T06:29:45.463331+00:00,Official War Thunder Wiki RB BR
+ussr_type_62,Type 62,,6.7,,https://wiki.warthunder.com/unit/ussr_type_62,2026-07-02T06:29:47.691766+00:00,Official War Thunder Wiki RB BR
+ussr_type_65_aa,Phòng không T-34,,5.0,,https://wiki.warthunder.com/unit/ussr_type_65_aa,2026-07-02T06:29:49.829881+00:00,Official War Thunder Wiki RB BR
+ussr_valentine_mk_9,"МК-IX ""Valentine""",,3.0,,https://wiki.warthunder.com/unit/ussr_valentine_mk_9,2026-07-02T06:29:52.387172+00:00,Official War Thunder Wiki RB BR
+ussr_zis_12_94KM_1945,ZiS-12 (94-KM),,3.3,,https://wiki.warthunder.com/unit/ussr_zis_12_94KM_1945,2026-07-02T06:29:55.076798+00:00,Official War Thunder Wiki RB BR
+ussr_zis_30,ZiS-30,,2.3,,https://wiki.warthunder.com/unit/ussr_zis_30,2026-07-02T06:29:56.875279+00:00,Official War Thunder Wiki RB BR
+ussr_zis_43,ZiS-43,,3.0,,https://wiki.warthunder.com/unit/ussr_zis_43,2026-07-02T06:29:59.348904+00:00,Official War Thunder Wiki RB BR
+ussr_zprk_2s6,2S6,,10.7,,https://wiki.warthunder.com/unit/ussr_zprk_2s6,2026-07-02T06:30:01.531377+00:00,Official War Thunder Wiki RB BR
+ussr_zsu_23_4,ZSU-23-4,,8.0,,https://wiki.warthunder.com/unit/ussr_zsu_23_4,2026-07-02T06:30:03.654224+00:00,Official War Thunder Wiki RB BR
+ussr_zsu_23_4m2,ЗСУ-23-4М2,,7.3,,https://wiki.warthunder.com/unit/ussr_zsu_23_4m2,2026-07-02T06:30:06.310355+00:00,Official War Thunder Wiki RB BR
+ussr_zsu_23_4m4,ZSU-23-4M4,,9.3,,https://wiki.warthunder.com/unit/ussr_zsu_23_4m4,2026-07-02T06:30:08.886113+00:00,Official War Thunder Wiki RB BR
+ussr_zsu_29k,YaG-10 (29-K),,3.3,,https://wiki.warthunder.com/unit/ussr_zsu_29k,2026-07-02T06:30:10.561626+00:00,Official War Thunder Wiki RB BR
+ussr_zsu_37,ZSU-37,,3.3,,https://wiki.warthunder.com/unit/ussr_zsu_37,2026-07-02T06:30:12.240239+00:00,Official War Thunder Wiki RB BR
+ussr_zsu_37_2,ZSU-37-2,,7.7,,https://wiki.warthunder.com/unit/ussr_zsu_37_2,2026-07-02T06:30:14.473329+00:00,Official War Thunder Wiki RB BR
+ussr_zsu_57_2,ZSU-57-2,,7.0,,https://wiki.warthunder.com/unit/ussr_zsu_57_2,2026-07-02T06:30:16.341077+00:00,Official War Thunder Wiki RB BR
+ussr_zut_37,ZUT-37,,2.3,,https://wiki.warthunder.com/unit/ussr_zut_37,2026-07-02T06:30:17.973056+00:00,Official War Thunder Wiki RB BR
