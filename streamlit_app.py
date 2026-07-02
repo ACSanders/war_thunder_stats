@@ -45,6 +45,10 @@ WIKI_BR_LOOKUP_PATH = (
     Path(__file__).resolve().parent / "data" / "metadata" / "wiki_ground_br_lookup.csv"
 )
 
+WIKI_VEHICLE_IMAGES_PATH = (
+    Path(__file__).resolve().parent / "data" / "metadata" / "wiki_vehicle_images.csv"
+)
+
 
 # ============================================================
 # Data loading
@@ -77,6 +81,20 @@ def load_wiki_br_lookup(path: Path) -> pd.DataFrame | None:
     Not cached: it's a tiny local file and this keeps a lookup-file edit
     picked up on the next rerun without needing to bust a cache. Any read
     failure is swallowed so the app quietly falls back to ThunderSkill BRs.
+    """
+    if not path.exists():
+        return None
+    try:
+        return pd.read_csv(path)
+    except Exception:
+        return None
+
+
+def load_wiki_vehicle_images(path: Path) -> pd.DataFrame | None:
+    """Load the War Thunder Wiki vehicle image URL CSV, if present and valid.
+
+    Not cached, same reasoning as load_wiki_br_lookup. Any read failure is
+    swallowed so the app quietly renders without a Wiki image.
     """
     if not path.exists():
         return None
@@ -212,6 +230,7 @@ except Exception as e:
 cleaned_daily_df = get_cleaned_daily(raw_df)
 wiki_br_lookup_df = load_wiki_br_lookup(WIKI_BR_LOOKUP_PATH)
 cleaned_daily_df = features.apply_wiki_br_overrides(cleaned_daily_df, wiki_br_lookup_df)
+wiki_vehicle_images_df = load_wiki_vehicle_images(WIKI_VEHICLE_IMAGES_PATH)
 recent_df = get_recent_daily(cleaned_daily_df)
 vehicle_30d_df = get_vehicle_agg(recent_df)
 
@@ -955,15 +974,28 @@ with tab_rankings:
                     "as CE Score, BR heatmaps, and BR grouping."
                 )
 
-            # Link buttons side by side, kept compact (stack on mobile).
-            pic_url = row.get("pic")
+            # Wiki vehicle image, shown only when a trusted, successfully-checked
+            # URL exists for this vehicle. Silently omitted otherwise -- no
+            # broken-image placeholder.
+            wiki_image_url = None
+            if wiki_vehicle_images_df is not None and "vehicle_slug" in wiki_vehicle_images_df.columns:
+                img_match = wiki_vehicle_images_df[wiki_vehicle_images_df["vehicle_slug"] == selected_slug]
+                if not img_match.empty:
+                    img_row = img_match.iloc[0]
+                    candidate_url = img_row.get("wiki_image_url")
+                    if img_row.get("status") == "ok" and pd.notna(candidate_url) and str(candidate_url).strip():
+                        wiki_image_url = str(candidate_url)
+
+            if wiki_image_url:
+                img_col, _img_spacer = st.columns([1, 2])
+                with img_col:
+                    st.image(wiki_image_url, width="stretch")
+
+            # Link button, kept compact (stack on mobile).
             ts_url = row.get("vehicle_url")
-            btn_a, btn_b, _btn_spacer = st.columns([2, 2, 3])
-            with btn_a:
-                if pd.notna(pic_url) and str(pic_url).startswith("http"):
-                    st.link_button("Open vehicle image", str(pic_url), width="stretch")
-            with btn_b:
-                if pd.notna(ts_url):
+            if pd.notna(ts_url):
+                btn_a, _btn_spacer = st.columns([2, 5])
+                with btn_a:
                     st.link_button("Open ThunderSkill page", str(ts_url), width="stretch")
 
             # Stat cards.
