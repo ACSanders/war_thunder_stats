@@ -1,0 +1,45 @@
+name: Update Wiki BR Lookup
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "0 12 * * 0"
+
+permissions:
+  contents: write
+
+jobs:
+  update-lookup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install pandas requests beautifulsoup4 lxml
+
+      - name: Run Wiki BR review script
+        run: python scripts/wiki_br_review.py --write-lookup --sleep-min 1.0 --sleep-max 2.0
+
+      - name: Check for lookup changes
+        id: check_diff
+        run: |
+          if git diff --quiet -- data/metadata/wiki_ground_br_lookup.csv; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit and push updated lookup
+        if: steps.check_diff.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/metadata/wiki_ground_br_lookup.csv
+          git commit -m "Update Wiki BR lookup"
+          git push
