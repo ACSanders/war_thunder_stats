@@ -21,3 +21,8 @@ logs/*.csv
 # Dated raw index snapshots
 data/raw/vehicle_index/ground_realistic_vehicle_index_*.csv
 data/raw/vehicle_index/vehicle_index_*.csv
+
+# Wiki BR review script outputs (generated, not source-controlled).
+# Does not match data/metadata/wiki_ground_br_lookup.csv, which is trusted.
+data/metadata/wiki_realistic_br_mismatch_review*.csv
+data/checkpoints/wiki_br_review_checkpoint*.csv
