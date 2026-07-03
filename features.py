@@ -909,7 +909,7 @@ def build_nation_summary(vehicle_df: pd.DataFrame) -> pd.DataFrame:
 # Clustering intentionally uses only three standardized features:
 #   CE Score, K/D (ground frags per death), and log1p(sample battles).
 # Win rate / frags-per-battle / nation / vehicle type are context only.
-CLUSTER_MIN_SAMPLE_BATTLES = 100   # default evidence floor (user-adjustable in UI)
+CLUSTER_MIN_SAMPLE_BATTLES = 50    # default evidence floor (user-adjustable in UI)
 CLUSTER_MIN_VEHICLES = 15          # below this we do not attempt clustering
 CLUSTER_Z_HIGH = 0.4               # z-median above this counts as "high"
 CLUSTER_Z_LOW = -0.4               # z-median below this counts as "low"
@@ -1102,7 +1102,7 @@ def label_clusters(clustered_df: pd.DataFrame) -> pd.DataFrame:
 # hard role/BR-coverage constraints, no uptier modelling.
 LINEUP_TOP_N = 25   # only combine the top-N eligible vehicles by CE (keeps search fast)
 LINEUP_TOP_K = 20   # number of scored lineups returned
-LINEUP_MIN_SAMPLE_BATTLES = 100
+LINEUP_MIN_SAMPLE_BATTLES = 50
 
 
 def lineup_diversity_bonus(n_types: int) -> float:

@@ -1038,15 +1038,34 @@ with tab_rankings:
                     r=r_vals + [r_vals[0]],
                     theta=theta + [theta[0]],
                     fill="toself",
-                    line=dict(color="#E8743B"),
+                    line=dict(color="#FF6B57"),
+                    fillcolor="rgba(255, 107, 87, 0.25)",
+                    marker=dict(color="#FF6B57"),
                     name=str(row.get("vehicle_name", "")),
                 )
             )
             radar_fig.update_layout(
-                polar=dict(radialaxis=dict(range=[0, 100], visible=True)),
+                polar=dict(
+                    bgcolor="rgba(15, 23, 42, 0.35)",
+                    radialaxis=dict(
+                        range=[0, 100],
+                        visible=True,
+                        gridcolor="rgba(125, 168, 210, 0.30)",
+                        linecolor="rgba(125, 168, 210, 0.30)",
+                        tickfont=dict(color="#94A3B8", size=10),
+                    ),
+                    angularaxis=dict(
+                        gridcolor="rgba(125, 168, 210, 0.25)",
+                        linecolor="rgba(125, 168, 210, 0.25)",
+                        tickfont=dict(color="#E5E7EB"),
+                    ),
+                ),
                 showlegend=False,
                 height=380,
                 margin=dict(l=40, r=40, t=30, b=30),
+                paper_bgcolor="rgba(0,0,0,0)",
+                plot_bgcolor="rgba(0,0,0,0)",
+                font=dict(color="#E5E7EB"),
             )
             st.plotly_chart(radar_fig, width="stretch")
             radar_cap = (
