@@ -6,6 +6,7 @@ of truth for:
   * cleaning / typing the raw ThunderSkill CSV          -> clean_daily()
   * safe metadata fallbacks (country / type / rank)     -> apply_metadata_fallbacks()
   * manual War Thunder Wiki BR overrides                -> apply_wiki_br_overrides()
+  * manual War Thunder Wiki premium-status overrides     -> apply_wiki_premium_overrides()
   * the recent 30-day window                            -> recent_window()
   * the one-row-per-vehicle aggregate                   -> build_vehicle_agg()
   * BR-relative Combat Effectiveness Score              -> add_combat_effectiveness()
@@ -356,6 +357,90 @@ def apply_wiki_br_overrides(df: pd.DataFrame, lookup_df: pd.DataFrame | None) ->
     out["br_source"] = np.where(overridden, "war_thunder_wiki", "thunderskill")
 
     out = out.drop(columns=wiki_cols)
+
+    return out
+
+
+# ============================================================
+# Manual War Thunder Wiki premium-status overrides
+# ============================================================
+# ThunderSkill occasionally has stale premium status (e.g. Sherman Hell is
+# not marked premium in ThunderSkill, but the Wiki marks it premium). This
+# uses the same wiki_ground_br_lookup.csv (its wiki_is_premium column) to
+# correct is_premium before it flows into filters, CE, or anything else.
+
+def _coerce_bool(value):
+    """Best-effort parse of a boolean-like value (True/False, 'true'/'false',
+    1/0, ...). Returns pd.NA for anything ambiguous or unparsable -- never
+    guesses."""
+    if isinstance(value, bool):
+        return value
+    if pd.isna(value):
+        return pd.NA
+    s = str(value).strip().lower()
+    if s in ("true", "1", "1.0"):
+        return True
+    if s in ("false", "0", "0.0"):
+        return False
+    return pd.NA
+
+
+def apply_wiki_premium_overrides(df: pd.DataFrame, lookup_df: pd.DataFrame | None) -> pd.DataFrame:
+    """Override stale ThunderSkill is_premium with trusted War Thunder Wiki values.
+
+    Uses the same lookup CSV as apply_wiki_br_overrides (its wiki_is_premium
+    column). Preserves the original ThunderSkill value as
+    thunderskill_is_premium so both are inspectable. Adds premium_overridden
+    (bool) and premium_source ("war_thunder_wiki" or "thunderskill").
+
+    Safe no-op (returns ``df`` unchanged) if ``df`` is empty, has no
+    vehicle_slug or is_premium column, or ``lookup_df`` is None/empty, has no
+    vehicle_slug column, or has no wiki_is_premium column. Wiki values that
+    don't parse as a clean boolean are treated as missing -- the ThunderSkill
+    value is kept and premium_overridden stays False for that row.
+
+    premium_overridden is True only when a valid Wiki value exists AND it
+    disagrees with the original ThunderSkill value -- a valid Wiki value that
+    simply confirms ThunderSkill is not counted as an override.
+    """
+    if df.empty:
+        return df
+
+    if "vehicle_slug" not in df.columns or "is_premium" not in df.columns:
+        return df
+
+    if lookup_df is None or lookup_df.empty or "vehicle_slug" not in lookup_df.columns:
+        return df
+
+    if "wiki_is_premium" not in lookup_df.columns:
+        return df
+
+    lookup = lookup_df[["vehicle_slug", "wiki_is_premium"]].copy()
+    lookup["vehicle_slug"] = _clean_text_series(lookup["vehicle_slug"])
+    lookup = lookup.dropna(subset=["vehicle_slug"]).drop_duplicates(
+        subset="vehicle_slug", keep="last"
+    )
+
+    lookup["wiki_is_premium"] = lookup["wiki_is_premium"].apply(_coerce_bool)
+
+    out = df.copy()
+    out["thunderskill_is_premium"] = out["is_premium"]
+
+    out = out.merge(lookup, on="vehicle_slug", how="left")
+
+    has_wiki_value = out["wiki_is_premium"].notna()
+
+    disagrees = pd.Series(False, index=out.index)
+    disagrees.loc[has_wiki_value] = (
+        out.loc[has_wiki_value, "wiki_is_premium"].astype(bool)
+        != out.loc[has_wiki_value, "thunderskill_is_premium"].astype(bool)
+    )
+
+    out["is_premium"] = out["wiki_is_premium"].where(has_wiki_value, out["is_premium"]).astype(bool)
+    out["premium_overridden"] = disagrees
+    out["premium_source"] = np.where(has_wiki_value, "war_thunder_wiki", "thunderskill")
+
+    out = out.drop(columns=["wiki_is_premium"])
 
     return out
 
