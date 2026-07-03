@@ -230,6 +230,7 @@ except Exception as e:
 cleaned_daily_df = get_cleaned_daily(raw_df)
 wiki_br_lookup_df = load_wiki_br_lookup(WIKI_BR_LOOKUP_PATH)
 cleaned_daily_df = features.apply_wiki_br_overrides(cleaned_daily_df, wiki_br_lookup_df)
+cleaned_daily_df = features.apply_wiki_premium_overrides(cleaned_daily_df, wiki_br_lookup_df)
 wiki_vehicle_images_df = load_wiki_vehicle_images(WIKI_VEHICLE_IMAGES_PATH)
 recent_df = get_recent_daily(cleaned_daily_df)
 vehicle_30d_df = get_vehicle_agg(recent_df)
