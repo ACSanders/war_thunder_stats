@@ -1,27 +1,39 @@
-"""Compare ThunderSkill realistic_br against official War Thunder Wiki RB BR.
+"""Compare ThunderSkill realistic_br and premium status against official War
+Thunder Wiki metadata.
 
 Reads the processed ThunderSkill CSV, fetches each vehicle's War Thunder Wiki
-page, and extracts its Realistic (RB) battle rating. Ground Realistic only --
-Arcade and Simulator BR are ignored.
+page once, and extracts both its Realistic (RB) battle rating and its
+premium status. Ground Realistic only -- Arcade and Simulator BR are
+ignored. BR and premium extraction share a single page fetch per vehicle.
 
 Two modes:
 
   Default (review mode): writes a review/audit CSV
   (data/metadata/wiki_realistic_br_mismatch_review.csv) covering every row
-  checked this run -- successes, mismatches, 404s, and parse failures alike.
-  This never touches the trusted app lookup file.
+  checked this run -- successes, mismatches, 404s, and parse failures alike,
+  for both BR and premium status. This never touches the trusted app lookup
+  file.
 
   --write-lookup (automation mode): additionally builds a candidate update
   for the trusted app lookup file (data/metadata/wiki_ground_br_lookup.csv)
-  from this run's successful, sane, in-range RB values; merges it with any
-  existing trusted rows (preserving rows for vehicles this run didn't
-  successfully re-check); validates the merged result against strict
-  thresholds; and only then atomically replaces the real lookup file. If
-  validation fails, the real lookup file is left untouched AND the process
-  exits with status 1 (including under --dry-run, so a failing dry run is
-  observable to a caller like CI without grepping stdout). --dry-run runs
-  the full pipeline (including validation) without ever writing the real
-  lookup file, so it's safe to preview what a run would do.
+  from this run's successful, sane values; merges it with any existing
+  trusted rows (preserving rows -- and individual BR/premium fields -- for
+  vehicles this run didn't successfully re-check on that axis); validates
+  the merged result against strict thresholds; and only then atomically
+  replaces the real lookup file. If validation fails, the real lookup file
+  is left untouched AND the process exits with status 1 (including under
+  --dry-run, so a failing dry run is observable to a caller like CI without
+  grepping stdout). --dry-run runs the full pipeline (including validation)
+  without ever writing the real lookup file, so it's safe to preview what a
+  run would do.
+
+Wiki premium status is read from the page's root container class
+(div.game-unit), which is one of: game-unit--premium, game-unit--regular,
+or game-unit--squadron. Squadron is a separate availability axis (squadron
+vehicles are not the same thing as premium vehicles), so it's explicitly
+mapped to "not premium" rather than treated as an unknown/ambiguous status.
+Any other combination (missing, or more than one status class) is left
+unknown (wiki_is_premium=None) -- never guessed.
 
 Usage:
     python scripts/wiki_br_review.py --slugs ussr_kv_1s ussr_t_80bvm
@@ -65,6 +77,14 @@ BR_MAX = 13.7
 BR_VALID_LAST_DIGITS = {0, 3, 7}
 BR_STEP_TOLERANCE = 0.02
 
+# Wiki root-container status classes that map to a known premium signal.
+# game-unit--squadron is a separate availability axis, not premium.
+PREMIUM_STATUS_CLASS_MAP = {
+    "game-unit--premium": True,
+    "game-unit--regular": False,
+    "game-unit--squadron": False,
+}
+
 LOOKUP_NOTE = "Official War Thunder Wiki RB BR"
 LOOKUP_COLUMNS = [
     "vehicle_slug",
@@ -72,13 +92,14 @@ LOOKUP_COLUMNS = [
     "wiki_arcade_br",
     "wiki_realistic_br",
     "wiki_simulator_br",
+    "wiki_is_premium",
     "wiki_url",
     "checked_at",
     "notes",
 ]
 
 # Metadata carried into the review row (first non-null value per vehicle_slug).
-METADATA_COLS = ["vehicle_name", "country", "vehicle_type", "realistic_br", "vehicle_url"]
+METADATA_COLS = ["vehicle_name", "country", "vehicle_type", "realistic_br", "vehicle_url", "is_premium"]
 
 
 def utc_now_iso() -> str:
@@ -110,33 +131,45 @@ def build_unique_vehicles(raw_df: pd.DataFrame) -> pd.DataFrame:
     return grouped.reset_index()
 
 
-def fetch_wiki_rb_br(vehicle_slug: str, timeout: float = 20.0) -> dict:
-    """Fetch a vehicle's Wiki page and extract its Realistic (RB) battle rating.
+def fetch_wiki_page(vehicle_slug: str, timeout: float = 20.0):
+    """Fetch a vehicle's Wiki page once, shared by both the BR and premium
+    extractors so a vehicle only costs a single HTTP request per run.
 
-    Returns a dict with keys: wiki_realistic_br, wiki_url, status, error.
-    status is one of: ok, http_404, http_error, request_error, no_br_block,
-    rb_mode_not_found, parse_error.
+    Returns (soup, wiki_url, early_result). ``soup`` is None and
+    ``early_result`` is a dict with keys (status, error) when the page
+    itself couldn't be fetched or parsed into HTML -- in that case both BR
+    and premium extraction share that same failure status for this vehicle.
+    On success ``soup`` is a BeautifulSoup object and ``early_result`` is
+    None.
     """
     wiki_url = f"{WIKI_BASE_URL}/{vehicle_slug}"
 
     try:
         response = requests.get(wiki_url, headers=HEADERS, timeout=timeout, allow_redirects=True)
     except requests.RequestException as exc:
-        return {"wiki_realistic_br": None, "wiki_url": wiki_url, "status": "request_error", "error": str(exc)}
+        return None, wiki_url, {"status": "request_error", "error": str(exc)}
 
     if response.status_code == 404:
-        return {"wiki_realistic_br": None, "wiki_url": wiki_url, "status": "http_404", "error": None}
+        return None, wiki_url, {"status": "http_404", "error": None}
 
     if response.status_code != 200:
-        return {
-            "wiki_realistic_br": None,
-            "wiki_url": wiki_url,
-            "status": "http_error",
-            "error": f"HTTP {response.status_code}",
-        }
+        return None, wiki_url, {"status": "http_error", "error": f"HTTP {response.status_code}"}
 
     try:
         soup = BeautifulSoup(response.text, "lxml")
+    except Exception as exc:
+        return None, wiki_url, {"status": "parse_error", "error": str(exc)}
+
+    return soup, wiki_url, None
+
+
+def extract_rb_br(soup: BeautifulSoup, wiki_url: str) -> dict:
+    """Extract Realistic (RB) battle rating from an already-parsed Wiki page.
+
+    Returns a dict with keys: wiki_realistic_br, wiki_url, status, error.
+    status is one of: ok, no_br_block, rb_mode_not_found, parse_error.
+    """
+    try:
         br_block = soup.select_one(".game-unit_br")
 
         if br_block is None:
@@ -168,23 +201,78 @@ def fetch_wiki_rb_br(vehicle_slug: str, timeout: float = 20.0) -> dict:
         return {"wiki_realistic_br": None, "wiki_url": wiki_url, "status": "parse_error", "error": str(exc)}
 
 
+def extract_premium_status(soup: BeautifulSoup, wiki_url: str) -> dict:
+    """Extract Wiki premium status from an already-parsed Wiki page.
+
+    Returns a dict with keys: wiki_is_premium, premium_status, premium_error.
+    premium_status is one of: ok, no_root_found, ambiguous_status_class,
+    parse_error. Ambiguous/unknown always yields wiki_is_premium=None --
+    never guessed.
+    """
+    try:
+        root = soup.select_one("div.game-unit")
+
+        if root is None:
+            return {"wiki_is_premium": None, "premium_status": "no_root_found", "premium_error": None}
+
+        classes = root.get("class") or []
+        matched = [known for known in PREMIUM_STATUS_CLASS_MAP if known in classes]
+
+        if len(matched) != 1:
+            return {
+                "wiki_is_premium": None,
+                "premium_status": "ambiguous_status_class",
+                "premium_error": f"classes={classes}",
+            }
+
+        return {
+            "wiki_is_premium": PREMIUM_STATUS_CLASS_MAP[matched[0]],
+            "premium_status": "ok",
+            "premium_error": None,
+        }
+
+    except Exception as exc:
+        return {"wiki_is_premium": None, "premium_status": "parse_error", "premium_error": str(exc)}
+
+
 def build_review_row(vehicle_row: pd.Series) -> dict:
-    """Fetch + compare one vehicle. Never fabricates a Wiki value -- a failed
-    fetch/parse leaves wiki_realistic_br null, mismatch False, and the
-    ThunderSkill value untouched."""
+    """Fetch + compare one vehicle's BR and premium status. Never fabricates
+    a Wiki value -- a failed fetch/parse leaves the corresponding wiki_*
+    field null, its mismatch flag False, and the ThunderSkill value
+    untouched. BR and premium extraction share a single page fetch."""
     vehicle_slug = vehicle_row["vehicle_slug"]
+    checked_at = utc_now_iso()
 
     ts_br = pd.to_numeric(vehicle_row.get("realistic_br"), errors="coerce")
     ts_br = float(ts_br) if pd.notna(ts_br) else None
 
-    result = fetch_wiki_rb_br(vehicle_slug)
-    wiki_br = result["wiki_realistic_br"]
+    ts_premium = vehicle_row.get("is_premium")
+    ts_premium = bool(ts_premium) if pd.notna(ts_premium) else None
 
+    soup, wiki_url, early_result = fetch_wiki_page(vehicle_slug)
+
+    if early_result is not None:
+        br_result = {"wiki_realistic_br": None, "wiki_url": wiki_url, **early_result}
+        premium_result = {
+            "wiki_is_premium": None,
+            "premium_status": early_result["status"],
+            "premium_error": early_result["error"],
+        }
+    else:
+        br_result = extract_rb_br(soup, wiki_url)
+        premium_result = extract_premium_status(soup, wiki_url)
+
+    wiki_br = br_result["wiki_realistic_br"]
     br_delta = None
     mismatch = False
     if ts_br is not None and wiki_br is not None:
         br_delta = wiki_br - ts_br
         mismatch = abs(br_delta) > BR_MISMATCH_TOLERANCE
+
+    wiki_premium = premium_result["wiki_is_premium"]
+    premium_mismatch = (
+        ts_premium is not None and wiki_premium is not None and ts_premium != wiki_premium
+    )
 
     return {
         "vehicle_slug": vehicle_slug,
@@ -195,10 +283,15 @@ def build_review_row(vehicle_row: pd.Series) -> dict:
         "wiki_realistic_br": wiki_br,
         "br_delta": br_delta,
         "mismatch": mismatch,
-        "wiki_url": result["wiki_url"],
-        "status": result["status"],
-        "error": result["error"],
-        "checked_at": utc_now_iso(),
+        "thunderskill_is_premium": ts_premium,
+        "wiki_is_premium": wiki_premium,
+        "premium_mismatch": premium_mismatch,
+        "wiki_url": wiki_url,
+        "status": br_result["status"],
+        "error": br_result["error"],
+        "premium_status": premium_result["premium_status"],
+        "premium_error": premium_result["premium_error"],
+        "checked_at": checked_at,
     }
 
 
@@ -232,8 +325,8 @@ def is_valid_br_step(value) -> bool:
 
 
 def eligible_for_lookup(review_df: pd.DataFrame) -> pd.DataFrame:
-    """Rows from this run that are safe to feed into the trusted lookup:
-    status == 'ok', numeric, in-range, on a valid BR step."""
+    """Rows from this run that are safe to feed into the trusted lookup's BR
+    columns: status == 'ok', numeric, in-range, on a valid BR step."""
     if review_df.empty:
         return review_df
 
@@ -243,6 +336,16 @@ def eligible_for_lookup(review_df: pd.DataFrame) -> pd.DataFrame:
         & review_df["wiki_realistic_br"].apply(is_sane_br)
         & review_df["wiki_realistic_br"].apply(is_valid_br_step)
     )
+    return review_df[mask].copy()
+
+
+def eligible_for_premium_lookup(review_df: pd.DataFrame) -> pd.DataFrame:
+    """Rows from this run that are safe to feed into the trusted lookup's
+    premium column: premium_status == 'ok', i.e. a known True/False signal."""
+    if review_df.empty:
+        return review_df
+
+    mask = (review_df["premium_status"] == "ok") & review_df["wiki_is_premium"].notna()
     return review_df[mask].copy()
 
 
@@ -259,32 +362,60 @@ def load_existing_lookup(path: Path) -> pd.DataFrame:
     return df[LOOKUP_COLUMNS]
 
 
-def build_lookup_candidate(eligible_df: pd.DataFrame, existing_lookup_df: pd.DataFrame) -> pd.DataFrame:
-    """Merge this run's eligible rows on top of the existing trusted lookup.
+def build_lookup_candidate(review_df: pd.DataFrame, existing_lookup_df: pd.DataFrame) -> pd.DataFrame:
+    """Merge this run's eligible BR and premium values on top of the
+    existing trusted lookup, upserted independently per axis.
 
-    Vehicles this run didn't successfully re-check keep their existing
-    trusted row untouched (preserved, not deleted). Vehicles this run did
-    successfully re-check get refreshed with the new Wiki value.
+    A vehicle that only refreshed successfully on one axis this run (BR or
+    premium) keeps its previously trusted value on the other axis -- neither
+    axis is ever cleared just because the other one didn't refresh this run.
+    Vehicles untouched this run keep their existing trusted row entirely.
     """
-    new_rows = pd.DataFrame({
-        "vehicle_slug": eligible_df["vehicle_slug"],
-        "vehicle_name": eligible_df["vehicle_name"],
-        "wiki_arcade_br": pd.NA,
-        "wiki_realistic_br": eligible_df["wiki_realistic_br"],
-        "wiki_simulator_br": pd.NA,
-        "wiki_url": eligible_df["wiki_url"],
-        "checked_at": eligible_df["checked_at"],
-        "notes": LOOKUP_NOTE,
-    })[LOOKUP_COLUMNS] if not eligible_df.empty else pd.DataFrame(columns=LOOKUP_COLUMNS)
+    base = existing_lookup_df.copy()
+    for col in LOOKUP_COLUMNS:
+        if col not in base.columns:
+            base[col] = pd.NA
+    base = base[LOOKUP_COLUMNS].drop_duplicates(subset="vehicle_slug", keep="last")
+    base = base.set_index("vehicle_slug")
 
-    combined = pd.concat([existing_lookup_df, new_rows], ignore_index=True)
+    br_eligible = eligible_for_lookup(review_df)
+    premium_eligible = eligible_for_premium_lookup(review_df)
 
-    # New rows are appended last, so keep="last" refreshes any vehicle this
-    # run re-checked successfully while preserving untouched vehicles.
-    combined = combined.drop_duplicates(subset="vehicle_slug", keep="last")
-    combined = combined.sort_values("vehicle_slug").reset_index(drop=True)
+    if not br_eligible.empty:
+        br_updates = br_eligible.set_index("vehicle_slug")[
+            ["vehicle_name", "wiki_realistic_br", "wiki_url", "checked_at"]
+        ].copy()
+        br_updates["notes"] = LOOKUP_NOTE
+    else:
+        br_updates = pd.DataFrame(columns=["vehicle_name", "wiki_realistic_br", "wiki_url", "checked_at", "notes"])
 
-    return combined
+    if not premium_eligible.empty:
+        premium_updates = premium_eligible.set_index("vehicle_slug")[
+            ["vehicle_name", "wiki_is_premium", "wiki_url", "checked_at"]
+        ].copy()
+    else:
+        premium_updates = pd.DataFrame(columns=["vehicle_name", "wiki_is_premium", "wiki_url", "checked_at"])
+
+    # A brand-new vehicle_slug only enters the trusted lookup once it has a
+    # valid BR -- premium-only data is never enough to create a new row by
+    # itself (DataFrame.update() below silently skips premium rows whose
+    # vehicle_slug isn't already present in base, rather than adding them).
+    # This keeps every candidate row's wiki_realistic_br guaranteed non-null
+    # without loosening that validation invariant.
+    base = base.reindex(base.index.union(br_updates.index))
+
+    if not br_updates.empty:
+        base.update(br_updates)
+    if not premium_updates.empty:
+        base.update(premium_updates)
+
+    # Ground Realistic only -- always blank, regardless of source.
+    base["wiki_arcade_br"] = pd.NA
+    base["wiki_simulator_br"] = pd.NA
+
+    out = base.reset_index().rename(columns={"index": "vehicle_slug"})
+    out = out.sort_values("vehicle_slug").reset_index(drop=True)
+    return out[LOOKUP_COLUMNS]
 
 
 def validate_lookup_candidate(
@@ -292,8 +423,10 @@ def validate_lookup_candidate(
     attempted_count: int,
     ok_count: int,
     valid_count: int,
+    premium_ok_count: int,
     min_ok_rate: float,
     min_valid_wiki_rate: float,
+    min_premium_ok_rate: float,
     min_vehicles: int,
 ) -> list:
     """Returns a list of failure reasons; empty list means validation passed."""
@@ -312,6 +445,12 @@ def validate_lookup_candidate(
     if valid_rate < min_valid_wiki_rate:
         failures.append(
             f"valid_wiki_rate={valid_rate:.3f} below --min-valid-wiki-rate={min_valid_wiki_rate}"
+        )
+
+    premium_ok_rate = (premium_ok_count / attempted_count) if attempted_count else 0.0
+    if premium_ok_rate < min_premium_ok_rate:
+        failures.append(
+            f"premium_ok_rate={premium_ok_rate:.3f} below --min-premium-ok-rate={min_premium_ok_rate}"
         )
 
     if candidate_df.empty:
@@ -333,6 +472,11 @@ def validate_lookup_candidate(
     if candidate_df["wiki_arcade_br"].notna().any() or candidate_df["wiki_simulator_br"].notna().any():
         failures.append("candidate has non-blank wiki_arcade_br/wiki_simulator_br (Ground Realistic only)")
 
+    if "wiki_is_premium" in candidate_df.columns:
+        premium_values = candidate_df["wiki_is_premium"].dropna()
+        if not premium_values.empty and not premium_values.isin([True, False]).all():
+            failures.append("candidate contains wiki_is_premium values that aren't boolean True/False")
+
     return failures
 
 
@@ -342,6 +486,7 @@ def run_write_lookup(
     lookup_output: Path,
     min_ok_rate: float,
     min_valid_wiki_rate: float,
+    min_premium_ok_rate: float,
     min_vehicles: int,
     dry_run: bool,
 ) -> None:
@@ -354,20 +499,28 @@ def run_write_lookup(
     eligible_df = eligible_for_lookup(review_df)
     valid_count = len(eligible_df)
 
+    premium_ok_count = int((review_df["premium_status"] == "ok").sum())
+    premium_eligible_df = eligible_for_premium_lookup(review_df)
+    premium_valid_count = len(premium_eligible_df)
+
     print(f"Attempted this run: {attempted_count}")
-    print(f"status == ok: {ok_count}")
-    print(f"Eligible for lookup (ok + sane + valid step): {valid_count}")
+    print(f"BR status == ok: {ok_count}")
+    print(f"BR eligible for lookup (ok + sane + valid step): {valid_count}")
+    print(f"Premium status == ok: {premium_ok_count}")
+    print(f"Premium eligible for lookup: {premium_valid_count}")
 
     existing_lookup_df = load_existing_lookup(lookup_output)
-    candidate_df = build_lookup_candidate(eligible_df, existing_lookup_df)
+    candidate_df = build_lookup_candidate(review_df, existing_lookup_df)
 
     failures = validate_lookup_candidate(
         candidate_df=candidate_df,
         attempted_count=attempted_count,
         ok_count=ok_count,
         valid_count=valid_count,
+        premium_ok_count=premium_ok_count,
         min_ok_rate=min_ok_rate,
         min_valid_wiki_rate=min_valid_wiki_rate,
+        min_premium_ok_rate=min_premium_ok_rate,
         min_vehicles=min_vehicles,
     )
 
@@ -396,7 +549,7 @@ def run_write_lookup(
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Review ThunderSkill realistic_br against War Thunder Wiki RB BR."
+        description="Review ThunderSkill realistic_br and premium status against War Thunder Wiki metadata."
     )
     parser.add_argument(
         "--sample", type=int, default=None,
@@ -425,11 +578,15 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--min-ok-rate", type=float, default=0.98,
-        help="Minimum fraction of attempted vehicles with status == ok, required to write the lookup.",
+        help="Minimum fraction of attempted vehicles with BR status == ok, required to write the lookup.",
     )
     parser.add_argument(
         "--min-valid-wiki-rate", type=float, default=0.98,
         help="Minimum fraction of attempted vehicles with a sane, valid-step Wiki BR, required to write the lookup.",
+    )
+    parser.add_argument(
+        "--min-premium-ok-rate", type=float, default=0.98,
+        help="Minimum fraction of attempted vehicles with a known Wiki premium status, required to write the lookup.",
     )
     parser.add_argument(
         "--min-vehicles", type=int, default=100,
@@ -483,9 +640,13 @@ def main() -> None:
     print(f"Saved review CSV: {args.output}")
     print(f"Rows: {len(review_df)}")
     if not review_df.empty:
-        print("Status counts:")
+        print("BR status counts:")
         print(review_df["status"].value_counts().to_string())
-        print(f"Mismatches: {int(review_df['mismatch'].sum())}")
+        print(f"BR mismatches: {int(review_df['mismatch'].sum())}")
+        print()
+        print("Premium status counts:")
+        print(review_df["premium_status"].value_counts().to_string())
+        print(f"Premium mismatches: {int(review_df['premium_mismatch'].sum())}")
 
     if args.write_lookup:
         run_write_lookup(
@@ -494,6 +655,7 @@ def main() -> None:
             lookup_output=args.lookup_output,
             min_ok_rate=args.min_ok_rate,
             min_valid_wiki_rate=args.min_valid_wiki_rate,
+            min_premium_ok_rate=args.min_premium_ok_rate,
             min_vehicles=args.min_vehicles,
             dry_run=args.dry_run,
         )
