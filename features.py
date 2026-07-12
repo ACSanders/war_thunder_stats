@@ -1405,3 +1405,241 @@ def build_meta_value(
     d["underplay_strength"] = underplay
     d["meta_value_score"] = (100.0 * perf * (0.50 + 0.50 * underplay) * reliability).round(2)
     return d.sort_values("meta_value_score", ascending=False).reset_index(drop=True)
+
+
+# ============================================================
+# CE Score explainability: breakdown, evidence badge, explanation
+# ============================================================
+# Pure, presentation-agnostic helpers for the Vehicle Rankings detail view.
+# They reconstruct the existing Combat Effectiveness Score EXACTLY from the
+# per-metric within-BR z columns that add_combat_effectiveness already emits
+# (kd_z_br / fpb_z_br / wr_z_br / confidence_z) -- they never recompute or change
+# the score. The reconstruction identity is:
+#
+#   base (50) + sum(point contributions) == raw (unclipped) score
+#   clip(raw, 0, 100)                    == combat_effectiveness
+#
+# where each contribution = SCORE_SLOPE * (weight_raw / den) * z, and den is the
+# sum of the raw weights of the terms actually present (the same per-row weight
+# renormalization the score uses).
+
+# Display labels for each CE component (dict order = display order).
+CE_COMPONENT_LABELS = {
+    "kd": "K/D",
+    "fpb": "Frags per battle",
+    "wr": "Win rate",
+    "confidence": "Sample evidence",
+}
+
+# Metric component spec: (short key, raw source column, z column, raw weight).
+_CE_COMPONENT_SPEC = [
+    ("kd", "ground_frags_per_death", "kd_z_br", CE_METRIC_WEIGHTS["ground_frags_per_death"]),
+    ("fpb", "ground_frags_per_battle", "fpb_z_br", CE_METRIC_WEIGHTS["ground_frags_per_battle"]),
+    ("wr", "win_rate", "wr_z_br", CE_METRIC_WEIGHTS["win_rate"]),
+]
+
+# Evidence badge tiers (Scheme A). This is an EVIDENCE basis -- how much
+# tracked-user sample data backs the score -- NOT a statistical confidence
+# level, probability, or interval. Each tier is [lo, hi) in sample battles.
+EVIDENCE_TIERS = [
+    ("Limited evidence", 0, 50),
+    ("Developing evidence", 50, 150),
+    ("Solid evidence", 150, 500),
+    ("Strong evidence", 500, float("inf")),
+]
+
+# Point-magnitude bands for the deterministic explanation sentence.
+_EXPLAIN_MIN_POINTS = 1.5      # below this (abs) a contribution is not called out
+_EXPLAIN_STRONG_POINTS = 3.0   # at/above this magnitude uses stronger wording
+_EXPLAIN_CONF_POINTS = 1.0     # min sample-evidence magnitude to mention it
+
+
+def _row_get(row, col):
+    """Value of ``col`` from a Series/dict-like row, or NaN if absent."""
+    try:
+        return row.get(col, np.nan)
+    except AttributeError:
+        try:
+            return row[col]
+        except (KeyError, IndexError, TypeError):
+            return np.nan
+
+
+def ce_score_breakdown(row) -> dict:
+    """Exact additive decomposition of one vehicle's Combat Effectiveness Score.
+
+    Reads ONLY the vehicle's own stored columns (realistic_br,
+    combat_effectiveness, the *_z_br / confidence_z terms, and the raw metric
+    columns), so the result is independent of any UI filtering.
+
+    Returns a dict with:
+      scoreable          -- bool (needs a BR and >= 1 usable metric term)
+      base               -- SCORE_CENTER (50.0)                [scoreable only]
+      peer_br            -- realistic_br (float or None)
+      components         -- list of included terms, each:
+                              key, label, z, weight_raw, weight_effective, points
+      raw_score          -- 50 + sum(points), UNCLIPPED        [scoreable only]
+      clip_adjustment    -- clip(raw,0,100) - raw (0 unless clipped) [scoreable]
+      capped_score       -- clip(raw, 0, 100)                  [scoreable only]
+      displayed_score    -- stored combat_effectiveness (post-clip, rounded)
+      dropped            -- list of excluded metrics, each: key, label, reason
+                            (reason in {"insufficient_peers", "missing_data"})
+    """
+    br = _row_get(row, "realistic_br")
+    displayed = _row_get(row, "combat_effectiveness")
+
+    included = []  # (key, label, z, weight_raw)
+    dropped = []   # (key, label, reason)
+    for key, raw_col, z_col, w_raw in _CE_COMPONENT_SPEC:
+        z = _row_get(row, z_col)
+        if pd.notna(z):
+            included.append((key, CE_COMPONENT_LABELS[key], float(z), float(w_raw)))
+        else:
+            # A present raw metric with a NaN within-BR z can only mean the exact
+            # BR had fewer than MIN_SCORE_PEERS comparable vehicles (the robust-z
+            # peer-count guard); a NaN raw metric means the source stat is missing.
+            raw_val = _row_get(row, raw_col)
+            reason = "missing_data" if pd.isna(raw_val) else "insufficient_peers"
+            dropped.append((key, CE_COMPONENT_LABELS[key], reason))
+
+    scoreable = bool(pd.notna(br) and len(included) >= 1)
+    dropped_out = [{"key": k, "label": lab, "reason": r} for k, lab, r in dropped]
+
+    if not scoreable:
+        return {
+            "scoreable": False,
+            "peer_br": float(br) if pd.notna(br) else None,
+            "displayed_score": float(displayed) if pd.notna(displayed) else None,
+            "components": [],
+            "dropped": dropped_out,
+        }
+
+    # The confidence/sample-evidence term participates only on a scoreable row.
+    conf_z = _row_get(row, "confidence_z")
+    terms = list(included)
+    if pd.notna(conf_z):
+        terms.append(
+            ("confidence", CE_COMPONENT_LABELS["confidence"], float(conf_z),
+             float(CE_CONFIDENCE_WEIGHT))
+        )
+
+    den = sum(w for *_, w in terms)
+
+    components = []
+    for key, label, z, w_raw in terms:
+        w_eff = w_raw / den
+        components.append({
+            "key": key,
+            "label": label,
+            "z": z,
+            "weight_raw": w_raw,
+            "weight_effective": w_eff,
+            "points": SCORE_SLOPE * w_eff * z,
+        })
+
+    raw_score = SCORE_CENTER + sum(c["points"] for c in components)
+    capped = min(100.0, max(0.0, raw_score))
+    clip_adjustment = capped - raw_score
+
+    return {
+        "scoreable": True,
+        "base": float(SCORE_CENTER),
+        "peer_br": float(br),
+        "components": components,
+        "raw_score": float(raw_score),
+        "clip_adjustment": float(clip_adjustment),
+        "capped_score": float(capped),
+        "displayed_score": (
+            float(displayed) if pd.notna(displayed) else float(round(capped, 1))
+        ),
+        "dropped": dropped_out,
+    }
+
+
+def ce_evidence_tier(total_battles_30d, days_observed=None) -> dict:
+    """Map sample battles (Scheme A) to a viewer-friendly evidence tier.
+
+    Returns {"tier", "sample_battles", "basis"}. The tier communicates how much
+    tracked-user sample data backs the score; it is NOT a confidence level.
+    """
+    battles = 0.0 if pd.isna(total_battles_30d) else float(total_battles_30d)
+    tier = EVIDENCE_TIERS[0][0]
+    for lab, lo, hi in EVIDENCE_TIERS:
+        if lo <= battles < hi:
+            tier = lab
+            break
+    b = int(round(battles))
+    if days_observed is not None and pd.notna(days_observed):
+        basis = (
+            f"{b:,} tracked-user sample battles over {int(days_observed)} observed days"
+        )
+    else:
+        basis = f"{b:,} tracked-user sample battles"
+    return {"tier": tier, "sample_battles": b, "basis": basis}
+
+
+def ce_explanation_sentence(breakdown: dict) -> str:
+    """Deterministic, conservative plain-language summary of a CE breakdown.
+
+    References the exact BR peer group, names the main positive driver and an
+    optional meaningful negative contributor, and treats sample evidence as a
+    small secondary factor (never the main driver). Never uses the phrase
+    "above BR" (reserved for the future performance-above-BR feature).
+    """
+    if not breakdown.get("scoreable"):
+        return ""
+
+    br_txt = f"BR {breakdown['peer_br']:.1f}"
+    comps = {c["key"]: c for c in breakdown["components"]}
+    metric_comps = [c for c in breakdown["components"] if c["key"] != "confidence"]
+
+    parts = []
+    positives = [c for c in metric_comps if c["points"] > 0]
+    if positives:
+        top = max(positives, key=lambda c: c["points"])
+        main_key = top["key"]
+        parts.append(
+            f"The score is driven mainly by {top['label']} relative to other "
+            f"vehicles at {br_txt}."
+        )
+    else:
+        # No performance metric raises the score; lead with the largest drag
+        # (performance metrics only -- never Sample evidence) instead.
+        metric_negatives = [c for c in metric_comps if c["points"] < 0]
+        if metric_negatives:
+            low = min(metric_negatives, key=lambda c: c["points"])
+            main_key = low["key"]
+            parts.append(
+                f"The score is pulled down mainly by {low['label']} relative to "
+                f"other vehicles at {br_txt}."
+            )
+        else:
+            main_key = None
+            parts.append(
+                f"No single performance metric stands out relative to other "
+                f"vehicles at {br_txt}."
+            )
+
+    negatives = [
+        c for c in metric_comps
+        if c["key"] != main_key and c["points"] <= -_EXPLAIN_MIN_POINTS
+    ]
+    if negatives:
+        low = min(negatives, key=lambda c: c["points"])
+        adverb = "well below" if low["points"] <= -_EXPLAIN_STRONG_POINTS else "slightly below"
+        parts.append(f"{low['label']} is {adverb} the {br_txt} peer baseline.")
+
+    conf = comps.get("confidence")
+    if conf is not None:
+        if conf["points"] >= _EXPLAIN_CONF_POINTS:
+            parts.append(
+                f"It also has more recorded sample battles than most vehicles at "
+                f"{br_txt}, a small positive factor."
+            )
+        elif conf["points"] <= -_EXPLAIN_CONF_POINTS:
+            parts.append(
+                f"It also has fewer recorded sample battles than most vehicles at "
+                f"{br_txt}, a small negative factor."
+            )
+
+    return " ".join(parts)
