@@ -1020,6 +1020,140 @@ with tab_rankings:
             d9.metric("Frags / battle", f"{row.get('ground_frags_per_battle', np.nan):.2f}")
             d10.metric("Frags / death", f"{row.get('ground_frags_per_death', np.nan):.2f}")
 
+            # --- CE Score breakdown + evidence badge ---
+            # Pure, filter-independent decomposition of the vehicle's own CE Score
+            # (reads only its stored within-BR component columns).
+            breakdown = features.ce_score_breakdown(row)
+            evidence = features.ce_evidence_tier(
+                row.get("total_battles_30d"), row.get("days_observed")
+            )
+
+            st.markdown("**CE Score breakdown**")
+
+            # Evidence badge — an evidence basis, not a statistical confidence level.
+            _tier_colors = {
+                "Limited evidence": "#6B7280",
+                "Developing evidence": "#C08A2E",
+                "Solid evidence": "#3E7CB1",
+                "Strong evidence": "#2E8B6B",
+            }
+            _tcol = _tier_colors.get(evidence["tier"], "#6B7280")
+            st.markdown(
+                f"<span style='background:{_tcol};color:#FFFFFF;padding:2px 10px;"
+                f"border-radius:999px;font-size:0.82rem;font-weight:600;'>"
+                f"{evidence['tier']}</span>"
+                f"<span style='color:#94A3B8;font-size:0.82rem;'>&nbsp;&nbsp;"
+                f"{evidence['basis']}</span>",
+                unsafe_allow_html=True,
+            )
+            st.caption(
+                "Evidence reflects how much ThunderSkill tracked-user sample data "
+                "backs the score — not a statistical confidence level or interval. "
+                "These are tracked-user sample battles, not global War Thunder totals."
+            )
+
+            if not breakdown["scoreable"]:
+                st.info(
+                    "This vehicle isn't scored, so there is no CE Score breakdown. "
+                    "A Combat Effectiveness Score needs a Realistic BR and at least "
+                    "one metric that can be compared against enough vehicles at the "
+                    "same BR."
+                )
+            else:
+                # Deterministic, conservative plain-language explanation.
+                explanation = features.ce_explanation_sentence(breakdown)
+                if explanation:
+                    st.markdown(explanation)
+
+                # Waterfall: Base → signed contributions → (score cap) → CE Score.
+                wf_labels = ["Base (BR average)"]
+                wf_values = [breakdown["base"]]
+                wf_measure = ["absolute"]
+                wf_text = [f"{breakdown['base']:.0f}"]
+                for c in breakdown["components"]:
+                    wf_labels.append(c["label"])
+                    wf_values.append(c["points"])
+                    wf_measure.append("relative")
+                    wf_text.append(f"{c['points']:+.1f}")
+                if abs(breakdown["clip_adjustment"]) >= 0.05:
+                    wf_labels.append("Score cap (0–100)")
+                    wf_values.append(breakdown["clip_adjustment"])
+                    wf_measure.append("relative")
+                    wf_text.append(f"{breakdown['clip_adjustment']:+.1f}")
+                wf_labels.append("CE Score")
+                wf_values.append(0.0)
+                wf_measure.append("total")
+                wf_text.append(f"{breakdown['displayed_score']:.1f}")
+
+                wf_fig = go.Figure(
+                    go.Waterfall(
+                        orientation="h",
+                        y=wf_labels,
+                        x=wf_values,
+                        measure=wf_measure,
+                        text=wf_text,
+                        textposition="outside",
+                        connector=dict(line=dict(color="rgba(148, 163, 184, 0.4)")),
+                        increasing=dict(marker=dict(color="#FF6B57")),
+                        decreasing=dict(marker=dict(color="#5A9BD4")),
+                        totals=dict(marker=dict(color="#94A3B8")),
+                        hovertemplate="%{y}: %{x:+.1f} pts<extra></extra>",
+                    )
+                )
+                wf_fig.update_layout(
+                    height=max(280, 42 * len(wf_labels) + 90),
+                    margin=dict(l=10, r=10, t=20, b=10),
+                    paper_bgcolor="rgba(0,0,0,0)",
+                    plot_bgcolor="rgba(0,0,0,0)",
+                    font=dict(color="#E5E7EB"),
+                    xaxis=dict(
+                        title="CE points",
+                        gridcolor="rgba(125, 168, 210, 0.18)",
+                        zerolinecolor="rgba(125, 168, 210, 0.35)",
+                    ),
+                    yaxis=dict(autorange="reversed"),
+                    showlegend=False,
+                )
+                st.plotly_chart(wf_fig, width="stretch")
+
+                bd_cap = (
+                    "Base 50 is the BR average. Each bar is that metric's exact, "
+                    "renormalized contribution to the score; positive bars raise it, "
+                    "negative bars lower it."
+                )
+                if abs(breakdown["clip_adjustment"]) >= 0.05:
+                    bd_cap += (
+                        " The score cap bar reconciles the raw total "
+                        f"({breakdown['raw_score']:.1f}) to the displayed 0–100 "
+                        "CE Score."
+                    )
+                st.caption(bd_cap)
+
+                # Explicitly surface any metric dropped from the score.
+                if breakdown["dropped"]:
+                    br_val = breakdown["peer_br"]
+                    drop_msgs = []
+                    for d in breakdown["dropped"]:
+                        if d["reason"] == "insufficient_peers":
+                            drop_msgs.append(
+                                f"{d['label']} (fewer than {features.MIN_SCORE_PEERS} "
+                                f"vehicles at BR {br_val:.1f} had comparable data)"
+                            )
+                        elif d["reason"] == "missing_data":
+                            drop_msgs.append(
+                                f"{d['label']} (this stat was not reported for the vehicle)"
+                            )
+                        else:
+                            drop_msgs.append(
+                                f"{d['label']} (a reliable BR-relative comparison "
+                                "was unavailable)"
+                            )
+                    st.caption(
+                        "Not included in the score: "
+                        + "; ".join(drop_msgs)
+                        + ". The remaining metrics carry proportionally more weight."
+                    )
+
             # --- Performance radar (0-100; percentiles among filtered peers) ---
             st.markdown("**Performance radar**")
             radar_axes = {
