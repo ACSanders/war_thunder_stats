@@ -2176,31 +2176,51 @@ st.divider()
 
 with st.expander("Combat Effectiveness Score & data notes"):
     st.write(
-        "The Combat Effectiveness Score measures how much a vehicle overperforms "
-        "the average for its exact BR. Each metric is smoothed toward the BR "
-        "average using an empirical-Bayes-style reliability weight, so low-battle "
-        "vehicles are pulled toward average and do not dominate."
+        "The Combat Effectiveness Score compares a vehicle's recent performance "
+        "with other vehicles at the same exact Realistic BR. A score near 50 "
+        "represents the neutral BR-relative baseline; higher or lower scores "
+        "indicate stronger or weaker performance relative to those peers."
+    )
+
+    st.write(
+        "K/D, frags per battle, and win rate are adjusted for sample reliability "
+        "and compared with the typical vehicle at that BR using outlier-resistant "
+        "statistics. Low-battle results are pulled toward the BR median so thin "
+        "samples do not dominate."
     )
 
     st.code(
         """
-z_total =
-  0.40 × z(K/D, ground frags per death)
-+ 0.40 × z(ground frags per battle)
-+ 0.15 × z(win rate)
-+ 0.05 × z(data confidence = log1p(sample battles))
+Combined BR-relative score =
+  0.40 × robust score for K/D
++ 0.40 × robust score for frags per battle
++ 0.15 × robust score for win rate
++ 0.05 × robust score for sample evidence
 
-Combat Effectiveness Score = clip(50 + 15 × z_total, 0, 100)
+CE Score = clip(50 + 15 × combined BR-relative score, 0, 100)
         """.strip()
     )
 
     st.write(
-        "K/D and frags per battle are log-transformed before smoothing because "
-        "they are skewed. 50 is roughly BR-average, ~65 is a strong step above, "
-        "and ~95+ is exceptional. ThunderSkill efficiency is intentionally "
-        "excluded because it is already a composite. Vehicles without Realistic "
-        "BR are not scored in BR-normalized views. Battle counts are ThunderSkill "
-        "tracked-user sample battles, not global War Thunder totals."
+        "If a component is unavailable, the remaining weights are rescaled to "
+        "total 100%. K/D and frags per battle are log-transformed because they "
+        "are skewed. Low-battle metrics are smoothed toward the BR median with "
+        "reliability = battles / (battles + 100). Each metric's robust score then "
+        "compares it with the BR median using the median absolute deviation, so "
+        "extreme values have less influence. Sample evidence reflects battle "
+        "volume relative to other vehicles at the same BR, and its contribution "
+        "is capped so unusually large battle counts do not dominate; it is not a "
+        "confidence percentage or interval."
+    )
+
+    st.write(
+        "As rules of thumb, ~65 is a clear step above the BR baseline and ~90–95+ "
+        "is exceptional. 50 is the neutral BR-relative baseline, not necessarily "
+        "the exact mean or median of the final CE Scores. A vehicle is unscored "
+        "if it lacks a Realistic BR or if reliable BR-relative comparisons are "
+        "unavailable. ThunderSkill efficiency is intentionally excluded because it "
+        "is already a composite. Battle counts are ThunderSkill tracked-user "
+        "sample battles, not global War Thunder totals."
     )
 
 st.caption(
