@@ -2251,9 +2251,15 @@ _TVT_VERDICT_ICON = {
 }
 _TVT_PROFILE_ICON = {
     "Core Metric Sweep": "🧹 Core Metric Sweep",
-    "2–1 Performance Edge": "2–1 Performance Edge",
+    "Broad Performance Advantage": "💪 Broad Performance Advantage",
+    "2–1 Performance Edge": "⚔️ 2–1 Performance Edge",
+    "Narrow Advantage": "🔹 Narrow Advantage",
     "Tradeoff Matchup": "🔀 Tradeoff Matchup",
     "Dead Heat": "⚖️ Dead Heat",
+}
+_TVT_PROFILE_NAMED = {
+    "Core Metric Sweep", "Broad Performance Advantage",
+    "Narrow Advantage", "2–1 Performance Edge",
 }
 
 
@@ -2540,8 +2546,8 @@ def _render_tank_vs_tank():
     # -------- D. Matchup character + signature advantages --------
     prof = result["profile"]
     hdr = _TVT_PROFILE_ICON.get(prof["label"], prof["label"])
-    if result["leader_name"] and prof["label"] in ("Core Metric Sweep", "2–1 Performance Edge"):
-        hdr += f" — {result['leader_name']}" if prof["label"] == "Core Metric Sweep" else ""
+    if prof.get("winner_name") and prof["label"] in _TVT_PROFILE_NAMED:
+        hdr += f" — {prof['winner_name']}"
     st.markdown(f"#### {hdr}")
     st.write(prof["explanation"])
     sig = result["signature"]
