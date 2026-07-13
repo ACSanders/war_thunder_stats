@@ -1670,3 +1670,347 @@ def ce_explanation_sentence(breakdown: dict) -> str:
             )
 
     return " ".join(parts)
+
+
+# ============================================================
+# Tank vs Tank: deterministic head-to-head comparison
+# ============================================================
+# Pure, presentation-agnostic helpers for the head-to-head tab. They reuse the
+# existing CE Score, CE breakdown, and evidence tier -- they do NOT introduce a
+# second overall winner score or any new CE math. The overall edge is decided by
+# CE Score alone; the core-metric profile only describes WHERE each vehicle
+# leads. Uncertainty/probability is deliberately excluded (the daily panel is an
+# overlapping rolling-window series, so row bootstrap is invalid).
+
+# The three core BR-relative CE performance inputs compared in the profile.
+_TVT_CORE_METRICS = [
+    ("kd", "K/D", "ground_frags_per_death", "kd_pctl_br"),
+    ("fpb", "Frags per battle", "ground_frags_per_battle", "fpb_pctl_br"),
+    ("wr", "Win rate", "win_rate", "wr_pctl_br"),
+]
+
+# Deterministic thresholds (calibrated from the same-BR pairwise CE-gap
+# distribution; see design notes). Higher is better for every core metric.
+TVT_TOO_CLOSE_CE_GAP = 5.0     # |CE gap| below this -> Too Close to Call
+TVT_CLEAR_CE_GAP = 12.0        # |CE gap| at/above this -> Clear Edge (if evidence allows)
+TVT_PCTL_TIE_TOL = 5.0         # percentile-point tie tolerance for core metrics
+TVT_MIN_BATTLES = 50           # min sample battles for a verdict-eligible vehicle
+TVT_MIN_METRICS = 2            # min valid core metrics for a verdict
+
+_EVIDENCE_ORDER = {
+    "Limited evidence": 0,
+    "Developing evidence": 1,
+    "Solid evidence": 2,
+    "Strong evidence": 3,
+}
+
+
+def build_matchup_percentiles(vehicle_df: pd.DataFrame) -> pd.DataFrame:
+    """Attach full exact-BR peer-group percentiles (0-100) for the head-to-head.
+
+    Percentiles are ranked WITHIN each exact realistic_br over the supplied frame
+    -- pass the FULL vehicle aggregate (never a filtered selector slice) so the
+    standings are stable regardless of the tab's local filters. Adds:
+      ce_pctl_br, kd_pctl_br, fpb_pctl_br, wr_pctl_br
+    (NaN where the metric or BR is missing).
+    """
+    out = vehicle_df.copy()
+    mapping = {
+        "combat_effectiveness": "ce_pctl_br",
+        "ground_frags_per_death": "kd_pctl_br",
+        "ground_frags_per_battle": "fpb_pctl_br",
+        "win_rate": "wr_pctl_br",
+    }
+    for src, dst in mapping.items():
+        if src in out.columns and "realistic_br" in out.columns:
+            out[dst] = out.groupby("realistic_br")[src].rank(pct=True) * 100.0
+        else:
+            out[dst] = np.nan
+    return out
+
+
+def _row_val(row, col):
+    try:
+        return row.get(col, np.nan)
+    except AttributeError:
+        return row[col] if col in row else np.nan
+
+
+def classify_matchup_profile(a_row, b_row, tol: float = TVT_PCTL_TIE_TOL) -> dict:
+    """Describe WHERE each vehicle leads across the three core CE metrics.
+
+    Uses full exact-BR percentiles (kd/fpb/wr_pctl_br) with a percentile-point
+    tie tolerance. Returns per-metric winners ("A"/"B"/"tie"/"n/a"), win counts,
+    a matchup-character label, and a deterministic explanation. This NEVER
+    overrides the CE-based overall winner -- it is descriptive only.
+    """
+    winners = {}
+    a_wins = b_wins = ties = 0
+    a_leads, b_leads = [], []
+    for key, label, _raw, pctl in _TVT_CORE_METRICS:
+        pa, pb = _row_val(a_row, pctl), _row_val(b_row, pctl)
+        if pd.isna(pa) or pd.isna(pb):
+            winners[key] = "n/a"
+            continue
+        if abs(pa - pb) < tol:
+            winners[key] = "tie"
+            ties += 1
+        elif pa > pb:
+            winners[key] = "A"; a_wins += 1; a_leads.append(label)
+        else:
+            winners[key] = "B"; b_wins += 1; b_leads.append(label)
+
+    scored = a_wins + b_wins + ties
+    if scored == 0:
+        label = "Dead Heat"
+    elif ties == scored:
+        label = "Dead Heat"
+    elif a_wins == scored or b_wins == scored:
+        label = "Core Metric Sweep"
+    elif (a_wins == 2 and b_wins == 1) or (b_wins == 2 and a_wins == 1):
+        label = "2–1 Performance Edge"
+    else:
+        label = "Tradeoff Matchup"
+
+    a_name = _row_val(a_row, "vehicle_name")
+    b_name = _row_val(b_row, "vehicle_name")
+
+    def _join(items):
+        if not items:
+            return ""
+        if len(items) == 1:
+            return items[0]
+        return ", ".join(items[:-1]) + " and " + items[-1]
+
+    if label == "Dead Heat":
+        explanation = "Neither vehicle clearly leads on K/D, frags per battle, or win rate."
+    elif label == "Core Metric Sweep":
+        winner, leads = (a_name, a_leads) if a_wins == scored else (b_name, b_leads)
+        explanation = f"{winner} leads all core metrics: {_join(leads)}."
+    else:
+        parts = []
+        if a_leads:
+            parts.append(f"{a_name} leads in {_join(a_leads)}")
+        if b_leads:
+            parts.append(f"{b_name} leads in {_join(b_leads)}")
+        explanation = "; ".join(parts) + "." if parts else "Split core-metric profile."
+
+    return {
+        "category_winners": winners,
+        "a_wins": a_wins,
+        "b_wins": b_wins,
+        "ties": ties,
+        "label": label,
+        "explanation": explanation,
+    }
+
+
+def select_signature_advantages(a_row, b_row, tol: float = TVT_PCTL_TIE_TOL) -> dict:
+    """Each vehicle's strongest positive BR-relative advantage over the opponent.
+
+    Among K/D, frags per battle, and win rate, picks the core metric where the
+    vehicle's exact-BR percentile most exceeds the opponent's (by more than
+    ``tol``). Returns {"A": {...}|None, "B": {...}|None} with metric label, both
+    percentiles, and both raw values; None when the vehicle has no clear edge.
+    """
+    def best(primary, other):
+        best_gap = tol
+        best_item = None
+        for key, label, raw, pctl in _TVT_CORE_METRICS:
+            pp, po = _row_val(primary, pctl), _row_val(other, pctl)
+            if pd.isna(pp) or pd.isna(po):
+                continue
+            gap = pp - po
+            if gap > best_gap:
+                best_gap = gap
+                best_item = {
+                    "metric": key,
+                    "label": label,
+                    "self_pctl": float(pp),
+                    "opp_pctl": float(po),
+                    "self_value": (float(_row_val(primary, raw))
+                                   if pd.notna(_row_val(primary, raw)) else None),
+                    "opp_value": (float(_row_val(other, raw))
+                                  if pd.notna(_row_val(other, raw)) else None),
+                }
+        return best_item
+
+    return {"A": best(a_row, b_row), "B": best(b_row, a_row)}
+
+
+def _vehicle_facts(row) -> dict:
+    b = _row_val(row, "total_battles_30d")
+    b = 0 if pd.isna(b) else int(b)
+    ce = _row_val(row, "combat_effectiveness")
+    n_metrics = sum(
+        1 for _k, _l, raw, _p in _TVT_CORE_METRICS if pd.notna(_row_val(row, raw))
+    )
+    return {
+        "slug": _row_val(row, "vehicle_slug"),
+        "name": _row_val(row, "vehicle_name"),
+        "nation": _row_val(row, "country"),
+        "type": _row_val(row, "vehicle_type"),
+        "br": (float(_row_val(row, "realistic_br"))
+               if pd.notna(_row_val(row, "realistic_br")) else None),
+        "ce": float(ce) if pd.notna(ce) else None,
+        "evidence_tier": ce_evidence_tier(b)["tier"],
+        "sample_battles": b,
+        "days_observed": (int(_row_val(row, "days_observed"))
+                          if pd.notna(_row_val(row, "days_observed")) else None),
+        "kd": (float(_row_val(row, "ground_frags_per_death"))
+               if pd.notna(_row_val(row, "ground_frags_per_death")) else None),
+        "fpb": (float(_row_val(row, "ground_frags_per_battle"))
+                if pd.notna(_row_val(row, "ground_frags_per_battle")) else None),
+        "win_rate": (float(_row_val(row, "win_rate"))
+                     if pd.notna(_row_val(row, "win_rate")) else None),
+        "is_premium": bool(_row_val(row, "is_premium")) if pd.notna(_row_val(row, "is_premium")) else False,
+        "is_squadron": bool(_row_val(row, "is_squadron")) if pd.notna(_row_val(row, "is_squadron")) else False,
+        "on_marketplace": bool(_row_val(row, "on_marketplace")) if pd.notna(_row_val(row, "on_marketplace")) else False,
+        "n_core_metrics": n_metrics,
+    }
+
+
+def _leader_sentence(bd_lead, bd_opp, lead_name) -> str:
+    """Deterministic 'why the leader leads' from CE contribution differences."""
+    if not (bd_lead.get("scoreable") and bd_opp.get("scoreable")):
+        return ""
+    lead_pts = {c["key"]: c["points"] for c in bd_lead["components"]}
+    opp_pts = {c["key"]: c["points"] for c in bd_opp["components"]}
+    labels = {c["key"]: c["label"] for c in bd_lead["components"]}
+    labels.update({c["key"]: c["label"] for c in bd_opp["components"]})
+    best_key, best_gap = None, 0.0
+    for k in set(lead_pts) | set(opp_pts):
+        gap = lead_pts.get(k, 0.0) - opp_pts.get(k, 0.0)
+        if gap > best_gap:
+            best_gap, best_key = gap, k
+    if best_key is None:
+        return f"{lead_name} leads on a small overall margin across components."
+    return (
+        f"{lead_name} leads mainly on {labels.get(best_key, best_key)} "
+        f"(+{lead_pts.get(best_key, 0.0):.1f} CE vs {opp_pts.get(best_key, 0.0):+.1f})."
+    )
+
+
+def compare_vehicles(
+    a_row,
+    b_row,
+    same_br_required: bool = True,
+    a_context: dict | None = None,
+    b_context: dict | None = None,
+) -> dict:
+    """Deterministic head-to-head. CE Score is the ONLY overall winner metric.
+
+    Returns a structured dict (Creator-Mode-ready) with the verdict, leader, CE
+    gap, core-metric profile, signature advantages, both CE breakdowns, a
+    'why the leader leads' line, evidence tiers, caveats, and context. The
+    core-metric profile is descriptive and never overrides the CE winner.
+
+    Rows must already carry the exact-BR percentile columns from
+    build_matchup_percentiles. Contexts (momentum/stability) are pass-through
+    only and never affect the verdict.
+    """
+    fa, fb = _vehicle_facts(a_row), _vehicle_facts(b_row)
+    same_br = (fa["br"] is not None and fb["br"] is not None and fa["br"] == fb["br"])
+    cross_br = not same_br
+    ce_a, ce_b = fa["ce"], fb["ce"]
+    ce_gap = (ce_a - ce_b) if (ce_a is not None and ce_b is not None) else None
+    abs_gap = abs(ce_gap) if ce_gap is not None else None
+
+    ord_a = _EVIDENCE_ORDER.get(fa["evidence_tier"], 0)
+    ord_b = _EVIDENCE_ORDER.get(fb["evidence_tier"], 0)
+    both_solid = ord_a >= 2 and ord_b >= 2
+    both_developing = ord_a >= 1 and ord_b >= 1
+
+    # verdict eligibility (same-BR, valid CE, >=50 battles each, >=2 metrics each)
+    verdict_eligible = (
+        same_br
+        and ce_a is not None and ce_b is not None
+        and fa["sample_battles"] >= TVT_MIN_BATTLES and fb["sample_battles"] >= TVT_MIN_BATTLES
+        and fa["n_core_metrics"] >= TVT_MIN_METRICS and fb["n_core_metrics"] >= TVT_MIN_METRICS
+        and both_developing
+    )
+
+    caveats = []
+    if cross_br:
+        caveats.append(
+            "Cross-BR: these vehicles are evaluated against different BR peer "
+            "groups, so CE Scores and percentiles are descriptive relative to "
+            "their own BRs and do not support a direct overall winner."
+        )
+    a_spaa = fa["type"] == "SPAA"
+    b_spaa = fb["type"] == "SPAA"
+    if a_spaa and b_spaa:
+        caveats.append("Frag-based measures may not fully represent an SPAA vehicle's team role.")
+    elif a_spaa or b_spaa:
+        caveats.append(
+            "One vehicle is SPAA: frag-based measures may not fully represent its "
+            "team role, so the comparison is weighted toward a role it isn't built for."
+        )
+    if fa["evidence_tier"] == "Limited evidence" or fb["evidence_tier"] == "Limited evidence":
+        caveats.append("Limited evidence (under 50 tracked battles): descriptive comparison only.")
+
+    # leader + verdict
+    leader = None
+    if ce_gap is not None and abs_gap is not None and abs_gap > 0:
+        leader = "A" if ce_gap > 0 else "B"
+
+    if not verdict_eligible:
+        verdict = "Descriptive Only"
+    elif abs_gap < TVT_TOO_CLOSE_CE_GAP:
+        verdict = "Too Close to Call"
+    elif abs_gap < TVT_CLEAR_CE_GAP:
+        verdict = "Slight Edge"
+    else:  # abs_gap >= CLEAR
+        verdict = "Clear Edge" if both_solid else "Slight Edge"
+
+    leader_name = fa["name"] if leader == "A" else (fb["name"] if leader == "B" else None)
+
+    profile = classify_matchup_profile(a_row, b_row)
+    signature = select_signature_advantages(a_row, b_row)
+
+    bd_a = ce_score_breakdown(a_row)
+    bd_b = ce_score_breakdown(b_row)
+    ce_diff_leader_sentence = ""
+    if verdict in ("Clear Edge", "Slight Edge") and leader is not None:
+        bd_lead, bd_opp = (bd_a, bd_b) if leader == "A" else (bd_b, bd_a)
+        ce_diff_leader_sentence = _leader_sentence(bd_lead, bd_opp, leader_name)
+
+    explanation = []
+    if verdict == "Descriptive Only":
+        if cross_br:
+            explanation.append("Descriptive cross-BR comparison — no overall winner is issued.")
+        else:
+            explanation.append("Descriptive comparison only — evidence or eligibility is insufficient for a verdict.")
+    elif verdict == "Too Close to Call":
+        explanation.append(f"CE gap is {abs_gap:.1f} (< {TVT_TOO_CLOSE_CE_GAP:.0f}) — too close to call.")
+    else:
+        explanation.append(
+            f"{leader_name} leads by {abs_gap:.1f} CE ({fa['ce']:.1f} vs {fb['ce']:.1f})."
+        )
+        if verdict == "Slight Edge" and abs_gap >= TVT_CLEAR_CE_GAP and not both_solid:
+            explanation.append("Capped at Slight Edge because one vehicle has only Developing evidence.")
+    if ce_diff_leader_sentence:
+        explanation.append(ce_diff_leader_sentence)
+    explanation.append(profile["explanation"])
+
+    return {
+        "vehicle_a": fa,
+        "vehicle_b": fb,
+        "same_br": same_br,
+        "cross_br": cross_br,
+        "same_br_required": same_br_required,
+        "verdict_eligible": verdict_eligible,
+        "verdict": verdict,
+        "leader": leader,
+        "leader_name": leader_name,
+        "ce_gap": ce_gap,
+        "abs_ce_gap": abs_gap,
+        "profile": profile,
+        "signature": signature,
+        "ce_breakdown": {"A": bd_a, "B": bd_b},
+        "ce_diff_leader_sentence": ce_diff_leader_sentence,
+        "evidence_tiers": {"A": fa["evidence_tier"], "B": fb["evidence_tier"]},
+        "context": {"A": a_context or {}, "B": b_context or {}},
+        "caveats": caveats,
+        "explanation": explanation,
+    }
