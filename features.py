@@ -1238,7 +1238,7 @@ def build_lineups(
 
 
 # ============================================================
-# Meta Signals (v1): Rising Performers + Underplayed Meta
+# Meta Signals (v1): Rising Performers + Strong & Less-Played
 # ============================================================
 # Daily Performance Score is a *daily BR-relative analogue* of the Combat
 # Effectiveness Score, used only for trend detection. It mirrors CE's structure
@@ -1249,7 +1249,11 @@ META_RELIABILITY_PRIOR = 50          # reliability = battles / (battles + 50)
 MOMENTUM_MIN_OBSERVED = 20           # min observed scored days for a momentum signal
 MOMENTUM_MIN_SAMPLE_BATTLES = 50     # min 30-day sample battles for a momentum signal
 MOMENTUM_WINDOW = 10                 # days averaged at each end
-META_VALUE_MIN_SAMPLE_BATTLES = 25   # default floor for Underplayed Meta
+
+# Strong & Less-Played: a transparent qualification rule (no composite score).
+STRONG_LESS_PLAYED_MIN_BATTLES = 50   # fixed evidence floor
+STRONG_LESS_PLAYED_CE_FLOOR = 0.80    # CE percentile at/above this qualifies (top 20%)
+STRONG_LESS_PLAYED_USAGE_CEIL = 0.50  # usage percentile at/below this qualifies
 
 # Daily Performance Score uses the same core metrics/weights as CE (minus the
 # sample-confidence term, which is meaningless per day).
@@ -1362,20 +1366,38 @@ def build_momentum(
     return mom.sort_values("momentum_score", ascending=False).reset_index(drop=True)
 
 
-def build_meta_value(
+def build_strong_less_played(
     vehicle_df: pd.DataFrame,
-    min_sample_battles: int = META_VALUE_MIN_SAMPLE_BATTLES,
+    min_sample_battles: int = STRONG_LESS_PLAYED_MIN_BATTLES,
+    ce_percentile_floor: float = STRONG_LESS_PLAYED_CE_FLOOR,
+    usage_percentile_ceiling: float = STRONG_LESS_PLAYED_USAGE_CEIL,
 ) -> pd.DataFrame:
-    """Underplayed Meta: Meta Value Score on the (already filtered) 30-day
-    aggregate, using percentiles within this slice.
+    """Strong & Less-Played: a transparent qualification, NOT a composite score.
 
-    performance_strength = 0.50*CE_pct + 0.30*KD_pct + 0.20*fpb_pct
-    underplay_strength   = 1 - sample_battles_pct
-    reliability          = sample_battles / (sample_battles + 50)
-    meta_value = 100 * performance_strength * (0.50 + 0.50*underplay_strength) * reliability
+    Within the supplied (already filtered) comparison set, each eligible vehicle
+    -- one with a Realistic BR, a CE Score, and >= min_sample_battles tracked-user
+    sample battles -- is ranked into:
+
+      ce_percentile     = rank(pct) of combat_effectiveness
+      usage_percentile  = rank(pct) of total_battles_30d
+
+    A vehicle qualifies (strong_less_played=True) when its CE percentile is at
+    least ``ce_percentile_floor`` (top 20% by default) AND its usage percentile
+    is at most ``usage_percentile_ceiling`` (bottom half of tracked usage). No
+    composite score is produced. K/D and frags per battle are NOT re-added here;
+    they already live inside CE.
+
+    Percentiles are computed WITHIN the supplied set, so they move with the app
+    filters. Returns every eligible vehicle (not just qualifiers) so callers can
+    plot the comparison set and highlight the qualifying region. Adds:
+      ce_percentile, usage_percentile, strong_less_played, qualification_reason
+    (deterministic text for qualifiers; empty string otherwise).
+
+    Ordering: CE percentile desc, usage percentile asc, sample battles desc
+    (a stable final tiebreaker). Empty / all-ineligible sets return empty safely.
     """
     if vehicle_df.empty:
-        return pd.DataFrame()
+        return vehicle_df.copy()
 
     has_br = (
         vehicle_df["has_realistic_br"].fillna(False)
@@ -1385,26 +1407,31 @@ def build_meta_value(
     d = vehicle_df[
         has_br
         & vehicle_df["combat_effectiveness"].notna()
-        & vehicle_df["ground_frags_per_death"].notna()
-        & vehicle_df["ground_frags_per_battle"].notna()
         & (vehicle_df["total_battles_30d"].fillna(0) >= min_sample_battles)
     ].copy()
     if d.empty:
         return d
 
-    d["ce_pct"] = d["combat_effectiveness"].rank(pct=True)
-    d["kd_pct"] = d["ground_frags_per_death"].rank(pct=True)
-    d["fpb_pct"] = d["ground_frags_per_battle"].rank(pct=True)
-    d["sample_battles_pct"] = d["total_battles_30d"].rank(pct=True)
+    d["ce_percentile"] = d["combat_effectiveness"].rank(pct=True)
+    d["usage_percentile"] = d["total_battles_30d"].rank(pct=True)
+    d["strong_less_played"] = (
+        (d["ce_percentile"] >= ce_percentile_floor)
+        & (d["usage_percentile"] <= usage_percentile_ceiling)
+    )
 
-    perf = 0.50 * d["ce_pct"] + 0.30 * d["kd_pct"] + 0.20 * d["fpb_pct"]
-    underplay = 1.0 - d["sample_battles_pct"]
-    reliability = d["total_battles_30d"] / (d["total_battles_30d"] + META_RELIABILITY_PRIOR)
+    ce_top = ((1.0 - d["ce_percentile"]) * 100).round().astype(int).clip(lower=1)
+    usage_below = ((1.0 - d["usage_percentile"]) * 100).round().astype(int)
+    d["qualification_reason"] = np.where(
+        d["strong_less_played"],
+        "top " + ce_top.astype(str) + "% CE performance with fewer tracked "
+        "battles than " + usage_below.astype(str) + "% of eligible vehicles",
+        "",
+    )
 
-    d["performance_strength"] = perf
-    d["underplay_strength"] = underplay
-    d["meta_value_score"] = (100.0 * perf * (0.50 + 0.50 * underplay) * reliability).round(2)
-    return d.sort_values("meta_value_score", ascending=False).reset_index(drop=True)
+    return d.sort_values(
+        ["ce_percentile", "usage_percentile", "total_battles_30d"],
+        ascending=[False, True, False],
+    ).reset_index(drop=True)
 
 
 # ============================================================

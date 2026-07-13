@@ -152,9 +152,10 @@ def get_momentum(recent_daily_df: pd.DataFrame, vehicle_agg_df: pd.DataFrame):
 
 
 @st.cache_data(ttl=60 * 60)
-def get_meta_value(vehicle_df: pd.DataFrame, min_sample_battles: int):
-    """Underplayed-Meta table on the filtered slice."""
-    return features.build_meta_value(vehicle_df, min_sample_battles=min_sample_battles)
+def get_strong_less_played(vehicle_df: pd.DataFrame):
+    """Strong & Less-Played qualification on the filtered slice (fixed 50-battle
+    floor; percentiles computed within the supplied set)."""
+    return features.build_strong_less_played(vehicle_df)
 
 
 # Data preparation, vehicle aggregation, scoring, and nation/BR aggregates now
@@ -1729,7 +1730,25 @@ with tab_meta:
         rising_n = st.slider(
             "Top N rising", 5, 25, 12, 1, key="meta_rising_n"
         )
-        top_rise = momentum.head(rising_n)
+        top_rise = momentum.head(rising_n).copy()
+
+        # Deterministic evidence tier + "Why it appears" text (grounded in values).
+        top_rise["evidence"] = top_rise["total_battles_30d"].apply(
+            lambda b: features.ce_evidence_tier(b)["tier"]
+        )
+
+        def _rise_why(r):
+            early, late = r["early_ce"], r["late_ce"]
+            verb = "rose" if late >= early else "moved"
+            s = (
+                f"its BR-relative daily score {verb} from {early:.1f} to "
+                f"{late:.1f} across the recent window."
+            )
+            if pd.notna(r["combat_effectiveness"]) and r["combat_effectiveness"] < 45:
+                s += " Rising quickly, but current CE remains below the BR baseline."
+            return s
+
+        top_rise["why"] = top_rise.apply(_rise_why, axis=1)
 
         # Bar chart by Momentum Score.
         bar_rise = top_rise.sort_values("momentum_score", ascending=True)
@@ -1766,11 +1785,27 @@ with tab_meta:
             )
             st.plotly_chart(trend_fig, width="stretch")
 
-        with st.expander("Show Rising Performers table"):
+        # Compact, text-based "Top rising stories" for the first 3 risers.
+        st.markdown("**Top rising stories**")
+        story_lines = []
+        for _, r in top_rise.head(3).iterrows():
+            caveat = (
+                " — Rising quickly, but current CE remains below the BR baseline."
+                if pd.notna(r["combat_effectiveness"]) and r["combat_effectiveness"] < 45
+                else ""
+            )
+            story_lines.append(
+                f"- **{r['vehicle_name']}** — daily score {r['early_ce']:.1f} → "
+                f"{r['late_ce']:.1f} · CE {r['combat_effectiveness']:.1f} · "
+                f"{r['evidence']}{caveat}"
+            )
+        st.markdown("\n".join(story_lines))
+
+        with st.expander("Show Rising Performers table", expanded=True):
             rise_cols = [
-                "display_label", "realistic_br", "vehicle_type", "early_ce",
-                "late_ce", "ce_gain", "observed_scored_days", "total_battles_30d",
-                "combat_effectiveness", "momentum_score",
+                "display_label", "realistic_br", "vehicle_type", "evidence",
+                "early_ce", "late_ce", "ce_gain", "observed_scored_days",
+                "total_battles_30d", "combat_effectiveness", "momentum_score", "why",
             ]
             rise_cols = [c for c in rise_cols if c in top_rise.columns]
             st.dataframe(
@@ -1779,6 +1814,7 @@ with tab_meta:
                     "display_label": "Vehicle",
                     "realistic_br": st.column_config.NumberColumn("BR", format="%.1f"),
                     "vehicle_type": "Type",
+                    "evidence": "Evidence",
                     "early_ce": st.column_config.NumberColumn("Early", format="%.1f"),
                     "late_ce": st.column_config.NumberColumn("Late", format="%.1f"),
                     "ce_gain": st.column_config.NumberColumn("Gain", format="%.1f"),
@@ -1786,6 +1822,7 @@ with tab_meta:
                     "total_battles_30d": st.column_config.NumberColumn("Sample battles", format="%d"),
                     "combat_effectiveness": st.column_config.NumberColumn("CE Score", format="%.1f"),
                     "momentum_score": st.column_config.NumberColumn("Momentum", format="%.2f"),
+                    "why": st.column_config.TextColumn("Why it appears", width="large"),
                 },
             )
 
@@ -1816,119 +1853,141 @@ Momentum Score = gain × coverage × reliability
 
     st.divider()
 
-    # ---------------- Section 2: Underplayed Meta ----------------
-    st.markdown("### Underplayed Meta")
+    # ---------------- Section 2: Strong & Less-Played ----------------
+    st.markdown("### Strong & Less-Played")
     st.caption(
-        "Strong, lethal vehicles with relatively low sample battles in the "
-        "current slice — overlooked opportunities with enough data to trust."
+        "These vehicles rank in the top 20% for CE within the current comparison "
+        "set while having fewer tracked sample battles than the typical eligible "
+        "vehicle (≥ 50 sample battles required). Tracked sample battles are a "
+        "proxy for usage among ThunderSkill tracked users, not global War Thunder "
+        "popularity."
     )
 
-    uc1, uc2 = st.columns([2, 1], gap="large")
-    with uc1:
-        meta_min_sb = st.slider(
-            "Minimum sample battles", 0, 500,
-            int(features.META_VALUE_MIN_SAMPLE_BATTLES), 25, key="meta_min_sb",
-        )
-    with uc2:
-        meta_n = st.slider("Top N", 5, 25, 12, 1, key="meta_value_n")
+    slp_all = get_strong_less_played(filtered_vehicle_df)
+    qualified = (
+        slp_all[slp_all["strong_less_played"]].copy()
+        if not slp_all.empty
+        else slp_all
+    )
 
-    meta_val = get_meta_value(filtered_vehicle_df, meta_min_sb)
-
-    if meta_val.empty:
+    if qualified.empty:
         st.info(
-            "No vehicles meet the Underplayed Meta threshold under the current "
-            "filters. Lower the minimum sample battles or widen the filters."
+            "No vehicles qualify as Strong & Less-Played under the current filters "
+            "(need a CE Score in the top 20% and usage in the bottom 50%, with ≥ 50 "
+            "sample battles). Widen the filters to grow the comparison set."
         )
     else:
-        meta_val = meta_val.copy()
-        meta_val["display_label"] = [
+        slp_all = slp_all.copy()
+        slp_all["display_label"] = [
             f"{n} — {c if pd.notna(c) else 'Unknown'}, {_meta_fmt_br(b)}"
-            for n, c, b in zip(meta_val["vehicle_name"], meta_val["country"], meta_val["realistic_br"])
+            for n, c, b in zip(slp_all["vehicle_name"], slp_all["country"], slp_all["realistic_br"])
         ]
-        top_meta = meta_val.head(meta_n)
+        slp_all["Region"] = np.where(
+            slp_all["strong_less_played"], "Strong & Less-Played", "Other eligible"
+        )
+        qualified["display_label"] = [
+            f"{n} — {c if pd.notna(c) else 'Unknown'}, {_meta_fmt_br(b)}"
+            for n, c, b in zip(qualified["vehicle_name"], qualified["country"], qualified["realistic_br"])
+        ]
+        qualified["evidence"] = qualified["total_battles_30d"].apply(
+            lambda b: features.ce_evidence_tier(b)["tier"]
+        )
 
-        # Opportunity Map: sample-battle percentile vs CE, size = Meta Value.
-        st.markdown("**Opportunity map** — strong but low-usage vehicles sit upper-left")
-        opp_fig = px.scatter(
-            meta_val, x="sample_battles_pct", y="combat_effectiveness",
-            size="meta_value_score", size_max=26, color="country",
+        slp_n = st.slider("Top N", 5, 25, 12, 1, key="slp_n")
+
+        # Featured list only: cap the DISPLAY at 2 vehicles per exact BR so a
+        # single BR can't dominate, keeping the qualified sort order and walking
+        # down the ranked qualifiers until Top N is filled. This does NOT change
+        # the qualified dataframe, percentiles, or qualification status; every
+        # qualifier still appears in the scatter and the full-qualifiers table.
+        _per_br = {}
+        _featured_idx = []
+        for _idx, _r in qualified.iterrows():
+            _br = _r["realistic_br"]
+            if _per_br.get(_br, 0) >= 2:
+                continue
+            _featured_idx.append(_idx)
+            _per_br[_br] = _per_br.get(_br, 0) + 1
+            if len(_featured_idx) >= slp_n:
+                break
+        top_slp = qualified.loc[_featured_idx]
+
+        # Map: usage percentile (x) vs CE percentile (y); the qualifying region is
+        # upper-left (high CE, low usage). All eligible shown; qualifiers highlighted.
+        st.markdown("**Strong & Less-Played map** — qualifiers sit in the shaded upper-left")
+        slp_fig = px.scatter(
+            slp_all, x="usage_percentile", y="ce_percentile", color="Region",
+            color_discrete_map={"Strong & Less-Played": "#FF6B57", "Other eligible": "#5A6472"},
             hover_name="display_label",
             hover_data={
-                "sample_battles_pct": ":.2f",
+                "Region": False,
+                "usage_percentile": ":.2f",
+                "ce_percentile": ":.2f",
                 "combat_effectiveness": ":.1f",
                 "realistic_br": ":.1f",
                 "vehicle_type": True,
-                "ground_frags_per_death": ":.2f",
-                "ground_frags_per_battle": ":.2f",
                 "total_battles_30d": ":,.0f",
-                "meta_value_score": ":.1f",
             },
         )
-        opp_fig.update_layout(
+        slp_fig.add_shape(
+            type="rect", x0=0, x1=0.50, y0=0.80, y1=1.0,
+            fillcolor="rgba(255, 107, 87, 0.10)", line=dict(width=0), layer="below",
+        )
+        slp_fig.add_vline(x=0.50, line_dash="dot", opacity=0.4)
+        slp_fig.add_hline(y=0.80, line_dash="dot", opacity=0.4)
+        slp_fig.update_layout(
             height=520, margin=dict(l=10, r=10, t=20, b=10),
-            xaxis_title="Sample-battle percentile (lower = less played)",
-            yaxis_title="CE Score", legend_title_text="Nation",
+            xaxis_title="Usage percentile (lower = fewer tracked battles)",
+            yaxis_title="CE percentile", legend_title_text=None,
         )
-        st.plotly_chart(opp_fig, width="stretch")
+        slp_fig.update_xaxes(range=[0, 1])
+        slp_fig.update_yaxes(range=[0, 1])
+        st.plotly_chart(slp_fig, width="stretch")
 
-        # Bar chart by Meta Value Score.
-        bar_meta = top_meta.sort_values("meta_value_score", ascending=True)
-        meta_fig = px.bar(
-            bar_meta, x="meta_value_score", y="display_label", orientation="h",
-            color="vehicle_type",
-            hover_data=[
-                c for c in ["realistic_br", "combat_effectiveness",
-                            "ground_frags_per_death", "ground_frags_per_battle",
-                            "total_battles_30d"]
-                if c in bar_meta.columns
-            ],
-        )
-        meta_fig.update_layout(
-            xaxis_title="Meta Value Score", yaxis_title=None,
-            height=max(320, 30 * len(bar_meta) + 120),
-            margin=dict(l=10, r=10, t=20, b=10), legend_title_text="Type",
-        )
-        st.plotly_chart(meta_fig, width="stretch")
+        slp_cfg = {
+            "display_label": "Vehicle",
+            "vehicle_type": "Type",
+            "evidence": "Evidence",
+            "combat_effectiveness": st.column_config.NumberColumn("CE Score", format="%.1f"),
+            "ce_percentile": st.column_config.NumberColumn("CE pct", format="%.2f"),
+            "total_battles_30d": st.column_config.NumberColumn("Sample battles", format="%d"),
+            "usage_percentile": st.column_config.NumberColumn("Usage pct", format="%.2f"),
+            "qualification_reason": st.column_config.TextColumn("Why it appears", width="large"),
+        }
+        slp_cols = [
+            "display_label", "vehicle_type", "evidence", "combat_effectiveness",
+            "ce_percentile", "total_battles_30d", "usage_percentile",
+            "qualification_reason",
+        ]
 
-        with st.expander("Show Underplayed Meta table"):
-            meta_cols = [
-                "display_label", "realistic_br", "vehicle_type",
-                "combat_effectiveness", "ground_frags_per_death",
-                "ground_frags_per_battle", "win_rate", "total_battles_30d",
-                "meta_value_score",
-            ]
-            meta_cols = [c for c in meta_cols if c in top_meta.columns]
+        st.caption(f"Featured list capped at 2 vehicles per BR · {len(qualified)} total qualifiers.")
+        with st.expander("Show featured Strong & Less-Played table", expanded=True):
+            cols = [c for c in slp_cols if c in top_slp.columns]
             st.dataframe(
-                top_meta[meta_cols], width="stretch", hide_index=True,
-                column_config={
-                    "display_label": "Vehicle",
-                    "realistic_br": st.column_config.NumberColumn("BR", format="%.1f"),
-                    "vehicle_type": "Type",
-                    "combat_effectiveness": st.column_config.NumberColumn("CE Score", format="%.1f"),
-                    "ground_frags_per_death": st.column_config.NumberColumn("K/D", format="%.2f"),
-                    "ground_frags_per_battle": st.column_config.NumberColumn("Frags / battle", format="%.2f"),
-                    "win_rate": st.column_config.NumberColumn("Win rate (ctx)", format="%.1f%%"),
-                    "total_battles_30d": st.column_config.NumberColumn("Sample battles", format="%d"),
-                    "meta_value_score": st.column_config.NumberColumn("Meta Value", format="%.1f"),
-                },
+                top_slp[cols], width="stretch", hide_index=True, column_config=slp_cfg,
             )
 
-        with st.expander("How Meta Value Score works"):
+        with st.expander(f"Show all qualifying vehicles ({len(qualified)})"):
+            cols = [c for c in slp_cols if c in qualified.columns]
+            st.dataframe(
+                qualified[cols], width="stretch", hide_index=True, column_config=slp_cfg,
+            )
+
+        with st.expander("How Strong & Less-Played works"):
             st.markdown(
-                "Percentiles are computed within the currently filtered slice and "
-                "scaled from 0 to 1 internally. Battle counts are ThunderSkill "
-                "tracked-user sample battles, not global War Thunder totals."
-            )
-            st.code(
-                """
-performance_strength = 0.50×CE pct + 0.30×K/D pct + 0.20×frags-per-battle pct
-underplay_strength   = 1 - sample-battles pct
-reliability          = sample_battles / (sample_battles + 50)
-
-Meta Value Score = 100 × performance_strength
-                       × (0.50 + 0.50 × underplay_strength)
-                       × reliability
-                """.strip()
+                "This is a simple qualification, **not** a score. Within the current "
+                "comparison set (the filtered vehicles), each eligible vehicle — one "
+                "with a Realistic BR, a CE Score, and ≥ 50 tracked sample battles — "
+                "gets:\n\n"
+                "- a **CE percentile** (rank of its CE Score), and\n"
+                "- a **usage percentile** (rank of its tracked sample battles).\n\n"
+                "A vehicle is **Strong & Less-Played** when its CE percentile is at "
+                "least 0.80 (top 20%) **and** its usage percentile is at most 0.50 "
+                "(fewer tracked battles than the typical eligible vehicle). "
+                "Percentiles are computed within the current filters, so they shift "
+                "as you change the filter deck. Tracked sample battles are a proxy "
+                "for usage among ThunderSkill tracked users, not global War Thunder "
+                "popularity."
             )
 
 
