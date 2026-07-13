@@ -158,6 +158,13 @@ def get_strong_less_played(vehicle_df: pd.DataFrame):
     return features.build_strong_less_played(vehicle_df)
 
 
+@st.cache_data(ttl=60 * 60)
+def get_matchup_percentiles(vehicle_df: pd.DataFrame):
+    """Full exact-BR peer percentiles for Tank vs Tank. Always computed on the
+    FULL aggregate (never a filtered slice) so head-to-head standings are stable."""
+    return features.build_matchup_percentiles(vehicle_df)
+
+
 # Data preparation, vehicle aggregation, scoring, and nation/BR aggregates now
 # live in features.py (pure pandas, reusable by offline scripts). The cached
 # wrappers above expose them to the app.
@@ -406,13 +413,14 @@ card_row2[2].metric("Rolling window", window_value, help=window_help, border=Tru
 # Tabs
 # ============================================================
 
-tab_nation, tab_rankings, tab_clusters, tab_meta, tab_lineup = st.tabs(
+tab_nation, tab_rankings, tab_clusters, tab_meta, tab_lineup, tab_tvt = st.tabs(
     [
         "Nation Meta",
         "Vehicle Rankings",
         "Performance Clusters",
         "Meta Signals",
         "Lineup Builder",
+        "Tank vs Tank",
     ]
 )
 
@@ -2225,6 +2233,421 @@ with tab_lineup:
                                 "is_premium": st.column_config.CheckboxColumn("Premium"),
                             },
                         )
+
+
+# ============================================================
+# Tank vs Tank tab
+# ============================================================
+
+_TVT_EV_ORDER = {
+    "Limited evidence": 0, "Developing evidence": 1,
+    "Solid evidence": 2, "Strong evidence": 3,
+}
+_TVT_VERDICT_ICON = {
+    "Clear Edge": "🏆 Clear Edge",
+    "Slight Edge": "🥇 Slight Edge",
+    "Too Close to Call": "⚖️ Too Close to Call",
+    "Descriptive Only": "⚠️ Descriptive Only",
+}
+_TVT_PROFILE_ICON = {
+    "Core Metric Sweep": "🧹 Core Metric Sweep",
+    "2–1 Performance Edge": "2–1 Performance Edge",
+    "Tradeoff Matchup": "🔀 Tradeoff Matchup",
+    "Dead Heat": "⚖️ Dead Heat",
+}
+
+
+def _tvt_image_url(slug):
+    if wiki_vehicle_images_df is None or "vehicle_slug" not in wiki_vehicle_images_df.columns:
+        return None
+    m = wiki_vehicle_images_df[wiki_vehicle_images_df["vehicle_slug"] == slug]
+    if m.empty:
+        return None
+    r = m.iloc[0]
+    u = r.get("wiki_image_url")
+    if r.get("status") == "ok" and pd.notna(u) and str(u).strip():
+        return str(u)
+    return None
+
+
+def _tvt_ce_waterfall(bd, title_color="#FF6B57"):
+    """Reuse the CE breakdown to render one contribution waterfall (same math)."""
+    if not bd.get("scoreable"):
+        return None
+    labels = ["Base (BR average)"]; values = [bd["base"]]; measure = ["absolute"]
+    text = [f"{bd['base']:.0f}"]
+    for c in bd["components"]:
+        labels.append(c["label"]); values.append(c["points"]); measure.append("relative")
+        text.append(f"{c['points']:+.1f}")
+    if abs(bd["clip_adjustment"]) >= 0.05:
+        labels.append("Score cap (0–100)"); values.append(bd["clip_adjustment"])
+        measure.append("relative"); text.append(f"{bd['clip_adjustment']:+.1f}")
+    labels.append("CE Score"); values.append(0.0); measure.append("total")
+    text.append(f"{bd['displayed_score']:.1f}")
+    fig = go.Figure(go.Waterfall(
+        orientation="h", y=labels, x=values, measure=measure, text=text,
+        textposition="outside",
+        connector=dict(line=dict(color="rgba(148, 163, 184, 0.4)")),
+        increasing=dict(marker=dict(color=title_color)),
+        decreasing=dict(marker=dict(color="#5A9BD4")),
+        totals=dict(marker=dict(color="#94A3B8")),
+        hovertemplate="%{y}: %{x:+.1f} pts<extra></extra>",
+    ))
+    fig.update_layout(
+        height=max(260, 40 * len(labels) + 80), margin=dict(l=10, r=10, t=20, b=10),
+        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+        font=dict(color="#E5E7EB"),
+        xaxis=dict(title="CE points", gridcolor="rgba(125, 168, 210, 0.18)",
+                   zerolinecolor="rgba(125, 168, 210, 0.35)"),
+        yaxis=dict(autorange="reversed"), showlegend=False,
+    )
+    return fig
+
+
+def _tvt_stability(slug):
+    """Contextual daily-K/D steadiness (higher = steadier). N/A-safe."""
+    s = recent_df[recent_df["vehicle_slug"] == slug]["ground_frags_per_death"].dropna()
+    if len(s) < 5:
+        return None
+    med = s.median()
+    if med <= 0:
+        return None
+    iqr = s.quantile(0.75) - s.quantile(0.25)
+    return float(np.clip(1.0 - iqr / med, 0.0, 1.0))
+
+
+def _render_tank_vs_tank():
+    st.subheader("Tank vs Tank")
+    st.caption("Head-to-head BR-relative performance comparison")
+    st.caption(
+        "Not a duel simulator, a match-win probability, or a balance "
+        "recommendation — it compares recent BR-relative performance among "
+        "ThunderSkill tracked users."
+    )
+
+    # Percentiles ALWAYS from the full aggregate (stable standings).
+    mp = get_matchup_percentiles(vehicle_30d_df)
+    base = mp[mp["combat_effectiveness"].notna() & mp["has_realistic_br"].fillna(False)].copy()
+    if base.empty:
+        st.info("No vehicles with a Realistic BR and a CE Score are available to compare.")
+        return
+    base["evidence_tier"] = base["total_battles_30d"].apply(lambda b: features.ce_evidence_tier(b)["tier"])
+    base["display_label"] = [
+        f"{n} — {c if pd.notna(c) else 'Unknown'}, "
+        + (f"BR {b:.1f}" if pd.notna(b) else "BR N/A")
+        for n, c, b in zip(base["vehicle_name"], base["country"], base["realistic_br"])
+    ]
+
+    # -------- A. Compact filter panel --------
+    with st.container(border=True):
+        top = st.columns([3, 1])
+        with top[0]:
+            st.markdown("**Compare setup** · local filters refine the selector pool (they never change the percentile math)")
+        with top[1]:
+            ignore_global = st.toggle(
+                "Ignore global filters", value=False, key="tvt_ignore_global",
+                help="Off (default): the app's global filters narrow the comparison pool. "
+                     "On: search across every eligible vehicle (this tab only — global controls are unchanged).")
+        if ignore_global:
+            universe = base
+        else:
+            gslugs = set(filtered_vehicle_df["vehicle_slug"])
+            universe = base[base["vehicle_slug"].isin(gslugs)]
+
+        fc = st.columns(5)
+        br_opts = ["All"] + [f"{b:.1f}" for b in sorted(universe["realistic_br"].dropna().unique())]
+        f_br = fc[0].selectbox("BR", br_opts, key="tvt_f_br")
+        f_nat = fc[1].selectbox("Nation", ["All"] + sorted(universe["country"].dropna().unique()), key="tvt_f_nat")
+        f_type = fc[2].selectbox("Type", ["All"] + sorted(universe["vehicle_type"].dropna().unique()), key="tvt_f_type")
+        f_prem = fc[3].selectbox("Premium", ["All", "Non-premium", "Premium"], key="tvt_f_prem")
+        f_ev = fc[4].selectbox("Min evidence", ["Limited", "Developing", "Solid", "Strong"], index=1, key="tvt_f_ev")
+
+        pool = universe.copy()
+        if f_br != "All":
+            pool = pool[pool["realistic_br"] == float(f_br)]
+        if f_nat != "All":
+            pool = pool[pool["country"] == f_nat]
+        if f_type != "All":
+            pool = pool[pool["vehicle_type"] == f_type]
+        if f_prem == "Non-premium":
+            pool = pool[pool["is_premium"] == False]
+        elif f_prem == "Premium":
+            pool = pool[pool["is_premium"] == True]
+        pool = pool[pool["evidence_tier"].map(_TVT_EV_ORDER) >= _TVT_EV_ORDER[f_ev + " evidence"]]
+
+        same_br_only = st.toggle("Same BR only", value=True, key="tvt_same_br",
+                                 help="Restrict Vehicle B to Vehicle A's exact Realistic BR (recommended — CE is BR-relative).")
+        status = (
+            f"Searching all eligible vehicles · **{len(pool)}** comparison candidates"
+            if ignore_global
+            else f"Using current app filters · **{len(pool)}** comparison candidates")
+        cc = st.columns([3, 1])
+        cc[0].caption(status + "  ·  type in the Vehicle A / Vehicle B boxes to search by name.")
+        if cc[1].button("Reset local filters", key="tvt_reset", width="stretch"):
+            for k in ["tvt_f_br", "tvt_f_nat", "tvt_f_type", "tvt_f_prem", "tvt_f_ev"]:
+                st.session_state.pop(k, None)
+            st.rerun()
+
+    if pool.empty:
+        st.info("No candidate vehicles match these filters. Loosen the local filters, lower the minimum evidence, or turn on **Ignore global filters**.")
+        return
+
+    label_by_slug = dict(zip(base["vehicle_slug"], base["display_label"]))
+    pool_slugs = pool["vehicle_slug"].tolist()
+
+    # -------- Vehicle selection (A / swap / B) with retention + swap --------
+    if st.session_state.get("tvt_A") not in set(pool_slugs):
+        st.session_state["tvt_A"] = pool_slugs[0]
+    sel_cols = st.columns([5, 1, 5])
+    with sel_cols[0]:
+        a_slug = st.selectbox(
+            "Vehicle A", pool_slugs, index=pool_slugs.index(st.session_state["tvt_A"]),
+            format_func=lambda s: label_by_slug.get(s, s), key="tvt_A_widget")
+        st.session_state["tvt_A"] = a_slug
+    a_row = base[base["vehicle_slug"] == a_slug].iloc[0]
+
+    # B candidate pool: exclude A; restrict to A's BR when Same BR only.
+    b_pool = pool[pool["vehicle_slug"] != a_slug]
+    if same_br_only:
+        b_pool = b_pool[b_pool["realistic_br"] == a_row["realistic_br"]]
+    b_slugs = b_pool["vehicle_slug"].tolist()
+    with sel_cols[1]:
+        st.markdown("<div style='height:1.9rem'></div>", unsafe_allow_html=True)
+        if st.button("⇄", key="tvt_swap", help="Swap A and B", width="stretch"):
+            st.session_state["tvt_A"], st.session_state["tvt_B"] = (
+                st.session_state.get("tvt_B", a_slug), a_slug)
+            st.rerun()
+
+    if not b_slugs:
+        with sel_cols[2]:
+            st.selectbox("Vehicle B", ["—"], key="tvt_B_widget_empty", disabled=True)
+        st.info(
+            "No valid Vehicle B at this exact BR under the current filters. "
+            "Turn off **Same BR only** for a descriptive cross-BR comparison, or widen the filters."
+            if same_br_only else "No second candidate vehicle under the current filters.")
+        return
+
+    # sensible default rival: closest CE at the same BR (deterministic, unsurprising)
+    if st.session_state.get("tvt_B") not in set(b_slugs):
+        ce_a = a_row["combat_effectiveness"]
+        st.session_state["tvt_B"] = (
+            b_pool.assign(_d=(b_pool["combat_effectiveness"] - ce_a).abs())
+            .sort_values("_d")["vehicle_slug"].iloc[0])
+    with sel_cols[2]:
+        b_slug = st.selectbox(
+            "Vehicle B", b_slugs, index=b_slugs.index(st.session_state["tvt_B"]),
+            format_func=lambda s: label_by_slug.get(s, s), key="tvt_B_widget")
+        st.session_state["tvt_B"] = b_slug
+    b_row = base[base["vehicle_slug"] == b_slug].iloc[0]
+
+    # -------- Deterministic comparison --------
+    _, momentum_all = get_momentum(recent_df, vehicle_30d_df)
+    mom_score = (dict(zip(momentum_all["vehicle_slug"], momentum_all["momentum_score"]))
+                 if not momentum_all.empty else {})
+    ctx_a = {"momentum": mom_score.get(a_slug), "stability": _tvt_stability(a_slug)}
+    ctx_b = {"momentum": mom_score.get(b_slug), "stability": _tvt_stability(b_slug)}
+    result = features.compare_vehicles(a_row, b_row, same_br_required=same_br_only,
+                                       a_context=ctx_a, b_context=ctx_b)
+    fa, fb = result["vehicle_a"], result["vehicle_b"]
+
+    # -------- Warnings --------
+    if result["cross_br"]:
+        st.warning(
+            "**Descriptive cross-BR comparison.** These vehicles are evaluated against "
+            "different BR peer groups. Their CE Scores and percentile profiles are "
+            "descriptive relative to their own BRs and do not support a direct overall winner.")
+    if fa["type"] == "SPAA" or fb["type"] == "SPAA":
+        st.warning("Frag-based measures may not fully represent an SPAA vehicle's team role.")
+
+    # -------- B. Hero comparison --------
+    def _vehicle_card(col, facts, slug, accent):
+        with col:
+            with st.container(border=True):
+                url = _tvt_image_url(slug)
+                if url:
+                    st.image(url, width="stretch")
+                st.markdown(f"### {facts['name']}")
+                tags = f"{facts['nation']} · {facts['type']} · BR {facts['br']:.1f}" if facts["br"] is not None else f"{facts['nation']} · {facts['type']}"
+                badges = []
+                if facts["is_premium"]:
+                    badges.append("💰 Premium")
+                if facts["is_squadron"]:
+                    badges.append("🏵 Squadron")
+                if facts["on_marketplace"]:
+                    badges.append("🪙 Marketplace")
+                st.caption(tags + ("  ·  " + " · ".join(badges) if badges else ""))
+                m1, m2 = st.columns(2)
+                m1.metric("CE Score", f"{facts['ce']:.1f}" if facts["ce"] is not None else "N/A")
+                m2.metric("Sample battles", f"{facts['sample_battles']:,}")
+                st.markdown(
+                    f"<span style='background:{accent};color:#fff;padding:2px 10px;"
+                    f"border-radius:999px;font-size:0.8rem;font-weight:600;'>"
+                    f"{facts['evidence_tier']}</span>", unsafe_allow_html=True)
+
+    hero = st.columns([5, 4, 5])
+    _vehicle_card(hero[0], fa, a_slug, "#B4552F")
+    with hero[1]:
+        with st.container(border=True):
+            st.markdown(f"#### {_TVT_VERDICT_ICON.get(result['verdict'], result['verdict'])}")
+            if result["verdict"] not in ("Descriptive Only",) and result["leader_name"]:
+                st.markdown(f"**{result['leader_name']}**")
+            if result["abs_ce_gap"] is not None:
+                st.metric("CE gap", f"{result['abs_ce_gap']:.1f}")
+            st.markdown(
+                f"<span style='background:#334155;color:#E5E7EB;padding:3px 10px;"
+                f"border-radius:8px;font-size:0.82rem;'>"
+                f"{_TVT_PROFILE_ICON.get(result['profile']['label'], result['profile']['label'])}</span>",
+                unsafe_allow_html=True)
+    _vehicle_card(hero[2], fb, b_slug, "#2F6DB4")
+
+    # -------- C. Side-by-side percentile battlecard --------
+    st.markdown("**Percentile battlecard** — exact-BR standings (0–100); raw values in labels")
+    rows = [("CE Score", "combat_effectiveness", "ce_pctl_br", "%.1f"),
+            ("K/D", "ground_frags_per_death", "kd_pctl_br", "%.2f"),
+            ("Frags / battle", "ground_frags_per_battle", "fpb_pctl_br", "%.2f"),
+            ("Win rate", "win_rate", "wr_pctl_br", "%.1f")]
+    ylabels = [r[0] for r in rows]
+    def _bar_txt(row, raw, pctl, fmt):
+        rv, pv = row.get(raw), row.get(pctl)
+        rvs = (fmt % rv) if pd.notna(rv) else "N/A"
+        pvs = f"p{pv:.0f}" if pd.notna(pv) else "p—"
+        return f"{rvs} ({pvs})"
+    bat = go.Figure()
+    bat.add_bar(y=ylabels, x=[a_row.get(r[2]) for r in rows], orientation="h",
+                name=fa["name"], marker_color="#FF6B57",
+                text=[_bar_txt(a_row, r[1], r[2], r[3]) for r in rows], textposition="auto")
+    bat.add_bar(y=ylabels, x=[b_row.get(r[2]) for r in rows], orientation="h",
+                name=fb["name"], marker_color="#5A9BD4",
+                text=[_bar_txt(b_row, r[1], r[2], r[3]) for r in rows], textposition="auto")
+    bat.update_layout(
+        barmode="group", height=380, margin=dict(l=10, r=10, t=30, b=10),
+        paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", font=dict(color="#E5E7EB"),
+        xaxis=dict(range=[0, 100], title="Exact-BR percentile", gridcolor="rgba(125,168,210,0.18)"),
+        yaxis=dict(autorange="reversed"),
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+    )
+    st.plotly_chart(bat, width="stretch")
+    # explicit category winners (CE + the three core metrics)
+    cw = dict(result["profile"]["category_winners"])
+    ce_w = "tie" if (result["abs_ce_gap"] is not None and result["abs_ce_gap"] < 0.05) else result["leader"]
+    def _wtxt(w):
+        return fa["name"] if w == "A" else (fb["name"] if w == "B" else ("Tie" if w == "tie" else "N/A"))
+    st.caption(
+        f"Category winners — CE: **{_wtxt(ce_w)}** · K/D: **{_wtxt(cw['kd'])}** · "
+        f"Frags/battle: **{_wtxt(cw['fpb'])}** · Win rate: **{_wtxt(cw['wr'])}**  "
+        "(ties within a small BR-percentile tolerance)")
+
+    # -------- D. Matchup character + signature advantages --------
+    prof = result["profile"]
+    hdr = _TVT_PROFILE_ICON.get(prof["label"], prof["label"])
+    if result["leader_name"] and prof["label"] in ("Core Metric Sweep", "2–1 Performance Edge"):
+        hdr += f" — {result['leader_name']}" if prof["label"] == "Core Metric Sweep" else ""
+    st.markdown(f"#### {hdr}")
+    st.write(prof["explanation"])
+    sig = result["signature"]
+    sc = st.columns(2)
+    for col, key, facts in [(sc[0], "A", fa), (sc[1], "B", fb)]:
+        with col:
+            s = sig[key]
+            if s and s["self_value"] is not None:
+                col.markdown(
+                    f"**{facts['name']} — signature advantage:** {s['label']} — "
+                    f"{s['self_value']:.2f} (p{s['self_pctl']:.0f}) vs {s['opp_value']:.2f} (p{s['opp_pctl']:.0f}).")
+            else:
+                col.markdown(f"**{facts['name']} — signature advantage:** none clearly ahead on a core metric.")
+
+    # -------- E. CE contribution showdown --------
+    st.markdown("**CE contribution showdown** — the exact CE breakdown for each vehicle")
+    wf = st.columns(2)
+    fig_a = _tvt_ce_waterfall(result["ce_breakdown"]["A"], "#FF6B57")
+    fig_b = _tvt_ce_waterfall(result["ce_breakdown"]["B"], "#5A9BD4")
+    with wf[0]:
+        st.caption(fa["name"])
+        if fig_a:
+            st.plotly_chart(fig_a, width="stretch")
+        else:
+            st.info("Not scoreable.")
+    with wf[1]:
+        st.caption(fb["name"])
+        if fig_b:
+            st.plotly_chart(fig_b, width="stretch")
+        else:
+            st.info("Not scoreable.")
+    if result["ce_diff_leader_sentence"]:
+        st.markdown(f"**Why the leader leads:** {result['ce_diff_leader_sentence']}")
+
+    # -------- F. Supporting context row (compact, full names, no duplicate metrics) --------
+    st.markdown("**Supporting context** (does not decide the core profile)")
+
+    def _esc(x):
+        return (str(x).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;"))
+
+    mA, mB = ctx_a["momentum"], ctx_b["momentum"]
+    sA, sB = ctx_a["stability"], ctx_b["stability"]
+    momA = f"{mA:+.1f}" if mA is not None else "N/A"
+    momB = f"{mB:+.1f}" if mB is not None else "N/A"
+    stabA = f"{sA:.0%}" if sA is not None else "N/A"
+    stabB = f"{sB:.0%}" if sB is not None else "N/A"
+    ctx_html = (
+        "<div style='border:1px solid rgba(148,163,184,0.25);border-radius:10px;"
+        "padding:8px 14px;overflow-x:auto;'>"
+        "<table style='width:100%;border-collapse:collapse;font-size:0.92rem;'>"
+        "<tr>"
+        "<th style='text-align:left;padding:4px 8px;color:#94A3B8;font-weight:600;'>Context</th>"
+        f"<th style='text-align:right;padding:4px 8px;color:#FF6B57;font-weight:700;'>{_esc(fa['name'])}</th>"
+        f"<th style='text-align:right;padding:4px 8px;color:#5A9BD4;font-weight:700;'>{_esc(fb['name'])}</th>"
+        "</tr>"
+        "<tr>"
+        "<td style='padding:4px 8px;color:#CBD5E1;'>Momentum <span style='color:#94A3B8;'>(recent trend)</span></td>"
+        f"<td style='text-align:right;padding:4px 8px;color:#E5E7EB;'>{momA}</td>"
+        f"<td style='text-align:right;padding:4px 8px;color:#E5E7EB;'>{momB}</td>"
+        "</tr>"
+        "<tr>"
+        "<td style='padding:4px 8px;color:#CBD5E1;'>Stability <span style='color:#94A3B8;'>(daily K/D steadiness — higher is steadier)</span></td>"
+        f"<td style='text-align:right;padding:4px 8px;color:#E5E7EB;'>{stabA}</td>"
+        f"<td style='text-align:right;padding:4px 8px;color:#E5E7EB;'>{stabB}</td>"
+        "</tr>"
+        "</table></div>"
+    )
+    st.markdown(ctx_html, unsafe_allow_html=True)
+    st.caption("Sample battles and evidence tier are shown on each vehicle card above.")
+
+    # -------- G. Recent trend --------
+    st.markdown("**Recent performance trend** — daily BR-relative score")
+    daily_score_df, _ = get_momentum(recent_df, vehicle_30d_df)
+    tr = daily_score_df[daily_score_df["vehicle_slug"].isin([a_slug, b_slug])].dropna(subset=["daily_score"]).copy()
+    if tr.empty:
+        st.caption("No recent daily-score trend is available for these vehicles.")
+    else:
+        tr["Vehicle"] = tr["vehicle_slug"].map({a_slug: fa["name"], b_slug: fb["name"]})
+        trend_fig = px.line(tr.sort_values("date"), x="date", y="daily_score", color="Vehicle",
+                            color_discrete_map={fa["name"]: "#FF6B57", fb["name"]: "#5A9BD4"})
+        trend_fig.add_hline(y=50, line_dash="dot", opacity=0.4, annotation_text="BR average (50)")
+        trend_fig.update_layout(height=340, margin=dict(l=10, r=10, t=20, b=10),
+                                xaxis_title="Date", yaxis_title="Daily BR-relative score",
+                                legend_title_text=None)
+        st.plotly_chart(trend_fig, width="stretch")
+
+    # -------- Methodology + caveats --------
+    if result["caveats"]:
+        for cav in result["caveats"]:
+            st.caption("⚠️ " + cav)
+    with st.expander("How Tank vs Tank works"):
+        st.markdown(
+            "Tank vs Tank compares recent BR-relative performance among ThunderSkill "
+            "tracked users. **CE Score determines the overall statistical edge**, while "
+            "the core-metric profile (K/D, frags per battle, win rate) shows where each "
+            "vehicle leads. It is not a direct duel simulation.\n\n"
+            "- **Verdict** (same BR only): Too Close to Call if the CE gap is under 5; "
+            "Slight Edge from 5 to 12 (or above 12 when a vehicle has only Developing "
+            "evidence); Clear Edge at 12+ when both have Solid or Strong evidence.\n"
+            "- **Percentiles** are ranked within each vehicle's exact BR over the full "
+            "catalog — never within the local selector filters.\n"
+            "- Cross-BR comparisons are descriptive only (different peer groups).")
+
+
+with tab_tvt:
+    _render_tank_vs_tank()
 
 
 # ============================================================
