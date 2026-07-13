@@ -1693,9 +1693,22 @@ _TVT_CORE_METRICS = [
 # distribution; see design notes). Higher is better for every core metric.
 TVT_TOO_CLOSE_CE_GAP = 5.0     # |CE gap| below this -> Too Close to Call
 TVT_CLEAR_CE_GAP = 12.0        # |CE gap| at/above this -> Clear Edge (if evidence allows)
-TVT_PCTL_TIE_TOL = 5.0         # percentile-point tie tolerance for core metrics
+TVT_PCTL_TIE_TOL = 5.0         # percentile-point gap used by signature advantages
 TVT_MIN_BATTLES = 50           # min sample battles for a verdict-eligible vehicle
 TVT_MIN_METRICS = 2            # min valid core metrics for a verdict
+
+# Metric-specific practical-tie rules for the core-metric profile. A metric is
+# a tie ONLY when the exact-BR percentile gap is small AND the raw values are
+# practically equal -- a small percentile gap alone is never enough. (The K/D
+# and frags percentile gap uses 5.0 rather than 4.0 so that a case like Tiger II
+# (H) vs T34 -- frags 3.94 vs 3.87, percentile gap 4.9, raw diff 1.8% -- reads
+# as the practical tie it plainly is; the raw tolerance still blocks false ties.)
+_TVT_TIE_PCTL_GAP = {"kd": 5.0, "fpb": 5.0, "wr": 4.0}
+_TVT_TIE_RAW_REL = {"kd": 0.03, "fpb": 0.03}   # relative raw-value tolerance
+_TVT_TIE_RAW_ABS = {"wr": 1.0}                 # absolute win-rate tolerance (pct points)
+
+# Metric labels used inside deterministic explanation sentences.
+_TVT_SENTENCE_LABEL = {"kd": "K/D", "fpb": "frags per battle", "wr": "win rate"}
 
 _EVIDENCE_ORDER = {
     "Limited evidence": 0,
@@ -1736,44 +1749,78 @@ def _row_val(row, col):
         return row[col] if col in row else np.nan
 
 
-def classify_matchup_profile(a_row, b_row, tol: float = TVT_PCTL_TIE_TOL) -> dict:
+def _is_metric_tie(key, ra, rb, pa, pb) -> bool:
+    """Practical tie for a core metric: a small exact-BR percentile gap AND
+    practically-equal raw values. A small percentile gap alone is never a tie.
+    Safe with NaNs, zeros, and tiny denominators."""
+    if pd.isna(pa) or pd.isna(pb):
+        return False
+    if abs(pa - pb) > _TVT_TIE_PCTL_GAP[key]:
+        return False
+    if pd.isna(ra) or pd.isna(rb):
+        return True  # percentiles agree and no raw info -> treat as a tie (rare)
+    if key == "wr":
+        return abs(ra - rb) <= _TVT_TIE_RAW_ABS["wr"]
+    denom = (abs(ra) + abs(rb)) / 2.0
+    if denom < 1e-9:
+        return True  # both effectively zero -> equal
+    return (abs(ra - rb) / denom) <= _TVT_TIE_RAW_REL[key]
+
+
+def classify_matchup_profile(a_row, b_row) -> dict:
     """Describe WHERE each vehicle leads across the three core CE metrics.
 
-    Uses full exact-BR percentiles (kd/fpb/wr_pctl_br) with a percentile-point
-    tie tolerance. Returns per-metric winners ("A"/"B"/"tie"/"n/a"), win counts,
-    a matchup-character label, and a deterministic explanation. This NEVER
-    overrides the CE-based overall winner -- it is descriptive only.
+    Uses full exact-BR percentiles (kd/fpb/wr_pctl_br) with metric-specific
+    practical-tie rules (see ``_is_metric_tie``). Returns per-metric winners
+    ("A"/"B"/"tie"/"n/a"), win/tie counts, the profile winner, a matchup-character
+    label, and a deterministic explanation. This NEVER overrides the CE-based
+    overall winner -- it is descriptive only.
+
+    Labels (higher is better for every metric):
+      Core Metric Sweep          -- winner takes every scored metric
+      Broad Performance Advantage-- winner wins 2, loses 0, ties 1
+      2-1 Performance Edge        -- winner wins 2, loses 1
+      Narrow Advantage           -- winner wins 1, loses 0, ties the rest
+      Tradeoff Matchup           -- each vehicle wins at least one metric (not 2-1)
+      Dead Heat                  -- no decisive metric (all ties)
     """
     winners = {}
     a_wins = b_wins = ties = 0
-    a_leads, b_leads = [], []
-    for key, label, _raw, pctl in _TVT_CORE_METRICS:
+    a_leads, b_leads, tie_labels = [], [], []
+    for key, _label, raw_col, pctl in _TVT_CORE_METRICS:
         pa, pb = _row_val(a_row, pctl), _row_val(b_row, pctl)
         if pd.isna(pa) or pd.isna(pb):
             winners[key] = "n/a"
             continue
-        if abs(pa - pb) < tol:
-            winners[key] = "tie"
-            ties += 1
+        ra, rb = _row_val(a_row, raw_col), _row_val(b_row, raw_col)
+        slabel = _TVT_SENTENCE_LABEL[key]
+        if _is_metric_tie(key, ra, rb, pa, pb):
+            winners[key] = "tie"; ties += 1; tie_labels.append(slabel)
         elif pa > pb:
-            winners[key] = "A"; a_wins += 1; a_leads.append(label)
+            winners[key] = "A"; a_wins += 1; a_leads.append(slabel)
         else:
-            winners[key] = "B"; b_wins += 1; b_leads.append(label)
+            winners[key] = "B"; b_wins += 1; b_leads.append(slabel)
 
-    scored = a_wins + b_wins + ties
-    if scored == 0:
+    w, low = max(a_wins, b_wins), min(a_wins, b_wins)
+    winner_side = "A" if a_wins > b_wins else ("B" if b_wins > a_wins else None)
+
+    if w == 0:
         label = "Dead Heat"
-    elif ties == scored:
-        label = "Dead Heat"
-    elif a_wins == scored or b_wins == scored:
+    elif low == 0 and ties == 0:
         label = "Core Metric Sweep"
-    elif (a_wins == 2 and b_wins == 1) or (b_wins == 2 and a_wins == 1):
+    elif low == 0 and w >= 2:
+        label = "Broad Performance Advantage"
+    elif low == 0 and w == 1:
+        label = "Narrow Advantage"
+    elif w == 2 and low == 1:
         label = "2–1 Performance Edge"
-    else:
+    else:  # each vehicle wins at least one, and it is not the 2-1 pattern
         label = "Tradeoff Matchup"
 
     a_name = _row_val(a_row, "vehicle_name")
     b_name = _row_val(b_row, "vehicle_name")
+    winner_name = a_name if winner_side == "A" else (b_name if winner_side == "B" else None)
+    win_leads = a_leads if winner_side == "A" else (b_leads if winner_side == "B" else [])
 
     def _join(items):
         if not items:
@@ -1782,24 +1829,45 @@ def classify_matchup_profile(a_row, b_row, tol: float = TVT_PCTL_TIE_TOL) -> dic
             return items[0]
         return ", ".join(items[:-1]) + " and " + items[-1]
 
+    def _tied_clause():
+        if not tie_labels:
+            return None
+        verb = "is" if len(tie_labels) == 1 else "are"
+        return f"{_join(tie_labels)} {verb} effectively tied"
+
     if label == "Dead Heat":
         explanation = "Neither vehicle clearly leads on K/D, frags per battle, or win rate."
     elif label == "Core Metric Sweep":
-        winner, leads = (a_name, a_leads) if a_wins == scored else (b_name, b_leads)
-        explanation = f"{winner} leads all core metrics: {_join(leads)}."
+        explanation = f"{winner_name} leads all core metrics: {_join(win_leads)}."
     else:
+        # One clause per side that leads something, plus a tied clause -- joined
+        # with "; " so punctuation is consistent across every pattern.
         parts = []
-        if a_leads:
-            parts.append(f"{a_name} leads in {_join(a_leads)}")
-        if b_leads:
-            parts.append(f"{b_name} leads in {_join(b_leads)}")
-        explanation = "; ".join(parts) + "." if parts else "Split core-metric profile."
+        if label in ("Broad Performance Advantage", "Narrow Advantage"):
+            parts.append(f"{winner_name} leads in {_join(win_leads)}")
+        elif label == "2–1 Performance Edge":
+            loser_side = "B" if winner_side == "A" else "A"
+            loser_name = b_name if loser_side == "B" else a_name
+            loser_leads = b_leads if loser_side == "B" else a_leads
+            parts.append(f"{winner_name} leads in {_join(win_leads)}")
+            parts.append(f"{loser_name} leads in {_join(loser_leads)}")
+        else:  # Tradeoff Matchup
+            if a_leads:
+                parts.append(f"{a_name} leads in {_join(a_leads)}")
+            if b_leads:
+                parts.append(f"{b_name} leads in {_join(b_leads)}")
+        tied = _tied_clause()
+        if tied:
+            parts.append(tied)
+        explanation = "; ".join(parts) + "."
 
     return {
         "category_winners": winners,
         "a_wins": a_wins,
         "b_wins": b_wins,
         "ties": ties,
+        "winner_side": winner_side,
+        "winner_name": winner_name,
         "label": label,
         "explanation": explanation,
     }
