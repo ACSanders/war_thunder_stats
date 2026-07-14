@@ -12,7 +12,7 @@ import features
 
 
 # ============================================================
-# App config
+# War Thunder Stats app config
 # ============================================================
 
 st.set_page_config(
@@ -22,8 +22,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# Larger, slightly heavier main tab labels (scoped to the tab list only so it
-# does not affect buttons, dropdowns, or other widgets).
+# tab formatting
 st.markdown(
     """
     <style>
@@ -66,8 +65,9 @@ def load_data(url: str) -> pd.DataFrame:
     return df
 
 
-# Cached wrappers around the pure helpers in features.py. Caching is kept here
-# (Streamlit-specific); the data logic lives in the importable module.
+# made cache wrappers around helpers in features.py. 
+# Note that caching is kept here
+# data logic is in the importable module
 
 @st.cache_data(ttl=60 * 60)
 def get_cleaned_daily(raw_df: pd.DataFrame) -> pd.DataFrame:
@@ -76,11 +76,10 @@ def get_cleaned_daily(raw_df: pd.DataFrame) -> pd.DataFrame:
 
 
 def load_wiki_br_lookup(path: Path) -> pd.DataFrame | None:
-    """Load the manual War Thunder Wiki BR override CSV, if present and valid.
+    """Load the manual War Thunder Wiki BR override CSV I made to help with data quality
 
-    Not cached: it's a tiny local file and this keeps a lookup-file edit
-    picked up on the next rerun without needing to bust a cache. Any read
-    failure is swallowed so the app quietly falls back to ThunderSkill BRs.
+    It is not cached. It's a small file.
+    If for some reason there's a failure the app falls back to ThunderSkill BRs
     """
     if not path.exists():
         return None
@@ -91,10 +90,10 @@ def load_wiki_br_lookup(path: Path) -> pd.DataFrame | None:
 
 
 def load_wiki_vehicle_images(path: Path) -> pd.DataFrame | None:
-    """Load the War Thunder Wiki vehicle image URL CSV, if present and valid.
+    """Load War Thunder Wiki vehicle image URL CSV
 
-    Not cached, same reasoning as load_wiki_br_lookup. Any read failure is
-    swallowed so the app quietly renders without a Wiki image.
+    Also not cached -- same reasoning as load_wiki_br_lookup
+    Added safeguard so if there's a failure it renders without a image
     """
     if not path.exists():
         return None
@@ -112,8 +111,8 @@ def get_recent_daily(cleaned_daily_df: pd.DataFrame) -> pd.DataFrame:
 
 @st.cache_data(ttl=60 * 60)
 def get_vehicle_agg(recent_daily_df: pd.DataFrame) -> pd.DataFrame:
-    """vehicle_agg_df: one row per vehicle with the Combat Effectiveness Score,
-    broad BR range fields, and quality flags."""
+    """vehicle_agg_df: one row per tank with Combat Effectiveness Score,
+    BR range fields, and some quality flags."""
     vehicle_df = features.build_vehicle_agg(recent_daily_df)
     vehicle_df = features.add_quality_flags(vehicle_df)
     vehicle_df = features.add_combat_effectiveness(vehicle_df)
@@ -124,8 +123,8 @@ def get_vehicle_agg(recent_daily_df: pd.DataFrame) -> pd.DataFrame:
 
 @st.cache_data(ttl=60 * 60)
 def get_clusters(vehicle_df: pd.DataFrame, min_sample_battles: int):
-    """Cluster the given (already filtered) vehicle slice and attach friendly
-    archetype labels. Cached on the slice contents + control value."""
+    """Cluster the vehicle slice and attach 
+    group labels -- this is cached"""
     clustered, meta = features.build_vehicle_clusters(
         vehicle_df, min_sample_battles=min_sample_battles
     )
@@ -136,16 +135,15 @@ def get_clusters(vehicle_df: pd.DataFrame, min_sample_battles: int):
 
 @st.cache_data(ttl=60 * 60)
 def get_lineups(candidate_df: pd.DataFrame, size: int, prefer_diversity: bool):
-    """Top-K scored lineups from an eligible candidate pool. Cached on the
+    """Top K scored lineups from an eligible pool. Cached on
     candidate contents + controls."""
     return features.build_lineups(candidate_df, size, prefer_diversity=prefer_diversity)
 
 
 @st.cache_data(ttl=60 * 60)
 def get_momentum(recent_daily_df: pd.DataFrame, vehicle_agg_df: pd.DataFrame):
-    """Momentum table for ALL qualifying vehicles (filter-independent, so the
-    heavy daily-score computation runs once). Also returns the daily score
-    series for trend lines. The tab filters results to the top-deck slice."""
+    """Momentum table for ALL eligible vehicles -- note this is filter-independent, so the
+    heavy score calc runs once. Also returns daily score for trend lines"""
     daily = features.build_daily_br_score(recent_daily_df)
     momentum = features.build_momentum(daily, vehicle_agg_df)
     return daily, momentum
@@ -153,21 +151,16 @@ def get_momentum(recent_daily_df: pd.DataFrame, vehicle_agg_df: pd.DataFrame):
 
 @st.cache_data(ttl=60 * 60)
 def get_strong_less_played(vehicle_df: pd.DataFrame):
-    """Strong & Less-Played qualification on the filtered slice (fixed 50-battle
-    floor; percentiles computed within the supplied set)."""
+    """Strong + Less-Played -- qualification on the filtered slice -- note: fixed 50 battle
+    floor and percentiles computed within the set"""
     return features.build_strong_less_played(vehicle_df)
 
 
 @st.cache_data(ttl=60 * 60)
 def get_matchup_percentiles(vehicle_df: pd.DataFrame):
-    """Full exact-BR peer percentiles for Tank vs Tank. Always computed on the
-    FULL aggregate (never a filtered slice) so head-to-head standings are stable."""
+    """Full exact BR peer percentiles for my new Tank vs Tank section -- calculated on the
+    FULL aggregate (not filtered) -- note this should help make head to head results stable"""
     return features.build_matchup_percentiles(vehicle_df)
-
-
-# Data preparation, vehicle aggregation, scoring, and nation/BR aggregates now
-# live in features.py (pure pandas, reusable by offline scripts). The cached
-# wrappers above expose them to the app.
 
 
 # ============================================================
@@ -177,11 +170,10 @@ def get_matchup_percentiles(vehicle_df: pd.DataFrame):
 @st.cache_data(ttl=60 * 60 * 24, show_spinner=False)
 def fetch_image_bytes(image_url):
     """
-    Fetch image bytes server-side.
+    image bytes server-side.
 
-    This is more reliable than embedding ThunderSkill image URLs directly,
-    because the Streamlit app serves the fetched image instead of asking the
-    browser to hotlink it.
+    I found this to be more reliable than embedding ThunderSkill image URLs
+    because no need to deal with the hotlinks
     """
     if pd.isna(image_url) or not str(image_url).startswith("http"):
         return None, "Missing or invalid image URL"
@@ -225,7 +217,7 @@ def fetch_image_bytes(image_url):
 
 
 # ============================================================
-# Load and prepare data
+# Load and prep data
 # ============================================================
 
 try:
@@ -244,7 +236,7 @@ recent_df = get_recent_daily(cleaned_daily_df)
 vehicle_30d_df = get_vehicle_agg(recent_df)
 
 if vehicle_30d_df.empty:
-    st.error("No vehicle data available after recent-date filtering.")
+    st.error("No data available after recent date filtering.")
     st.stop()
 
 
@@ -260,11 +252,14 @@ with logo_col:
         st.image(str(LOGO_PATH), width=88)
 with title_col:
     st.title("War Thunder Stats")
-    st.caption("Realistic Ground Forces meta, driven by player performance.")
+    st.caption("Advanced vehicle insights")
+    st.markdown(
+        "[Subscribe on YouTube](https://www.youtube.com/@warthunderstats)"
+    )
 
 
 # ============================================================
-# Top filter deck  (replaces the old sidebar)
+# Top filters
 # ============================================================
 
 def _br_range_options(df: pd.DataFrame) -> list:
@@ -321,7 +316,6 @@ with st.container(border=True):
         with tog_b:
             show_marketplace = st.toggle("Marketplace", value=True, key="flt_marketplace")
 
-# Normalize widget return values (empty multi -> all; None single -> All).
 selected_ranges = selected_ranges or []
 selected_countries = selected_countries or []
 selected_types = selected_types or []
@@ -366,7 +360,7 @@ br_30d_df = features.build_br_aggregate(filtered_vehicle_df)
 
 
 # ============================================================
-# Summary metric cards
+# Summary cards
 # ============================================================
 
 n_vehicles = filtered_vehicle_df["vehicle_slug"].nunique()
@@ -375,7 +369,7 @@ n_nations = filtered_vehicle_df["country"].nunique()
 avg_ce = filtered_vehicle_df["combat_effectiveness"].mean()
 avg_ce_str = f"{avg_ce:.1f}" if pd.notna(avg_ce) else "N/A"
 
-# Median vehicle-level win rate (win_rate is 0-100; not battle-weighted).
+# Median tank win rate -- note: win_rate is not battle weighted
 median_wr = filtered_vehicle_df["win_rate"].median(skipna=True)
 median_wr_str = f"{median_wr:.1f}%" if pd.notna(median_wr) else "—"
 
@@ -399,9 +393,9 @@ card_row2[0].metric(
     "Avg CE Score",
     avg_ce_str,
     help=(
-        "CE Score is a custom BR-normalized composite metric using K/D, frags "
+        "CE Score is a custom BR normalized composite metric using K/D, frags "
         "per battle, win rate, and sample battles/confidence. 50 is roughly "
-        "BR-average; higher is better."
+        "BR average, and higher is better."
     ),
     border=True,
 )
@@ -410,7 +404,7 @@ card_row2[2].metric("Rolling window", window_value, help=window_help, border=Tru
 
 
 # ============================================================
-# Tabs
+# TABS
 # ============================================================
 
 tab_nation, tab_rankings, tab_clusters, tab_meta, tab_lineup, tab_tvt = st.tabs(
@@ -434,16 +428,16 @@ with tab_nation:
         st.warning("No vehicles match the current filters.")
     else:
         # --- 1. Nation x BR Range heatmap ---
-        st.subheader("Nation × BR Range — battle-weighted win rate")
+        st.subheader("Nation × BR Range: Battle-Weighted Win Rate")
         st.caption(
-            "Cell value is the battle-weighted win rate over the rolling window. "
+            "The cell value is the battle weighted win rate. "
             "Color is centered on 50%."
         )
 
         heat = features.build_nation_br_heatmap(filtered_vehicle_df)
 
         if heat.empty:
-            st.info("Not enough data for the heatmap under the current filters.")
+            st.info("Not enough data under the current filters.")
         else:
             x_ranges = (
                 heat.sort_values("br_range_min")["br_range_label"].drop_duplicates().tolist()
@@ -511,10 +505,9 @@ with tab_nation:
             st.plotly_chart(heat_fig, width="stretch")
 
             st.caption(
-                "Heatmap reflects the active filters. Blank cells mean either no "
-                "vehicles passed the current filters, no win-rate signal was "
-                "available, or some source rows return N/A for BR metadata and are "
-                "omitted from BR-range cells."
+                "Heatmap reflects the active filters. Blank cells mean that either no "
+                "vehicles passed the current filters, no win rate information was "
+                "available, or there's some missing metadata."
             )
 
         st.divider()
@@ -636,7 +629,7 @@ with tab_nation:
 
         st.divider()
 
-        # --- 4. Nation strength (dumbbell + summary table) ---
+        # --- 4. Nation strength
         st.subheader("Nation strength")
 
         nation_summary = features.build_nation_summary(filtered_vehicle_df)
@@ -671,7 +664,7 @@ with tab_nation:
                 )
 
                 db_fig = go.Figure()
-                # Thin connecting segments (one per nation).
+
                 for _, r in dumbbell.iterrows():
                     db_fig.add_trace(
                         go.Scatter(
@@ -746,15 +739,15 @@ with tab_nation:
 
 
 # ============================================================
-# Vehicle Rankings tab  (rankings + folded-in vehicle detail)
+# Vehicle Rankings tab 
 # ============================================================
 
 with tab_rankings:
     st.subheader("Top performers by Combat Effectiveness Score")
     st.caption(
         "The Combat Effectiveness Score measures how much a vehicle overperforms "
-        "the average for its exact BR (K/D, frags per battle, win rate, and a "
-        "small data-confidence term). 50 is roughly average for the BR."
+        "the average for its exact BR. The score uses K/D, frags per battle, win rate, and a "
+        "small data confidence term. Note that 50 is roughly average for the BR."
     )
 
     if filtered_vehicle_df.empty:
@@ -772,8 +765,8 @@ with tab_rankings:
             for n, c, b in zip(vdf["vehicle_name"], vdf["country"], vdf["realistic_br"])
         ]
 
-        # Percentile features among currently filtered vehicles (for the radar),
-        # plus log1p battles used by the radar and by Similar vehicles.
+        # Percentile features for currently filtered vehicles
+        # log1p battles used by the radar and by Similar vehicles
         vdf["_wr_pct"] = vdf["win_rate"].rank(pct=True) * 100
         vdf["_kd_pct"] = vdf["ground_frags_per_death"].rank(pct=True) * 100
         vdf["_fpb_pct"] = vdf["ground_frags_per_battle"].rank(pct=True) * 100
@@ -802,7 +795,7 @@ with tab_rankings:
             .copy()
         )
 
-        # --- CE bar chart (full-width; unique label per bar; x fixed 0-100) ---
+        # --- CE bar chart
         st.markdown("**Top vehicles by CE Score**")
         bar_df = rankings.sort_values("combat_effectiveness", ascending=True)
         bar_fig = px.bar(
@@ -834,7 +827,7 @@ with tab_rankings:
         bar_fig.update_xaxes(range=[0, 100])
         st.plotly_chart(bar_fig, width="stretch")
 
-        # --- Top performer table (collapsed, below the bar) ---
+        # --- Top performer table
         with st.expander("Show top performer table"):
             st.dataframe(
                 rankings[ranking_cols],
@@ -856,8 +849,8 @@ with tab_rankings:
                 },
             )
 
-        # --- Daily K/D Stability Plot (top 12 by 30-day aggregate K/D) ---
-        st.markdown("**Daily K/D stability — top 12 by 30-day K/D**")
+        # --- Daily K/D Stability Plot -- I'm defaulting to top 12
+        st.markdown("**Daily K/D stability: top 12 by 30-day K/D**")
         st.caption(
             "Thick bar = middle 50% of daily K/D (25th–75th pct); thin line = "
             "10th–90th pct; dot = median daily K/D; diamond = 30-day aggregate "
@@ -956,7 +949,7 @@ with tab_rankings:
 
         st.divider()
 
-        # --- folded-in vehicle detail (was the Vehicle Explorer tab) ---
+        # --- folded-in vehicle detail
         st.subheader("Vehicle detail")
 
         detail_opts = vdf.sort_values("display_label")["vehicle_slug"].tolist()
@@ -978,15 +971,13 @@ with tab_rankings:
 
             if not bool(row.get("has_realistic_br", True)):
                 st.warning(
-                    "No Realistic BR is available from ThunderSkill for this "
+                    "No Realistic BR is available for this "
                     "vehicle. It is kept in the dataset because sample performance "
                     "data exists, but it is omitted from BR-normalized views such "
                     "as CE Score, BR heatmaps, and BR grouping."
                 )
 
-            # Wiki vehicle image, shown only when a trusted, successfully-checked
-            # URL exists for this vehicle. Silently omitted otherwise -- no
-            # broken-image placeholder.
+            # Wiki vehicle image
             wiki_image_url = None
             if wiki_vehicle_images_df is not None and "vehicle_slug" in wiki_vehicle_images_df.columns:
                 img_match = wiki_vehicle_images_df[wiki_vehicle_images_df["vehicle_slug"] == selected_slug]
@@ -1001,14 +992,14 @@ with tab_rankings:
                 with img_col:
                     st.image(wiki_image_url, width="stretch")
 
-            # Link button, kept compact (stack on mobile).
+            # Link button
             ts_url = row.get("vehicle_url")
             if pd.notna(ts_url):
                 btn_a, _btn_spacer = st.columns([2, 5])
                 with btn_a:
                     st.link_button("Open ThunderSkill page", str(ts_url), width="stretch")
 
-            # Stat cards.
+            # Stat cards
             d1, d2 = st.columns(2)
             d1.metric("Nation", row.get("country", "N/A"))
             d2.metric("Type", row.get("vehicle_type", "N/A"))
@@ -1029,9 +1020,7 @@ with tab_rankings:
             d9.metric("Frags / battle", f"{row.get('ground_frags_per_battle', np.nan):.2f}")
             d10.metric("Frags / death", f"{row.get('ground_frags_per_death', np.nan):.2f}")
 
-            # --- CE Score breakdown + evidence badge ---
-            # Pure, filter-independent decomposition of the vehicle's own CE Score
-            # (reads only its stored within-BR component columns).
+            # --- CE Score breakdown and evidence badge
             breakdown = features.ce_score_breakdown(row)
             evidence = features.ce_evidence_tier(
                 row.get("total_battles_30d"), row.get("days_observed")
@@ -1039,7 +1028,7 @@ with tab_rankings:
 
             st.markdown("**CE Score breakdown**")
 
-            # Evidence badge — an evidence basis, not a statistical confidence level.
+            # Evidence badge
             _tier_colors = {
                 "Limited evidence": "#6B7280",
                 "Developing evidence": "#C08A2E",
@@ -1056,25 +1045,23 @@ with tab_rankings:
                 unsafe_allow_html=True,
             )
             st.caption(
-                "Evidence reflects how much ThunderSkill tracked-user sample data "
-                "backs the score — not a statistical confidence level or interval. "
-                "These are tracked-user sample battles, not global War Thunder totals."
+                "Evidence reflects how much user sample data supports the score"
             )
 
             if not breakdown["scoreable"]:
                 st.info(
                     "This vehicle isn't scored, so there is no CE Score breakdown. "
-                    "A Combat Effectiveness Score needs a Realistic BR and at least "
+                    "Note that a Combat Effectiveness Score needs a BR and at least "
                     "one metric that can be compared against enough vehicles at the "
                     "same BR."
                 )
             else:
-                # Deterministic, conservative plain-language explanation.
+                # provide explanation
                 explanation = features.ce_explanation_sentence(breakdown)
                 if explanation:
                     st.markdown(explanation)
 
-                # Waterfall: Base → signed contributions → (score cap) → CE Score.
+                # Waterfall
                 wf_labels = ["Base (BR average)"]
                 wf_values = [breakdown["base"]]
                 wf_measure = ["absolute"]
@@ -1127,7 +1114,7 @@ with tab_rankings:
 
                 bd_cap = (
                     "Base 50 is the BR average. Each bar is that metric's exact, "
-                    "renormalized contribution to the score; positive bars raise it, "
+                    "renormalized contribution to the score. Positive bars raise it, "
                     "negative bars lower it."
                 )
                 if abs(breakdown["clip_adjustment"]) >= 0.05:
@@ -1138,7 +1125,7 @@ with tab_rankings:
                     )
                 st.caption(bd_cap)
 
-                # Explicitly surface any metric dropped from the score.
+                # show any metric dropped from the score
                 if breakdown["dropped"]:
                     br_val = breakdown["peer_br"]
                     drop_msgs = []
@@ -1163,7 +1150,7 @@ with tab_rankings:
                         + ". The remaining metrics carry proportionally more weight."
                     )
 
-            # --- Performance radar (0-100; percentiles among filtered peers) ---
+            # --- Performance radar (0-100 -- note: percentiles among filtered peers)
             st.markdown("**Performance radar**")
             radar_axes = {
                 "CE Score": row.get("combat_effectiveness"),
@@ -1213,7 +1200,7 @@ with tab_rankings:
             st.plotly_chart(radar_fig, width="stretch")
             radar_cap = (
                 "Win Rate / K/D / Frags-per-battle / Sample Size are percentiles "
-                "among the currently filtered vehicles; CE Score is the 0-100 "
+                "among the currently filtered vehicles. CE Score is the 0-100 "
                 "Combat Effectiveness Score."
             )
             if missing_axes:
@@ -1222,13 +1209,13 @@ with tab_rankings:
                 radar_cap += " Percentiles are unreliable with so few vehicles in view."
             st.caption(radar_cap)
 
-            # --- Similar vehicles (simple standardized nearest-neighbor) ---
+            # --- Similar vehicles -- here I'm using simple standardized nearest-neighbor
             st.subheader("Similar vehicles by K-nearest neighbors")
             st.caption(
                 "Compares the selected vehicle with currently filtered vehicles "
                 "using standardized BR, CE Score, win rate, K/D, frags per battle, "
-                "and log sample battles. The search starts with same vehicle type "
-                "and nearby BR, then broadens if too few peers are available."
+                "and log sample battles. The search starts with vehicles of the same type and a nearby BR, "
+                "then broadens if too few peers are available."
             )
             sim_feats = [
                 "realistic_br",
@@ -1240,8 +1227,8 @@ with tab_rankings:
             ]
             if pd.isna(row.get("realistic_br")) or pd.isna(row.get("combat_effectiveness")):
                 st.info(
-                    "Similar vehicles need a Realistic BR and CE Score, which are "
-                    "unavailable for this vehicle."
+                    "Similar vehicles need a Realistic BR and valid CE Score, which are "
+                    "currently unavailable for this vehicle."
                 )
             else:
                 base = vdf.dropna(
@@ -1255,7 +1242,7 @@ with tab_rankings:
                 ).copy()
                 base = base[base["vehicle_slug"] != selected_slug]
 
-                # Candidate pool: same type & BR within +-1.0, broadening if sparse.
+                # Candidate pool: same type & BR within +-1.0 -- note that there is broadening if sparse
                 cand = base[
                     (base["vehicle_type"] == row.get("vehicle_type"))
                     & ((base["realistic_br"] - row["realistic_br"]).abs() <= 1.0)
@@ -1308,7 +1295,7 @@ with tab_rankings:
                         },
                     )
 
-                    # Similarity ladder (compact lollipop of the top-3 matches).
+                    # Similarity ladder
                     ladder = sim.sort_values("similarity", ascending=True)
                     ladder_fig = px.bar(
                         ladder,
@@ -1337,7 +1324,7 @@ with tab_rankings:
                     )
                     st.plotly_chart(ladder_fig, width="stretch")
 
-            # --- Trend chart + raw observations (last) ---
+            # --- Trend chart and raw observations
             vehicle_trend_df = filtered_recent_df[
                 filtered_recent_df["vehicle_slug"] == selected_slug
             ].sort_values("date")
@@ -1418,16 +1405,13 @@ with tab_clusters:
     with st.expander("How these clusters work", expanded=False):
         st.markdown(
             "HDBSCAN is a density-based clustering method. Instead of forcing every "
-            "vehicle into a fixed number of groups, it looks for natural dense "
-            "pockets in the data and can mark uncertain vehicles as noise/outliers. "
-            "That makes it useful for messy game-performance data where some "
-            "vehicles form clear groups and others are weird one-offs.\n\n"
-            "Clusters here use **only three signals**: **CE Score** (BR-relative "
+            "vehicle into a fixed number of groups, it looks for naturally dense "
+            "groups in the data and can mark uncertain vehicles as noise or outliers.\n\n"
+            "Clusters use **only three signals**: **CE Score** (BR-relative "
             "strength), **K/D** (combat efficiency), and **log1p(sample battles)** "
             "(evidence strength). Win rate and frags per battle are shown as "
-            "**context only** — they do not form the clusters. Clustering runs on the "
-            "currently filtered slice, so archetypes change as you adjust the top "
-            "filters."
+            "**context only**. Clustering runs on the currently filtered slice, so "
+            "archetypes change as you adjust the top filters."
         )
 
     min_sb = st.slider(
@@ -1440,7 +1424,7 @@ with tab_clusters:
         help="Vehicles below this 30-day sample-battle count are excluded from clustering.",
     )
 
-    # Missing-BR vehicles are excluded inside build_vehicle_clusters.
+    # missing BR vehicles are excluded inside build_vehicle_clusters.
     clustered_df, cluster_meta = get_clusters(filtered_vehicle_df, min_sb)
 
     if not cluster_meta["available"]:
@@ -1466,7 +1450,7 @@ with tab_clusters:
             for n, c, b in zip(cdf["vehicle_name"], cdf["country"], cdf["realistic_br"])
         ]
 
-        # --- 2. Quality cards ---
+        # --- 2. Quality cards
         sil = cluster_meta["silhouette"]
         qcard = st.columns(4)
         qcard[0].metric("Vehicles clustered", f"{cluster_meta['n_vehicles']:,}", border=True)
@@ -1481,19 +1465,19 @@ with tab_clusters:
 
         if cluster_meta["n_clusters"] == 0:
             st.info(
-                "HDBSCAN did not find dense archetypes in this slice — every vehicle "
-                "is an outlier. This is common for small or very uniform slices. Try "
+                "HDBSCAN did not find dense archetypes in this slice, so every vehicle "
+                "is an outlier. Note that this is common for small or very uniform slices. Try "
                 "a wider BR range or a lower minimum sample battles."
             )
         elif cluster_meta["n_clusters"] > 20 or (
             cluster_meta["n_vehicles"] > 250 and cluster_meta["n_clusters"] > 25
         ):
             st.info(
-                "This slice produced many small archetypes. For a cleaner cluster "
+                "This filtered slice produced many small archetypes. For a cleaner cluster "
                 "map, narrow the BR range or select a vehicle type."
             )
 
-        # Canonical label order (+ any disambiguated suffixes appended).
+        # canonical label order
         label_order = [
             "Core Meta",
             "Underplayed Meta",
@@ -1542,7 +1526,7 @@ with tab_clusters:
         )
         st.plotly_chart(fig3d, width="stretch")
 
-        # --- 4. 2D CE vs K/D nation map (most readable) ---
+        # --- 4. 2D CE vs K/D nation map
         st.markdown("**Archetype map — CE Score vs K/D** (point size = sample battles)")
         fig2d = px.scatter(
             cdf,
@@ -1614,7 +1598,7 @@ with tab_clusters:
             },
         )
 
-        # --- 6. Cluster drilldown ---
+        # --- 6. Cluster examination
         st.subheader("Explore an archetype")
         drill = st.selectbox("Archetype", options=present, key="clusters_drill")
         sub = cdf[cdf["friendly_label"] == drill]
@@ -1655,7 +1639,7 @@ with tab_clusters:
                 )
                 st.dataframe(comp, width="stretch", hide_index=True)
 
-        # --- 7. Full clustered table (collapsed) ---
+        # --- 7. Full clustered table
         with st.expander("Full clustered vehicle table"):
             full_cols = [
                 "display_label",
@@ -1702,8 +1686,7 @@ with tab_clusters:
 with tab_meta:
     st.subheader("Meta Signals")
     st.caption(
-        "What is changing and what is being overlooked in the current slice. "
-        "Uses the top filter deck."
+        "Rising performers and underplayed strong picks"
     )
 
     def _meta_fmt_br(b):
@@ -1715,7 +1698,7 @@ with tab_meta:
     st.markdown("### Rising Performers")
     st.caption(
         "Vehicles whose daily BR-relative performance improved over the rolling "
-        "30-day window (min 20 observed days, min 50 sample battles)."
+        "30-day window (minimum 20 observed days and minimum 50 sample battles)."
     )
 
     daily_score_df, momentum_all = get_momentum(recent_df, vehicle_30d_df)
@@ -1740,7 +1723,7 @@ with tab_meta:
         )
         top_rise = momentum.head(rising_n).copy()
 
-        # Deterministic evidence tier + "Why it appears" text (grounded in values).
+        # evidence tier -- using deterministic method
         top_rise["evidence"] = top_rise["total_battles_30d"].apply(
             lambda b: features.ce_evidence_tier(b)["tier"]
         )
@@ -1776,7 +1759,7 @@ with tab_meta:
         )
         st.plotly_chart(rise_fig, width="stretch")
 
-        # Daily Performance Score trend lines for the top risers.
+        # daily performance score trend lines for the top risers
         st.markdown("**Daily Performance Score trend** (BR-relative, CE-like)")
         trend = daily_score_df[daily_score_df["vehicle_slug"].isin(top_rise["vehicle_slug"])].copy()
         trend = trend.merge(
@@ -1793,7 +1776,7 @@ with tab_meta:
             )
             st.plotly_chart(trend_fig, width="stretch")
 
-        # Compact, text-based "Top rising stories" for the first 3 risers.
+        # Top rising stories for the first 3 risers
         st.markdown("**Top rising stories**")
         story_lines = []
         for _, r in top_rise.head(3).iterrows():
@@ -1836,39 +1819,33 @@ with tab_meta:
 
         with st.expander("How Momentum Score works"):
             st.markdown(
-                "The **Daily Performance Score** is a daily BR-relative analogue "
-                "used only for trend detection — it is **not** the official 30-day "
-                "CE Score. For each date:\n\n"
-                "- K/D and frags per battle are log-transformed (they are skewed).\n"
-                "- K/D, frags per battle, and win rate are robust z-scored within "
-                "exact BR for that date, then combined with CE's metric weights.\n"
-                "- The result is mapped to a 0–100 scale where 50 is roughly "
-                "BR-average.\n"
-                "- Unlike CE, it applies no per-day sample smoothing (daily battle "
-                "counts are too small)."
+                "The **Daily Performance Score** tracks BR-relative performance over time. "
+                "It uses daily K/D, frags per battle, and win rate, weighted like CE Score "
+                "and mapped to a 0–100 scale where 50 is roughly BR average.\n\n"
+                "Momentum compares the first 10 observed daily scores with the last 10, "
+                "then adjusts the gain for coverage and sample reliability. It is a trend "
+                "signal, not the official 30-day CE Score."
             )
             st.code(
                 """
 early_score = mean of the first 10 observed daily scores
-late_score  = mean of the last  10 observed daily scores
+late_score  = mean of the last 10 observed daily scores
 gain        = late_score - early_score
 coverage    = min(observed_days / 30, 1)
 reliability = sample_battles / (sample_battles + 50)
 
 Momentum Score = gain × coverage × reliability
-                """.strip()
-            )
+        """.strip()
+    )
 
     st.divider()
 
-    # ---------------- Section 2: Strong & Less-Played ----------------
+    # ----Strong and Less-Played
     st.markdown("### Strong & Less-Played")
     st.caption(
-        "These vehicles rank in the top 20% for CE within the current comparison "
+        "These vehicles rank in the top 20% for CE within the comparison "
         "set while having fewer tracked sample battles than the typical eligible "
-        "vehicle (≥ 50 sample battles required). Tracked sample battles are a "
-        "proxy for usage among ThunderSkill tracked users, not global War Thunder "
-        "popularity."
+        "vehicle (≥ 50 sample battles required)."
     )
 
     slp_all = get_strong_less_played(filtered_vehicle_df)
@@ -1882,7 +1859,7 @@ Momentum Score = gain × coverage × reliability
         st.info(
             "No vehicles qualify as Strong & Less-Played under the current filters "
             "(need a CE Score in the top 20% and usage in the bottom 50%, with ≥ 50 "
-            "sample battles). Widen the filters to grow the comparison set."
+            "sample battles). Widen the filters to expand the comparison set."
         )
     else:
         slp_all = slp_all.copy()
@@ -1903,11 +1880,6 @@ Momentum Score = gain × coverage × reliability
 
         slp_n = st.slider("Top N", 5, 25, 12, 1, key="slp_n")
 
-        # Featured list only: cap the DISPLAY at 2 vehicles per exact BR so a
-        # single BR can't dominate, keeping the qualified sort order and walking
-        # down the ranked qualifiers until Top N is filled. This does NOT change
-        # the qualified dataframe, percentiles, or qualification status; every
-        # qualifier still appears in the scatter and the full-qualifiers table.
         _per_br = {}
         _featured_idx = []
         for _idx, _r in qualified.iterrows():
@@ -1920,8 +1892,8 @@ Momentum Score = gain × coverage × reliability
                 break
         top_slp = qualified.loc[_featured_idx]
 
-        # Map: usage percentile (x) vs CE percentile (y); the qualifying region is
-        # upper-left (high CE, low usage). All eligible shown; qualifiers highlighted.
+        # Map: usage percentile (x) vs CE percentile (y) -- the qualifying region is
+        # upper-left (high CE, low usage). All eligible shown and qualifiers highlighted.
         st.markdown("**Strong & Less-Played map** — qualifiers sit in the shaded upper-left")
         slp_fig = px.scatter(
             slp_all, x="usage_percentile", y="ce_percentile", color="Region",
@@ -1983,19 +1955,11 @@ Momentum Score = gain × coverage × reliability
 
         with st.expander("How Strong & Less-Played works"):
             st.markdown(
-                "This is a simple qualification, **not** a score. Within the current "
-                "comparison set (the filtered vehicles), each eligible vehicle — one "
-                "with a Realistic BR, a CE Score, and ≥ 50 tracked sample battles — "
-                "gets:\n\n"
-                "- a **CE percentile** (rank of its CE Score), and\n"
-                "- a **usage percentile** (rank of its tracked sample battles).\n\n"
-                "A vehicle is **Strong & Less-Played** when its CE percentile is at "
-                "least 0.80 (top 20%) **and** its usage percentile is at most 0.50 "
-                "(fewer tracked battles than the typical eligible vehicle). "
-                "Percentiles are computed within the current filters, so they shift "
-                "as you change the filter deck. Tracked sample battles are a proxy "
-                "for usage among ThunderSkill tracked users, not global War Thunder "
-                "popularity."
+                "Eligible vehicles need a Realistic "
+                "BR, a CE Score, and at least 50 sample battles.\n\n"
+                "A vehicle qualifies when it ranks in the top 20% for CE and the bottom "
+                "50% for tracked usage within the current filters. These percentiles change "
+                "with the comparison set."
             )
 
 
@@ -2006,11 +1970,8 @@ Momentum Score = gain × coverage × reliability
 with tab_lineup:
     st.subheader("Lineup Builder")
     st.caption(
-        "Builds the strongest same-nation lineup you can actually bring within a "
-        "BR range. It ranks candidate combinations mostly by average Combat "
-        "Effectiveness Score, with an optional small role-diversity bonus. "
-        "This tab uses its own lineup controls and does not depend on the top "
-        "filter deck."
+        "Builds the strongest lineup within a BR range using average CE Score, "
+        "with an optional small bonus for role variety."
     )
 
     lb_all = vehicle_30d_df  # full dataset; this tab is self-contained
@@ -2116,7 +2077,7 @@ with tab_lineup:
                         .sort_values("combat_effectiveness", ascending=False)
                     )
 
-                    # --- Hero recommendation ---
+                    # --- Hero recommendation
                     st.markdown("#### Recommended lineup")
                     hero = st.columns(5)
                     hero[0].metric("Lineup Score", f"{best['lineup_score']:.1f}", border=True)
@@ -2125,7 +2086,7 @@ with tab_lineup:
                     hero[3].metric("Median sample battles", f"{int(best['median_sample_battles']):,}", border=True)
                     hero[4].metric("Types covered", f"{int(best['n_types'])}", border=True)
 
-                    # --- Vehicle cards ---
+                    # --- Vehicle cards
                     card_cols = st.columns(len(members))
                     for col, (_, v) in zip(card_cols, members.iterrows()):
                         with col:
@@ -2141,7 +2102,7 @@ with tab_lineup:
                                     f"{int(v['total_battles_30d']):,} sample battles"
                                 )
 
-                    # --- Visual A: lineup CE bar ---
+                    # --- lineup CE bar
                     st.markdown("**Recommended lineup by CE Score**")
                     bar = members.sort_values("combat_effectiveness", ascending=True)
                     bar_fig = px.bar(
@@ -2161,8 +2122,8 @@ with tab_lineup:
                     bar_fig.update_xaxes(range=[0, 100])
                     st.plotly_chart(bar_fig, width="stretch")
 
-                    # --- Visual B: lineup performance map (CE vs K/D) ---
-                    st.markdown("**Lineup performance map — CE Score vs K/D** (point size = sample battles)")
+                    # --- lineup performance map (CE vs K/D)
+                    st.markdown("**Lineup performance map: CE Score vs K/D** (point size = sample battles)")
                     map_fig = px.scatter(
                         members, x="combat_effectiveness", y="ground_frags_per_death",
                         color="vehicle_type", size="total_battles_30d", size_max=26,
@@ -2179,13 +2140,13 @@ with tab_lineup:
                         },
                     )
                     map_fig.update_layout(
-                        xaxis_title="CE Score", yaxis_title="K/D (ground frags per death)",
+                        xaxis_title="CE Score", yaxis_title="K/D",
                         height=480,
                         margin=dict(l=10, r=10, t=20, b=10), legend_title_text="Type",
                     )
                     st.plotly_chart(map_fig, width="stretch")
 
-                    # --- Alternative lineups table ---
+                    # --- Alternative lineups table
                     st.markdown("**Alternative lineups**")
                     alt = lineups.copy()
                     alt.insert(0, "rank", range(1, len(alt) + 1))
@@ -2209,7 +2170,7 @@ with tab_lineup:
                         },
                     )
 
-                    # --- Candidate pool ---
+                    # --- Candidate pool
                     with st.expander(f"Eligible vehicles considered ({len(candidates)})"):
                         pool_cols = [
                             "display_label", "vehicle_type", "realistic_br",
@@ -2277,7 +2238,7 @@ def _tvt_image_url(slug):
 
 
 def _tvt_ce_waterfall(bd, title_color="#FF6B57"):
-    """Reuse the CE breakdown to render one contribution waterfall (same math)."""
+    """Reuse CE breakdown to render one contribution waterfall"""
     if not bd.get("scoreable"):
         return None
     labels = ["Base (BR average)"]; values = [bd["base"]]; measure = ["absolute"]
@@ -2311,7 +2272,7 @@ def _tvt_ce_waterfall(bd, title_color="#FF6B57"):
 
 
 def _tvt_stability(slug):
-    """Contextual daily-K/D steadiness (higher = steadier). N/A-safe."""
+    """Contextual daily K/D steadiness (higher = steadier)"""
     s = recent_df[recent_df["vehicle_slug"] == slug]["ground_frags_per_death"].dropna()
     if len(s) < 5:
         return None
@@ -2324,14 +2285,9 @@ def _tvt_stability(slug):
 
 def _render_tank_vs_tank():
     st.subheader("Tank vs Tank")
-    st.caption("Head-to-head BR-relative performance comparison")
-    st.caption(
-        "Not a duel simulator, a match-win probability, or a balance "
-        "recommendation — it compares recent BR-relative performance among "
-        "ThunderSkill tracked users."
-    )
+    st.caption("Compare vehicles head-to-head by BR-relative performance")
 
-    # Percentiles ALWAYS from the full aggregate (stable standings).
+    # note that percentiles are always from the full aggregate -- more stable
     mp = get_matchup_percentiles(vehicle_30d_df)
     base = mp[mp["combat_effectiveness"].notna() & mp["has_realistic_br"].fillna(False)].copy()
     if base.empty:
@@ -2344,7 +2300,6 @@ def _render_tank_vs_tank():
         for n, c, b in zip(base["vehicle_name"], base["country"], base["realistic_br"])
     ]
 
-    # -------- A. Compact filter panel --------
     with st.container(border=True):
         top = st.columns([3, 1])
         with top[0]:
@@ -2353,7 +2308,7 @@ def _render_tank_vs_tank():
             ignore_global = st.toggle(
                 "Ignore global filters", value=False, key="tvt_ignore_global",
                 help="Off (default): the app's global filters narrow the comparison pool. "
-                     "On: search across every eligible vehicle (this tab only — global controls are unchanged).")
+                     "On: search across every eligible vehicle (this tab only - global controls are unchanged).")
         if ignore_global:
             universe = base
         else:
@@ -2395,7 +2350,7 @@ def _render_tank_vs_tank():
             st.rerun()
 
     if pool.empty:
-        st.info("No candidate vehicles match these filters. Loosen the local filters, lower the minimum evidence, or turn on **Ignore global filters**.")
+        st.info("No candidate vehicles match these filters. Adjust the local filters, lower the minimum evidence, or turn on **Ignore global filters**.")
         return
 
     label_by_slug = dict(zip(base["vehicle_slug"], base["display_label"]))
@@ -2412,7 +2367,7 @@ def _render_tank_vs_tank():
         st.session_state["tvt_A"] = a_slug
     a_row = base[base["vehicle_slug"] == a_slug].iloc[0]
 
-    # B candidate pool: exclude A; restrict to A's BR when Same BR only.
+    # B candidate pool: exclude A. restrict to A's BR when Same BR only.
     b_pool = pool[pool["vehicle_slug"] != a_slug]
     if same_br_only:
         b_pool = b_pool[b_pool["realistic_br"] == a_row["realistic_br"]]
@@ -2433,7 +2388,7 @@ def _render_tank_vs_tank():
             if same_br_only else "No second candidate vehicle under the current filters.")
         return
 
-    # sensible default rival: closest CE at the same BR (deterministic, unsurprising)
+    # default rival: closest CE at the same BR
     if st.session_state.get("tvt_B") not in set(b_slugs):
         ce_a = a_row["combat_effectiveness"]
         st.session_state["tvt_B"] = (
@@ -2446,7 +2401,7 @@ def _render_tank_vs_tank():
         st.session_state["tvt_B"] = b_slug
     b_row = base[base["vehicle_slug"] == b_slug].iloc[0]
 
-    # -------- Deterministic comparison --------
+    # -------- Deterministic comparison
     _, momentum_all = get_momentum(recent_df, vehicle_30d_df)
     mom_score = (dict(zip(momentum_all["vehicle_slug"], momentum_all["momentum_score"]))
                  if not momentum_all.empty else {})
@@ -2456,16 +2411,16 @@ def _render_tank_vs_tank():
                                        a_context=ctx_a, b_context=ctx_b)
     fa, fb = result["vehicle_a"], result["vehicle_b"]
 
-    # -------- Warnings --------
+    # -------- Warnings
     if result["cross_br"]:
         st.warning(
             "**Descriptive cross-BR comparison.** These vehicles are evaluated against "
             "different BR peer groups. Their CE Scores and percentile profiles are "
-            "descriptive relative to their own BRs and do not support a direct overall winner.")
+            "descriptive relative to their own BRs and may not support a direct overall winner.")
     if fa["type"] == "SPAA" or fb["type"] == "SPAA":
         st.warning("Frag-based measures may not fully represent an SPAA vehicle's team role.")
 
-    # -------- B. Hero comparison --------
+    # -------- Hero comparison --------
     def _vehicle_card(col, facts, slug, accent):
         with col:
             with st.container(border=True):
@@ -2506,7 +2461,7 @@ def _render_tank_vs_tank():
                 unsafe_allow_html=True)
     _vehicle_card(hero[2], fb, b_slug, "#2F6DB4")
 
-    # -------- C. Side-by-side percentile battlecard --------
+    # -------- side by side percentile
     st.markdown("**Percentile battlecard** — exact-BR standings (0–100); raw values in labels")
     rows = [("CE Score", "combat_effectiveness", "ce_pctl_br", "%.1f"),
             ("K/D", "ground_frags_per_death", "kd_pctl_br", "%.2f"),
@@ -2533,7 +2488,7 @@ def _render_tank_vs_tank():
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
     )
     st.plotly_chart(bat, width="stretch")
-    # explicit category winners (CE + the three core metrics)
+    # explicit category winners --CE + the three core metrics
     cw = dict(result["profile"]["category_winners"])
     ce_w = "tie" if (result["abs_ce_gap"] is not None and result["abs_ce_gap"] < 0.05) else result["leader"]
     def _wtxt(w):
@@ -2543,7 +2498,7 @@ def _render_tank_vs_tank():
         f"Frags/battle: **{_wtxt(cw['fpb'])}** · Win rate: **{_wtxt(cw['wr'])}**  "
         "(ties within a small BR-percentile tolerance)")
 
-    # -------- D. Matchup character + signature advantages --------
+    # -------- matchup character and signature advantages --------
     prof = result["profile"]
     hdr = _TVT_PROFILE_ICON.get(prof["label"], prof["label"])
     if prof.get("winner_name") and prof["label"] in _TVT_PROFILE_NAMED:
@@ -2562,8 +2517,8 @@ def _render_tank_vs_tank():
             else:
                 col.markdown(f"**{facts['name']} — signature advantage:** none clearly ahead on a core metric.")
 
-    # -------- E. CE contribution showdown --------
-    st.markdown("**CE contribution showdown** — the exact CE breakdown for each vehicle")
+    # -------- CE contribution
+    st.markdown("**CE Score breakdown**")
     wf = st.columns(2)
     fig_a = _tvt_ce_waterfall(result["ce_breakdown"]["A"], "#FF6B57")
     fig_b = _tvt_ce_waterfall(result["ce_breakdown"]["B"], "#5A9BD4")
@@ -2582,8 +2537,8 @@ def _render_tank_vs_tank():
     if result["ce_diff_leader_sentence"]:
         st.markdown(f"**Why the leader leads:** {result['ce_diff_leader_sentence']}")
 
-    # -------- F. Supporting context row (compact, full names, no duplicate metrics) --------
-    st.markdown("**Supporting context** (does not decide the core profile)")
+    # -------- supporting context
+    st.markdown("**Supporting context**")
 
     def _esc(x):
         return (str(x).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;"))
@@ -2618,8 +2573,8 @@ def _render_tank_vs_tank():
     st.markdown(ctx_html, unsafe_allow_html=True)
     st.caption("Sample battles and evidence tier are shown on each vehicle card above.")
 
-    # -------- G. Recent trend --------
-    st.markdown("**Recent performance trend** — daily BR-relative score")
+    # -------- Recent trend --------
+    st.markdown("**Recent performance trend:** daily BR-relative score")
     daily_score_df, _ = get_momentum(recent_df, vehicle_30d_df)
     tr = daily_score_df[daily_score_df["vehicle_slug"].isin([a_slug, b_slug])].dropna(subset=["daily_score"]).copy()
     if tr.empty:
@@ -2634,23 +2589,14 @@ def _render_tank_vs_tank():
                                 legend_title_text=None)
         st.plotly_chart(trend_fig, width="stretch")
 
-    # -------- Methodology + caveats --------
+    # -------- Methodology and caveats
     if result["caveats"]:
         for cav in result["caveats"]:
             st.caption("⚠️ " + cav)
     with st.expander("How Tank vs Tank works"):
         st.markdown(
-            "Tank vs Tank compares recent BR-relative performance among ThunderSkill "
-            "tracked users. **CE Score determines the overall statistical edge**, while "
-            "the core-metric profile (K/D, frags per battle, win rate) shows where each "
-            "vehicle leads. It is not a direct duel simulation.\n\n"
-            "- **Verdict** (same BR only): Too Close to Call if the CE gap is under 5; "
-            "Slight Edge from 5 to 12 (or above 12 when a vehicle has only Developing "
-            "evidence); Clear Edge at 12+ when both have Solid or Strong evidence.\n"
-            "- **Percentiles** are ranked within each vehicle's exact BR over the full "
-            "catalog — never within the local selector filters.\n"
-            "- Cross-BR comparisons are descriptive only (different peer groups).")
-
+            "CE Score determines the overall edge. K/D, frags per battle, and win rate "
+            "show where each vehicle is stronger.\n\n")
 
 with tab_tvt:
     _render_tank_vs_tank()
@@ -2664,17 +2610,16 @@ st.divider()
 
 with st.expander("Combat Effectiveness Score & data notes"):
     st.write(
-        "The Combat Effectiveness Score compares a vehicle's recent performance "
-        "with other vehicles at the same exact Realistic BR. A score near 50 "
-        "represents the neutral BR-relative baseline; higher or lower scores "
+        "The Combat Effectiveness Score compares a vehicle's performance "
+        "with other vehicles at the same BR. A score near 50 "
+        "represents the neutral BR-relative baseline. Higher or lower scores "
         "indicate stronger or weaker performance relative to those peers."
     )
 
     st.write(
-        "K/D, frags per battle, and win rate are adjusted for sample reliability "
-        "and compared with the typical vehicle at that BR using outlier-resistant "
-        "statistics. Low-battle results are pulled toward the BR median so thin "
-        "samples do not dominate."
+        "K/D, frags per battle, and win rate are compared with vehicles at the same "
+        "BR using outlier-resistant statistics and empirical Bayes-style smoothing. "
+        "Low-battle results are pulled toward the BR median so thin samples do not dominate."
     )
 
     st.code(
@@ -2690,25 +2635,15 @@ CE Score = clip(50 + 15 × combined BR-relative score, 0, 100)
     )
 
     st.write(
-        "If a component is unavailable, the remaining weights are rescaled to "
-        "total 100%. K/D and frags per battle are log-transformed because they "
-        "are skewed. Low-battle metrics are smoothed toward the BR median with "
-        "reliability = battles / (battles + 100). Each metric's robust score then "
-        "compares it with the BR median using the median absolute deviation, so "
-        "extreme values have less influence. Sample evidence reflects battle "
-        "volume relative to other vehicles at the same BR, and its contribution "
-        "is capped so unusually large battle counts do not dominate; it is not a "
-        "confidence percentage or interval."
+        "If a metric is unavailable, the remaining weights are rescaled. K/D and "
+        "frags per battle are log-transformed, and low-sample results are smoothed "
+        "toward the BR median. Robust comparisons reduce the influence of extreme values."
     )
 
     st.write(
-        "As rules of thumb, ~65 is a clear step above the BR baseline and ~90–95+ "
-        "is exceptional. 50 is the neutral BR-relative baseline, not necessarily "
-        "the exact mean or median of the final CE Scores. A vehicle is unscored "
-        "if it lacks a Realistic BR or if reliable BR-relative comparisons are "
-        "unavailable. ThunderSkill efficiency is intentionally excluded because it "
-        "is already a composite. Battle counts are ThunderSkill tracked-user "
-        "sample battles, not global War Thunder totals."
+        "A CE Score near 50 is BR-average, around 65 is above average, and "
+        "90+ is exceptional. Vehicles without a Realistic BR or enough comparable "
+        "peer data are left unscored."
     )
 
 st.caption(
