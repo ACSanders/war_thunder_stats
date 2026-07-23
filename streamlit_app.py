@@ -263,16 +263,14 @@ if vehicle_30d_df.empty:
 
 LOGO_PATH = Path(__file__).resolve().parent / "assets" / "war_thunder_stats_logo1.png"
 
-logo_col, title_col = st.columns([1, 6], vertical_alignment="center")
+logo_col, title_col, yt_col = st.columns([1, 8, 1], vertical_alignment="center")
 with logo_col:
     if LOGO_PATH.exists():
         st.image(str(LOGO_PATH), width=88)
 with title_col:
     st.title("War Thunder Stats")
-    st.caption("Advanced vehicle insights")
-    st.markdown(
-        "[Subscribe on YouTube](https://www.youtube.com/@warthunderstats)"
-    )
+with yt_col:
+    st.link_button("YouTube", "https://www.youtube.com/@warthunderstats")
 
 
 # ============================================================
@@ -294,7 +292,8 @@ country_options = sorted(vehicle_30d_df["country"].dropna().unique())
 type_options = sorted(vehicle_30d_df["vehicle_type"].dropna().unique())
 
 with st.container(border=True):
-    st.markdown("**Filters** · empty pill groups mean *all*")
+    st.markdown("**Filters**")
+    st.caption("Leave a pill group empty to include all.")
 
     deck_left, deck_right = st.columns([3, 2], gap="large")
 
@@ -416,7 +415,7 @@ card_row2[0].metric(
     ),
     border=True,
 )
-card_row2[1].metric("Median Win Rate", median_wr_str, border=True)
+card_row2[1].metric("Median win rate", median_wr_str, border=True)
 card_row2[2].metric("Rolling window", window_value, help=window_help, border=True)
 
 
@@ -1007,7 +1006,8 @@ with tab_rankings:
             if wiki_image_url:
                 img_col, _img_spacer = st.columns([1, 2])
                 with img_col:
-                    st.image(wiki_image_url, width="stretch")
+                    with st.container(border=True):
+                        st.image(wiki_image_url, width="stretch")
 
             # Link button
             ts_url = row.get("vehicle_url")
@@ -1509,7 +1509,8 @@ with tab_clusters:
         present += sorted(labels_present - set(present))
 
         # --- 3. 3D cluster space ---
-        st.markdown("**Cluster feature space (3D)** — the exact features the model uses")
+        st.markdown("**Cluster feature space (3D)**")
+        st.caption("The exact features the model uses")
         fig3d = px.scatter_3d(
             cdf,
             x="combat_effectiveness",
@@ -1544,7 +1545,8 @@ with tab_clusters:
         st.plotly_chart(fig3d, width="stretch")
 
         # --- 4. 2D CE vs K/D nation map
-        st.markdown("**Archetype map — CE Score vs K/D** (point size = sample battles)")
+        st.markdown("**Archetype map**")
+        st.caption("CE Score vs K/D · point size = sample battles")
         fig2d = px.scatter(
             cdf,
             x="combat_effectiveness",
@@ -1712,7 +1714,7 @@ with tab_meta:
     filtered_slugs = set(filtered_vehicle_df["vehicle_slug"])
 
     # ---------------- Section 1: Rising Performers ----------------
-    st.markdown("### Rising Performers")
+    st.subheader("Rising Performers")
     st.caption(
         "Vehicles whose daily BR-relative performance improved over the rolling "
         "30-day window (minimum 20 observed days and minimum 50 sample battles)."
@@ -1858,7 +1860,7 @@ Momentum Score = gain × coverage × reliability
     st.divider()
 
     # ----Strong and Less-Played
-    st.markdown("### Strong & Less-Played")
+    st.subheader("Strong & Less-Played")
     st.caption(
         "These vehicles rank in the top 20% for CE within the comparison "
         "set while having fewer tracked sample battles than the typical eligible "
@@ -2151,7 +2153,8 @@ with tab_lineup:
                     st.plotly_chart(bar_fig, width="stretch")
 
                     # --- lineup performance map (CE vs K/D)
-                    st.markdown("**Lineup performance map: CE Score vs K/D** (point size = sample battles)")
+                    st.markdown("**Lineup performance map**")
+                    st.caption("CE Score vs K/D · point size = sample battles")
                     map_fig = px.scatter(
                         members, x="combat_effectiveness", y="ground_frags_per_death",
                         color="vehicle_type", size="total_battles_30d", size_max=26,
@@ -2490,7 +2493,8 @@ def _render_tank_vs_tank():
     _vehicle_card(hero[2], fb, b_slug, "#2F6DB4")
 
     # -------- side by side percentile
-    st.markdown("**Percentile battlecard** — exact-BR standings (0–100); raw values in labels")
+    st.markdown("**Percentile battlecard**")
+    st.caption("Exact-BR standings (0–100) · raw values in labels")
     rows = [("CE Score", "combat_effectiveness", "ce_pctl_br", "%.1f"),
             ("K/D", "ground_frags_per_death", "kd_pctl_br", "%.2f"),
             ("Frags / battle", "ground_frags_per_battle", "fpb_pctl_br", "%.2f"),
