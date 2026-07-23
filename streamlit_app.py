@@ -216,6 +216,23 @@ def fetch_image_bytes(image_url):
         return None, f"Request failed: {e}"
 
 
+def wiki_image_url_for_slug(slug):
+    """Return a trusted Wiki image URL for a vehicle_slug, or None.
+
+    Only rows with status "ok" and a non-blank wiki_image_url are returned.
+    """
+    if wiki_vehicle_images_df is None or "vehicle_slug" not in wiki_vehicle_images_df.columns:
+        return None
+    match = wiki_vehicle_images_df[wiki_vehicle_images_df["vehicle_slug"] == slug]
+    if match.empty:
+        return None
+    row = match.iloc[0]
+    url = row.get("wiki_image_url")
+    if row.get("status") == "ok" and pd.notna(url) and str(url).strip():
+        return str(url)
+    return None
+
+
 # ============================================================
 # Load and prep data
 # ============================================================
@@ -2085,6 +2102,17 @@ with tab_lineup:
                     hero[2].metric("Avg K/D", f"{best['avg_kd']:.2f}", border=True)
                     hero[3].metric("Median sample battles", f"{int(best['median_sample_battles']):,}", border=True)
                     hero[4].metric("Types covered", f"{int(best['n_types'])}", border=True)
+
+                    # --- Vehicle images
+                    img_cols = st.columns(len(members))
+                    for col, (_, v) in zip(img_cols, members.iterrows()):
+                        with col:
+                            with st.container(border=True):
+                                url = wiki_image_url_for_slug(v["vehicle_slug"])
+                                if url:
+                                    st.image(url, width="stretch")
+                                else:
+                                    st.caption("Image unavailable")
 
                     # --- Vehicle cards
                     card_cols = st.columns(len(members))
