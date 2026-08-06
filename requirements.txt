@@ -1,4 +1,5 @@
-streamlit
+streamlit==1.61.1
+starlette==1.4.1
 pandas
 numpy
 requests
